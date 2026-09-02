@@ -1,0 +1,27 @@
+# 디어데이클래스 · Cloudflare Pages 응답 머리말
+#
+# script-src 에 'unsafe-inline' 이 없습니다. 인라인 <script> 는 막힙니다.
+# 원본 HTML 의 인라인 스크립트를 src/assets 로 빼는 것이 3단계입니다.
+#
+# 광고·분석 태그(GTM · Meta 픽셀 등)는 아직 넣지 않았습니다.
+# 붙이실 때 그 주소를 script-src · connect-src · img-src 에 더해야 합니다.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), geolocation=(), microphone=(), payment=(), usb=()
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'none'; worker-src 'self' blob:; upgrade-insecure-requests
+
+/assets/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/images/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/images/managed/*
+  Cloudflare-CDN-Cache-Control: public, max-age=31536000, immutable
+
+/videos/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
