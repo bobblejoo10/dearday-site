@@ -29,6 +29,33 @@
     if (rich && titleEl && banner.titleHtml) rich.set(titleEl, banner.titleHtml, banner.title);
     if (rich && leadEl && banner.subtitleHtml) rich.set(leadEl, banner.subtitleHtml, banner.subtitle);
 
+    // 단추 — 디어데이 홈에는 원래 1개만 있습니다.
+    // 2차는 관리자에서 켜고 이름을 넣었을 때만 같은 모양으로 하나 더 만듭니다.
+    var actions = document.querySelector('.hero-actions');
+    if (actions) {
+      var first = actions.querySelector('a:not([data-cta-secondary])');
+      if (first) {
+        if (banner.primaryLabel) first.textContent = banner.primaryLabel;
+        if (banner.primaryUrl) first.setAttribute('href', banner.primaryUrl);
+        first.style.display = banner.primaryEnabled === false ? 'none' : '';
+      }
+      var second = actions.querySelector('[data-cta-secondary]');
+      var wantSecond = banner.secondaryEnabled !== false && !!banner.secondaryLabel;
+      if (wantSecond) {
+        if (!second) {
+          second = document.createElement('a');
+          second.className = first ? first.className : 'btn';
+          second.setAttribute('data-cta-secondary', '');
+          actions.appendChild(second);
+        }
+        second.textContent = banner.secondaryLabel;
+        second.setAttribute('href', banner.secondaryUrl || '#');
+        second.style.display = '';
+      } else if (second) {
+        second.style.display = 'none';
+      }
+    }
+
     if (!banner.videoUrl) return;
     if (video.getAttribute('src') === banner.videoUrl) return;
     video.setAttribute('src', banner.videoUrl);

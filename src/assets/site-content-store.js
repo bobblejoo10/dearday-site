@@ -67,6 +67,9 @@
     item.contentPosition = BANNER_POSITIONS.indexOf(text(item.contentPosition)) >= 0 ? text(item.contentPosition) : '';
     item.textAlign = BANNER_ALIGNS.indexOf(text(item.textAlign)) >= 0 ? text(item.textAlign) : '';
     item.ctaAlign = BANNER_ALIGNS.indexOf(text(item.ctaAlign)) >= 0 ? text(item.ctaAlign) : '';
+    // 단추를 보일지. 끄면 공개 페이지에서 그 단추가 사라집니다.
+    item.primaryEnabled = toBoolean(item.primaryEnabled, true);
+    item.secondaryEnabled = toBoolean(item.secondaryEnabled, true);
     item.eyebrow = text(item.eyebrow);
     item.desktopImage = normalizeAssetUrl(item.desktopImage, 'images');
     item.mobileImage = normalizeAssetUrl(item.mobileImage, 'images');
@@ -142,6 +145,8 @@
       contentPosition: row.content_position,
       textAlign: row.text_align,
       ctaAlign: row.cta_align,
+      primaryEnabled: row.primary_enabled,
+      secondaryEnabled: row.secondary_enabled,
       eyebrow: row.eyebrow,
       desktopImage: row.desktop_image,
       mobileImage: row.mobile_image,
@@ -176,6 +181,8 @@
       content_position: item.contentPosition || '',
       text_align: item.textAlign || '',
       cta_align: item.ctaAlign || '',
+      primary_enabled: item.primaryEnabled !== false,
+      secondary_enabled: item.secondaryEnabled !== false,
       eyebrow: item.eyebrow || null,
       desktop_image: item.desktopImage || null,
       mobile_image: item.mobileImage || null,
