@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>행사신청 · 디어데이클래스</title>
+<meta name="description" content="지금 신청 가능한 디어데이클래스 공연·강연·원데이클래스. 전액 무료로 만나보세요.">
+<link rel="icon" type="image/png" href="/images/common-01.png">
+<link rel="apple-touch-icon" href="/images/common-02.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --pink-tint:#FFF1F6;
+    --pink-2:#FCE7F0;
+    --pink-3:#FFF7FA;
+    --ink:#231C20;
+    --ink-2:#574C52;
+    --muted:#9B9298;
+    --line:#F3E3EB;
+    --line-2:#EBD2DE;
+    --magenta:#F1377A;
+    --magenta-deep:#D81E63;
+    --magenta-soft:#FBD7E4;
+    --pink-mid:#F795B8;
+    --sans:"Cabin","Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo",sans-serif;
+    --maxw:1280px;
+    --radius:18px;
+    --shadow:0 26px 60px -34px rgba(216,30,99,.42);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-synthesis:none;line-height:1.6;
+    -webkit-font-smoothing:antialiased;letter-spacing:-.02em;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,4vw,44px);}
+  a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--magenta);outline-offset:2px;border-radius:4px;}
+  .skip{position:absolute;left:-999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;z-index:300;}
+  .skip:focus{left:0;}
+
+  .utility{border-bottom:1px solid var(--line);font-size:.8rem;background:#fff;}
+  .utility-inner{display:flex;justify-content:flex-end;align-items:center;gap:16px;height:38px;color:var(--muted);}
+  .utility a:hover{color:var(--magenta);}
+  .utility .sep{width:1px;height:11px;background:var(--line-2);}
+  .utility .lang button{background:none;border:none;color:var(--muted);font-size:.8rem;padding:2px 4px;}
+  .utility .lang button[aria-current="true"]{color:var(--ink);font-weight:700;}
+
+  header.nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(12px);
+    border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s;}
+  header.nav.scrolled{border-bottom-color:var(--line);box-shadow:0 8px 30px -26px rgba(216,30,99,.3);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px;}
+  .brand{display:flex;align-items:center;}
+  .brand img{height:38px;width:auto;display:block;}
+  .nav-menu{display:flex;gap:clamp(16px,2.2vw,34px);align-items:center;margin-left:auto;}
+  .nav-menu a{font-size:.97rem;font-weight:600;color:var(--ink-2);position:relative;transition:color .2s;}
+  .nav-menu a::after{content:"";position:absolute;left:0;right:0;bottom:-27px;height:3px;background:var(--magenta);
+    transform:scaleX(0);transition:transform .25s;border-radius:3px;}
+  .nav-menu a:hover{color:var(--ink);}
+  .nav-menu a:hover::after{transform:scaleX(1);}
+  .nav-right{display:flex;align-items:center;gap:12px;}
+  .btn{font-size:.94rem;font-weight:700;border:none;background:var(--magenta);color:#fff;padding:12px 24px;border-radius:100px;
+    display:inline-flex;align-items:center;gap:8px;transition:transform .2s,background .25s,box-shadow .25s;
+    box-shadow:0 12px 26px -16px rgba(216,30,99,.85);}
+  .btn:hover{transform:translateY(-2px);background:var(--magenta-deep);}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line-2);box-shadow:none;}
+  .btn.ghost:hover{background:var(--pink-tint);border-color:var(--magenta-soft);color:var(--magenta-deep);}
+  
+
+  .hero{position:relative;background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);overflow:hidden;}
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(24px,4vw,56px);align-items:center;
+    min-height:clamp(560px,82vh,800px);padding:clamp(40px,5vw,60px) 0 clamp(100px,9vw,130px);}
+  .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
+  .hero h1{font-weight:800;font-size:clamp(2.8rem,6.4vw,5.4rem);line-height:1.04;letter-spacing:-.045em;color:var(--ink);}
+  .hero h1 .mg{color:var(--magenta);display:block;margin-top:.06em;}
+  .hero p.lead{font-size:clamp(1rem,1.4vw,1.18rem);color:var(--ink-2);margin:1.4em 0 0;max-width:31ch;font-weight:500;}
+  .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:2.1em;}
+  .hero-dots{display:flex;gap:9px;align-items:center;margin-top:2.4em;}
+  .hero-dots i{width:8px;height:8px;border-radius:50%;background:var(--magenta-soft);display:block;transition:.3s;}
+  .hero-dots i.on{width:26px;border-radius:6px;background:var(--magenta);}
+  .hero-arrow{position:absolute;top:42%;z-index:6;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);
+    background:rgba(255,255,255,.75);color:var(--ink-2);font-size:1.4rem;line-height:1;display:grid;place-items:center;transition:background .2s,transform .2s;}
+  .hero-arrow:hover{background:#fff;transform:scale(1.06);color:var(--magenta);}
+  .hero-arrow.left{left:14px;}.hero-arrow.right{right:14px;}
+  .hero-visual{position:relative;display:flex;justify-content:center;}
+  .poster{width:min(420px,86%);aspect-ratio:1/1;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:6px solid #fff;background:#fff;}
+  .poster img{width:100%;height:100%;object-fit:cover;}
+  .hero-chip{position:absolute;bottom:-18px;left:6%;background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:13px 17px;box-shadow:var(--shadow);max-width:74%;}
+  .hero-chip .t{font-size:.7rem;font-weight:800;letter-spacing:.08em;color:var(--magenta);}
+  .hero-chip .n{font-size:1.05rem;font-weight:800;margin:3px 0 1px;letter-spacing:-.03em;}
+  .hero-chip .s{font-size:.8rem;color:var(--muted);}
+  .hero-chip .free{color:var(--magenta-deep);font-weight:800;}
+
+  .applybar-pos{position:relative;}
+  .applybar{position:absolute;left:50%;bottom:0;transform:translate(-50%,50%);width:min(1100px,calc(100% - 40px));z-index:8;
+    background:var(--ink);border-radius:20px;padding:16px clamp(16px,2vw,24px);display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    box-shadow:0 34px 70px -32px rgba(35,28,32,.6);}
+  .applybar .lab{color:#fff;font-weight:800;font-size:1.02rem;white-space:nowrap;}
+  .applybar .field{flex:1 1 130px;min-width:0;}
+  .applybar input,.applybar select{width:100%;border:none;border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.92rem;background:#fff;color:var(--ink);}
+  .applybar input::placeholder{color:#aaa;}
+  .applybar .agree{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.78);font-size:.82rem;white-space:nowrap;}
+  .applybar .agree input{width:16px;height:16px;accent-color:var(--magenta);}
+  .applybar .agree a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
+  .applybar .submit{flex:0 0 auto;background:var(--magenta);color:#fff;border:none;border-radius:12px;padding:13px 26px;font-weight:800;font-size:.96rem;transition:background .2s,transform .2s;}
+  .applybar .submit:hover{background:var(--magenta-deep);transform:translateY(-2px);}
+
+  .rail{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:150;display:flex;flex-direction:column;gap:13px;align-items:center;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:14px 10px;box-shadow:0 22px 50px -28px rgba(60,40,46,.5);}
+  .rail-item{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;padding:0;text-decoration:none;width:auto;height:auto;}
+  .rail-item .ic{width:50px;height:50px;border-radius:10px;display:grid;place-items:center;box-shadow:0 8px 18px -8px rgba(0,0,0,.35);transition:transform .3s ease;overflow:hidden;}
+  .rail-item:hover .ic{transform:scale(1.2);}
+  .rail-item .lb{font-size:.72rem;font-weight:700;color:#3A3438;white-space:nowrap;}
+  .ic.ig{background:linear-gradient(45deg,#feda75 5%,#fa7e1e 30%,#d62976 55%,#962fbf 78%,#4f5bd5 100%);color:#fff;}
+  .ic.naver{background:#03C75A;color:#fff;font-weight:900;font-size:1.55rem;font-family:Arial,Helvetica,sans-serif;line-height:1;}
+  .ic.kakao{background:#FFE812;}
+  .ic.chatic{background:var(--magenta);color:#fff;}
+  .ic.top-ic{background:#fff;border:1.5px solid var(--magenta-soft);color:var(--magenta);font-weight:800;font-size:1.35rem;}
+  
+  section{padding:clamp(64px,8vw,116px) 0;}
+  .sec-head{text-align:center;max-width:640px;margin:0 auto clamp(40px,5vw,60px);}
+  .sec-head .eyebrow{display:inline-block;font-size:.82rem;font-weight:800;color:var(--magenta);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;}
+  .sec-head h2{font-size:clamp(2rem,4.2vw,3rem);font-weight:800;line-height:1.16;letter-spacing:-.04em;}
+  .sec-head h2 .mg{color:var(--magenta);}
+  .sec-head p{color:var(--muted);font-size:1.04rem;margin-top:15px;font-weight:500;}
+
+  .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(14px,1.6vw,20px);}
+  .cat{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:30px 26px 26px;transition:transform .3s,box-shadow .3s,border-color .3s;}
+  .cat:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:var(--magenta-soft);}
+  .cat .c-ic{width:52px;height:52px;border-radius:14px;background:var(--pink-tint);display:grid;place-items:center;font-size:1.4rem;color:var(--magenta);margin-bottom:20px;}
+  .cat h3{font-size:1.26rem;font-weight:800;letter-spacing:-.03em;margin-bottom:8px;}
+  .cat p{color:var(--muted);font-size:.92rem;}
+  .cat .c-go{margin-top:18px;font-size:.86rem;font-weight:700;color:var(--magenta);display:inline-flex;align-items:center;gap:6px;transition:gap .2s;}
+  .cat:hover .c-go{gap:11px;}
+
+  .upcoming{background:var(--pink-3);}
+  .rank-head{text-align:center;margin-bottom:clamp(24px,3vw,34px);}
+  .rank-head h2{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;letter-spacing:-.04em;line-height:1.14;}
+  .rank-head p{color:var(--muted);margin-top:10px;font-size:1rem;}
+  .tabs{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:clamp(30px,4vw,44px);}
+  .ev-search{max-width:420px;margin:0 auto clamp(20px,3vw,28px);display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line-2);border-radius:100px;padding:12px 20px;transition:border-color .2s,box-shadow .2s;}
+  .ev-search:focus-within{border-color:var(--magenta);box-shadow:0 0 0 4px var(--pink-tint);}
+  .ev-search-ic{flex:none;color:var(--muted);}
+  .ev-search input{flex:1;min-width:0;border:none;outline:none;font-family:inherit;font-size:.94rem;color:var(--ink);background:transparent;}
+  .ev-search input::placeholder{color:var(--muted);}
+  .ev-pagination{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:clamp(32px,4vw,48px);flex-wrap:wrap;}
+  .ev-pagination button{min-width:38px;height:38px;padding:0 8px;border-radius:10px;border:1px solid var(--line-2);background:#fff;color:var(--ink-2);font-weight:700;font-size:.9rem;transition:background .2s,color .2s,border-color .2s;}
+  .ev-pagination button:hover:not(:disabled):not(.active){border-color:var(--magenta-soft);color:var(--magenta-deep);}
+  .ev-pagination button.active{background:var(--magenta);color:#fff;border-color:var(--magenta);}
+  .ev-pagination button:disabled{opacity:.4;cursor:not-allowed;}
+  .ev-pagination button.ev-page-arrow{font-size:1.05rem;}
+  .tab{font-size:.92rem;font-weight:700;color:var(--ink-2);background:#fff;border:1px solid var(--line-2);padding:10px 22px;border-radius:100px;transition:background .2s,color .2s,border-color .2s;}
+  .tab:hover{border-color:var(--magenta-soft);color:var(--magenta);}
+  .tab.active{background:var(--magenta);color:#fff;border-color:var(--magenta);}
+  .rank-shell{position:relative;}
+  .rank-row{display:flex;gap:clamp(14px,1.6vw,20px);overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;scrollbar-width:thin;scrollbar-color:var(--magenta-soft) transparent;}
+  .rank-row::-webkit-scrollbar{height:6px;}
+  .rank-row::-webkit-scrollbar-thumb{background:var(--magenta-soft);border-radius:3px;}
+  .rank-empty{text-align:center;color:var(--muted);padding:52px 0;font-size:1rem;}
+  .rank-next{position:absolute;right:-8px;top:32%;z-index:5;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:#fff;color:var(--ink-2);font-size:1.5rem;line-height:1;display:grid;place-items:center;box-shadow:var(--shadow);transition:color .2s,transform .2s;}
+  .rank-next:hover{color:var(--magenta);transform:scale(1.07);}
+  .ex{flex:0 0 clamp(208px,23%,272px);scroll-snap-align:start;display:block;color:inherit;transition:transform .3s;}
+  .ex:hover{transform:translateY(-4px);}
+  .ex-imgwrap{position:relative;border-radius:14px;overflow:hidden;box-shadow:0 16px 34px -26px rgba(216,30,99,.45);}
+    .ex-img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--pink-2);transition:transform .55s ease;}
+  .ex:hover .ex-img{transform:scale(1.05);}
+  .ex-rank{position:absolute;left:10px;top:10px;z-index:2;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;line-height:1;color:#fff;letter-spacing:0;text-shadow:none;background:var(--magenta);border-radius:10px;box-shadow:0 6px 16px -6px rgba(216,30,99,.7);}
+  .ex-body{padding:14px 2px 0;}
+  .ex h3{font-size:1.04rem;font-weight:700;line-height:1.4;color:var(--ink);margin-bottom:6px;letter-spacing:-.02em;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;font-family:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo",sans-serif;}
+  .ex .venue{font-size:.88rem;color:var(--ink-2);}
+  .ex .daterange{font-size:.82rem;color:var(--muted);margin-top:3px;font-family:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo",sans-serif;}
+  .ex .ex-tag{display:inline-block;margin-top:11px;font-size:.72rem;font-weight:800;color:var(--magenta);border:1px solid var(--magenta-soft);padding:3px 10px;border-radius:6px;}
+
+  .promise-wrap{background:linear-gradient(135deg,#FFE6EF 0%,#FFF1F6 60%,#fff 100%);border-radius:28px;padding:clamp(44px,6vw,76px) clamp(26px,5vw,64px);}
+  .pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,2vw,26px);margin-top:clamp(34px,4vw,50px);}
+  .pitem{background:rgba(255,255,255,.82);border:1px solid #fff;border-radius:16px;padding:30px 28px;}
+  .pitem .rule{width:38px;height:3px;border-radius:3px;background:var(--magenta);margin-bottom:18px;}
+  .pitem h4{font-size:1.22rem;font-weight:800;letter-spacing:-.03em;margin-bottom:9px;color:var(--magenta-deep);}
+  .pitem p{font-size:.92rem;color:var(--ink-2);line-height:1.65;}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,24px);}
+  .step{text-align:center;padding:8px;}
+  .step .s-no{width:62px;height:62px;margin:0 auto 18px;border-radius:50%;background:var(--magenta);color:#fff;font-size:1.45rem;font-weight:800;display:grid;place-items:center;box-shadow:0 14px 28px -16px rgba(216,30,99,.85);}
+  .step h4{font-size:1.26rem;font-weight:800;letter-spacing:-.03em;margin-bottom:8px;}
+  .step p{color:var(--muted);font-size:.95rem;}
+
+  .final{background:var(--ink);color:#fff;text-align:center;position:relative;overflow:hidden;}
+  .final::before{content:"";position:absolute;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(241,55,122,.55),transparent 65%);top:-130px;left:-90px;}
+  .final::after{content:"";position:absolute;width:440px;height:440px;border-radius:50%;background:radial-gradient(circle,rgba(247,149,184,.42),transparent 65%);bottom:-170px;right:-70px;}
+  .final .wrap{position:relative;z-index:2;}
+  .final h2{font-size:clamp(2.1rem,4.6vw,3.5rem);font-weight:800;letter-spacing:-.04em;line-height:1.12;margin-bottom:.5em;}
+  .final h2 .mg{color:var(--pink-mid);}
+  .final p{color:rgba(255,255,255,.72);font-size:1.05rem;max-width:36ch;margin:0 auto 2em;}
+
+  footer{background:#df497c;color:#fff;padding:clamp(40px,5vw,56px) 0 28px;}
+  .foot-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding-bottom:26px;}
+  .foot-brand img{height:34px;width:auto;display:block;filter:brightness(0) invert(1);}
+  .foot-links{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .foot-links a{font-size:.86rem;color:#fff;position:relative;padding-right:14px;transition:opacity .2s;text-decoration:none;}
+  .foot-links a:not(:last-child)::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:12px;background:rgba(255,255,255,.3);}
+  .foot-links a:hover{opacity:.8;}
+  .foot-rule{border-top:1px solid rgba(255,255,255,.35);}
+  .foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-top:22px;font-size:.8rem;color:#fff;}
+
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1);}
+  .reveal.in{opacity:1;transform:none;}
+
+  @media(max-width:1000px){.cats{grid-template-columns:repeat(2,1fr);}.grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:880px){
+    .hero-grid{grid-template-columns:1fr;min-height:auto;padding-bottom:130px;text-align:center;}
+    .hero p.lead{margin-left:auto;margin-right:auto;}
+    .hero-actions,.hero-dots{justify-content:center;}
+    .hero-visual{order:-1;margin-bottom:8px;}
+    .hero-chip{left:50%;transform:translateX(-50%);}
+    .hero-arrow{display:none;}
+    .pgrid,.steps{grid-template-columns:1fr;}
+    .rail{flex-direction:column;top:auto;bottom:88px;right:20px;left:auto;transform:none;background:rgba(255,255,255,.94);padding:12px 8px;border-radius:20px;box-shadow:var(--shadow);gap:10px;}
+    .rail-item .lb{display:none;}
+    .rail-item .ic{width:40px;height:40px;border-radius:12px;}
+    .rail .top span{font-size:1rem;}
+    button.ct-launcher{background:var(--magenta-deep);}
+    .applybar{flex-direction:column;align-items:stretch;}
+    .applybar .field{flex:1 1 auto;}
+    .applybar .agree{justify-content:center;}
+  }
+  @media(max-width:620px){
+    .nav-menu{display:none;position:absolute;top:76px;left:0;right:0;flex-direction:column;align-items:flex-start;background:#fff;border-bottom:1px solid var(--line);padding:16px 24px 24px;gap:16px;}
+    .nav-menu.open{display:flex;}
+    .nav-menu a::after{display:none;}
+    
+    .nav-right .btn.ghost{display:none;}
+    .utility-inner{justify-content:center;}
+    .cats{grid-template-columns:1fr;}
+    .rank-next{display:none;}
+    .ex{flex:0 0 66%;}
+    .foot-top{flex-direction:column;align-items:flex-start;}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;}.reveal{opacity:1;transform:none;transition:none;}}
+
+  /* ===== hero video background ===== */
+  .hero{background:#130A0F;}
+  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  .hero-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(95deg,rgba(14,8,11,.86) 0%,rgba(22,9,16,.6) 46%,rgba(241,55,122,.22) 100%);}
+  .hero .wrap{position:relative;z-index:2;}
+  .hero-eyebrow{color:var(--pink-mid);}
+  .hero h1{color:#fff;}
+  .hero p.lead{color:rgba(255,255,255,.9);}
+  .hero p.lead b{color:var(--pink-mid);}
+  .hero-dots i{background:rgba(255,255,255,.45);}
+  .hero-arrow{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff;}
+  .hero-arrow:hover{background:rgba(255,255,255,.32);color:#fff;}
+  @media(max-width:880px){
+    .hero-overlay{background:linear-gradient(180deg,rgba(14,8,11,.55) 0%,rgba(14,8,11,.8) 100%);}
+  }
+
+  /* ===== reviews carousel ===== */
+  .reviews{background:linear-gradient(180deg,#fff 0%,var(--pink-3) 100%);}
+  .rv-head{text-align:center;margin-bottom:clamp(34px,4vw,52px);}
+  .rv-head .eyebrow{display:inline-block;font-size:.82rem;font-weight:800;color:var(--magenta);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+  .rv-head h2{font-size:clamp(2rem,4.2vw,3rem);font-weight:800;letter-spacing:-.04em;line-height:1.16;}
+  .rv-head h2 .mg{color:var(--magenta);}
+  .rv-underline{width:clamp(56px,8vw,96px);height:4px;border-radius:4px;background:linear-gradient(90deg,var(--magenta),var(--pink-mid));margin:18px auto 0;}
+  .rv-shell{position:relative;max-width:1100px;margin:0 auto;}
+  .rv-nav{display:flex;justify-content:center;gap:10px;margin-bottom:18px;}
+  @media(min-width:768px){.rv-nav{position:absolute;top:-64px;right:0;margin:0;}}
+  .rv-arrow{width:42px;height:42px;border-radius:50%;border:1px solid var(--line-2);background:#fff;color:var(--magenta);font-size:1.3rem;line-height:1;display:grid;place-items:center;box-shadow:0 8px 20px -12px rgba(216,30,99,.4);transition:background .2s,color .2s,transform .2s,opacity .2s;}
+  .rv-arrow:hover:not(:disabled){background:var(--magenta);color:#fff;border-color:var(--magenta);transform:scale(1.06);}
+  .rv-arrow:disabled{opacity:.38;cursor:not-allowed;}
+  .rv-viewport{overflow:hidden;}
+  .rv-track{display:flex;transition:transform .6s cubic-bezier(.22,.61,.36,1);}
+  .rv-card{flex:0 0 33.3333%;padding:10px;box-sizing:border-box;}
+  .rv-inner{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px 28px;height:100%;display:flex;flex-direction:column;box-shadow:0 18px 40px -30px rgba(216,30,99,.4);}
+  .rv-quote{position:absolute;top:2px;left:14px;font-size:5rem;line-height:1;color:var(--magenta);opacity:.13;font-family:Georgia,"Times New Roman",serif;}
+  .rv-text{position:relative;z-index:1;font-size:.98rem;color:var(--ink-2);line-height:1.7;font-weight:500;margin-bottom:22px;}
+  .rv-person{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:18px;border-top:1px solid var(--line);}
+  .rv-avatar{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:1.05rem;}
+  .rv-name{font-weight:800;font-size:.96rem;color:var(--ink);}
+  .rv-user{font-size:.84rem;color:var(--magenta);}
+  .rv-dots{display:flex;justify-content:center;gap:8px;margin-top:26px;}
+  .rv-dot{width:8px;height:8px;border-radius:50%;background:var(--magenta-soft);border:none;padding:0;cursor:pointer;transition:width .3s,background .3s;}
+  .rv-dot.on{width:24px;border-radius:5px;background:var(--magenta);}
+  @media(max-width:1279px){.rv-card{flex-basis:50%;}}
+  @media(max-width:767px){.rv-card{flex-basis:100%;}}
+
+  /* ===== rail social + chatbot ===== */
+  .chatbot{position:fixed;right:18px;bottom:92px;z-index:170;width:min(322px,calc(100vw - 32px));background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 64px -26px rgba(216,30,99,.55);overflow:hidden;display:flex;flex-direction:column;}
+  .chatbot[hidden]{display:none;}
+  .cb-head{background:var(--magenta);color:#fff;padding:14px 16px;font-weight:800;font-size:.95rem;display:flex;justify-content:space-between;align-items:center;}
+  .cb-head button{background:none;border:none;color:#fff;font-size:1rem;line-height:1;cursor:pointer;}
+  .cb-body{padding:16px;display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto;background:var(--pink-3);}
+  .cb-msg{max-width:84%;padding:10px 13px;border-radius:14px;font-size:.88rem;line-height:1.55;}
+  .cb-msg.bot{background:#fff;border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px;color:var(--ink);}
+  .cb-msg.user{background:var(--magenta);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .cb-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff;}
+  .cb-input input{flex:1;min-width:0;border:1px solid var(--line-2);border-radius:100px;padding:10px 14px;font-family:inherit;font-size:.88rem;outline:none;}
+  .cb-input input:focus{border-color:var(--magenta-soft);}
+  .cb-input button{flex:none;width:40px;height:40px;border-radius:50%;border:none;background:var(--magenta);color:#fff;font-size:.95rem;cursor:pointer;transition:background .2s;}
+  .cb-input button:hover{background:var(--magenta-deep);}
+  @media(max-width:880px){.chatbot{bottom:78px;right:12px;}}
+  .ct-launcher{position:fixed;right:20px;bottom:20px;z-index:180;width:56px;height:56px;border-radius:50%;background:var(--magenta);border:none;display:grid;place-items:center;box-shadow:0 16px 36px -14px rgba(216,30,99,.55);cursor:pointer;transition:transform .2s,background .2s;}
+  .ct-launcher:hover{background:var(--magenta-deep);transform:translateY(-2px);}
+  .ct-top{background:#fff;padding:16px 16px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);}
+  .ct-avatar{width:40px;height:40px;border-radius:50%;background:var(--magenta);display:grid;place-items:center;font-size:1.3rem;flex:none;}
+  .ct-topinfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .ct-topinfo strong{font-size:.98rem;color:var(--ink);}
+  .ct-hours-link{font-size:.78rem;color:var(--muted);cursor:pointer;}
+  .ct-top #cbClose{background:none;border:none;color:var(--muted);font-size:1.1rem;line-height:1;cursor:pointer;flex:none;}
+  .ct-top #cbClose:hover{color:var(--ink);}
+  .ct-greet{padding:14px 16px 18px;background:var(--pink-3);}
+  .ct-greet[hidden]{display:none;}
+  .ct-greet-row{display:flex;gap:10px;align-items:flex-start;}
+  .ct-greet-avatar{width:30px;height:30px;border-radius:50%;background:var(--magenta);display:grid;place-items:center;font-size:1rem;flex:none;}
+  .ct-greet-card{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;}
+  .ct-greet-card strong{display:block;font-size:.85rem;color:var(--ink);margin-bottom:6px;}
+  .ct-greet-card p{font-size:.88rem;color:var(--ink-2);line-height:1.55;margin-bottom:12px;}
+  .ct-cta{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;background:var(--magenta);color:#fff;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:.92rem;cursor:pointer;transition:background .2s;}
+  .ct-cta:hover{background:var(--magenta-deep);}
+  .ct-hours-note{text-align:center;font-size:.78rem;color:var(--muted);margin-top:12px;}
+  .cb-body[hidden]{display:none;}
+  .cb-input[hidden]{display:none;}
+  .ct-settings{padding:16px;background:var(--pink-3);}
+  .ct-settings[hidden]{display:none;}
+  .ct-settings-row{font-size:.85rem;color:var(--ink-2);line-height:1.6;margin-bottom:12px;}
+  .ct-settings-row strong{color:var(--ink);}
+  .ct-settings-row:last-child{margin-bottom:0;}
+  .ct-foot{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 0;font-size:.74rem;color:var(--muted);background:#fff;border-top:1px solid var(--line);}
+  .ct-foot-ic{width:6px;height:6px;border-radius:50%;background:var(--magenta);display:inline-block;}
+  .ct-nav{display:flex;background:#fff;border-top:1px solid var(--line);}
+  .ct-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 10px;background:none;border:none;color:var(--muted);font-size:.7rem;cursor:pointer;}
+  .ct-nav-item .ct-nav-ic{font-size:1.05rem;line-height:1;}
+  .ct-nav-item.active{color:var(--magenta);}
+
+  /* ===== hero eyebrow handwriting + lead line ===== */
+  .hero-eyebrow{font-family:'Nanum Pen Script','Pretendard',cursive;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:400;letter-spacing:0;line-height:1.02;margin-bottom:6px;color:var(--pink-mid);text-transform:none;}
+  .hero p.lead{max-width:none;font-size:clamp(.96rem,1.2vw,1.1rem);}
+  @media(min-width:881px){.hero .ld1{white-space:nowrap;}}
+
+  /* ===== gallery marquee ===== */
+  .gallery{background:#fff;overflow:hidden;}
+  .marquee{margin-top:clamp(34px,4vw,52px);overflow:hidden;width:100%;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);}
+  .marq-track{display:flex;gap:16px;width:max-content;animation:marq 48s linear infinite;will-change:transform;}
+  .marq-track img{height:clamp(190px,26vw,300px);width:auto;border-radius:14px;object-fit:cover;display:block;
+    box-shadow:0 18px 38px -28px rgba(216,30,99,.45);}
+  .marquee:hover .marq-track{animation-play-state:paused;}
+  @keyframes marq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  @media(prefers-reduced-motion:reduce){.marq-track{animation:none;}}
+
+  /* ===== events page ===== */
+  .page-head{text-align:center;padding:clamp(48px,8vw,96px) 0 clamp(28px,4vw,40px);}
+  .page-head .eyebrow{display:inline-block;color:var(--magenta);font-weight:800;letter-spacing:.18em;font-size:.82rem;margin-bottom:14px;}
+  .page-head h1{font-size:clamp(2rem,5.2vw,3.2rem);font-weight:900;letter-spacing:-.02em;color:var(--ink);line-height:1.15;}
+  .page-head h1 .mg{color:var(--magenta);}
+  .page-head p{color:var(--muted);margin-top:14px;font-size:1.04rem;}
+  .events{padding:0 0 clamp(60px,9vw,120px);background:linear-gradient(180deg,#fff,var(--pink-3) 38%,#fff);min-height:62vh;}
+  .ev-wrap{max-width:1200px;margin:0 auto;padding:0 22px;}
+  .ev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:clamp(20px,2.6vw,30px);}
+  .ev-grid .ex{flex:none;width:auto;display:block;}
+  .ev-grid .ex-imgwrap{aspect-ratio:1/1;}
+  .ev-grid .ex-rank{display:none;}
+  .ev-grid .ex-body{padding:18px 20px 22px;}
+  .ev-grid .ex-body h3{font-size:1.2rem;}
+  .empty{display:none;text-align:center;padding:72px 20px;color:var(--muted);font-size:1.04rem;}
+  .empty.show{display:block;}
+  @media(max-width:520px){
+    .ev-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+    .ev-grid .ex-body{padding:10px 2px 0;}
+    .ev-grid .ex-body h3{font-size:1rem;-webkit-line-clamp:2;line-height:1.35;margin-bottom:5px;}
+    .ev-grid .ex .venue{font-size:.82rem;}
+    .ev-grid .ex .daterange{font-size:.78rem;margin-top:3px;}
+    .ev-grid .ex .ex-tag{font-size:.68rem;padding:3px 8px;margin-top:7px;}
+    .ev-grid .ex-imgwrap{border-radius:10px;}
+  }
+
+  /* apply modal */
+  .modal[hidden]{display:none;}
+  .modal{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;}
+  #siteAlert{z-index:700;}
+  .modal-backdrop{position:absolute;inset:0;background:rgba(20,10,16,.55);backdrop-filter:blur(2px);}
+  .modal-card{position:relative;z-index:1;width:min(440px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:22px;padding:30px 26px 28px;box-shadow:0 40px 90px -30px rgba(35,28,32,.6);animation:modalIn .25s ease;}
+  @keyframes modalIn{from{opacity:0;transform:translateY(14px) scale(.98);}to{opacity:1;transform:none;}}
+  .modal-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border:none;background:var(--pink-tint);color:var(--ink-2);border-radius:50%;font-size:1.35rem;line-height:1;cursor:pointer;}
+  .modal-x:hover{background:var(--magenta-soft);}
+  .modal-title{font-size:1.4rem;font-weight:900;color:var(--ink);}
+  .modal-sub{color:var(--magenta-deep);font-weight:700;margin:4px 0 20px;font-size:.95rem;line-height:1.45;}
+  .modal-form{display:grid;gap:14px;}
+  .modal-form[hidden]{display:none;}
+  .mf{display:grid;gap:6px;}
+  .mf>span{font-size:.85rem;font-weight:700;color:var(--ink-2);}
+  .mf input,.mf select{border:1.5px solid var(--line-2);border-radius:12px;padding:13px 14px;font-family:inherit;font-size:.96rem;background:#fff;color:var(--ink);width:100%;}
+  .mf input:focus,.mf select:focus{outline:none;border-color:var(--magenta);}
+  .mf textarea{border:1.5px solid var(--line-2);border-radius:12px;padding:13px 14px;font-family:inherit;font-size:.96rem;background:#fff;color:var(--ink);width:100%;resize:vertical;}
+  .mf textarea:focus{outline:none;border-color:var(--magenta);}
+  .cd{position:relative;}
+  .cd-btn{border:1.5px solid var(--line-2);border-radius:12px;padding:13px 14px;font-family:inherit;font-size:.96rem;background:#fff;color:var(--muted);width:100%;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;}
+  .cd-btn.has-value{color:var(--ink);}
+  .cd.open .cd-btn,.cd-btn:focus{outline:none;border-color:var(--magenta);}
+  .cd-arrow{color:var(--muted);font-size:.75rem;margin-left:8px;transition:transform .2s;}
+  .cd.open .cd-arrow{transform:rotate(180deg);}
+  .cd-list{position:fixed;z-index:600;background:#fff;border:1.5px solid var(--line-2);border-radius:12px;max-height:220px;overflow-y:auto;box-shadow:0 20px 45px -20px rgba(35,28,32,.35);padding:6px;list-style:none;margin:0;}
+  .cd-list[hidden]{display:none;}
+  .cd-list li{padding:10px 12px;border-radius:8px;font-size:.94rem;color:var(--ink);cursor:pointer;}
+  .cd-list li:hover{background:var(--magenta-soft);color:var(--magenta-deep);}
+  .cd-list li.sel{font-weight:800;color:var(--magenta-deep);background:var(--magenta-soft);}
+  .mf-agree{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--ink-2);margin-top:2px;}
+  .mf-agree input{width:17px;height:17px;accent-color:var(--magenta);flex:0 0 auto;}
+  .mf-agree a{color:var(--magenta-deep);text-decoration:underline;}
+  .modal-submit{margin-top:6px;background:var(--magenta);color:#fff;border:none;border-radius:14px;padding:15px;font-weight:800;font-size:1.05rem;cursor:pointer;transition:background .2s,transform .2s;width:100%;}
+  .modal-submit:hover{background:var(--magenta-deep);transform:translateY(-1px);}
+  .modal-done{text-align:center;padding:14px 4px 4px;}
+  .modal-done[hidden]{display:none;}
+  .done-ic{width:62px;height:62px;border-radius:50%;background:var(--magenta);color:#fff;font-size:2rem;display:grid;place-items:center;margin:0 auto 16px;}
+  .alert-card{text-align:center;}
+  .alert-ic{background:var(--magenta-soft);color:var(--magenta-deep);}
+  .alert-msg{margin:4px 0 20px;font-size:1.05rem;font-weight:800;color:var(--ink);line-height:1.5;}
+  .modal-done h4{font-size:1.2rem;font-weight:900;margin-bottom:8px;color:var(--ink);}
+  .modal-done p{color:var(--ink-2);line-height:1.6;margin-bottom:18px;font-size:.95rem;}
+  body.modal-open{overflow:hidden;}
+  
+  .foot-bottom .biz{line-height:1.9;color:#fff;font-size:.8rem;}
+  .foot-bottom .biz .sep{margin:0 8px;color:rgba(255,255,255,.5);}
+  .foot-bottom .copy{white-space:nowrap;color:#fff;}
+  @media(max-width:640px){.foot-bottom{flex-direction:column;align-items:flex-start;} .foot-bottom .biz .sep{margin:0 6px;}}
+
+  .apply-btn,.modal-submit,.applybar .submit{border:none;outline:none;}
+  .pmodal[hidden]{display:none;}
+  .pmodal{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .pmodal-back{position:absolute;inset:0;background:rgba(35,28,32,.55);backdrop-filter:blur(2px);}
+  .pmodal-box{position:relative;z-index:1;background:#fff;border-radius:18px;max-width:560px;width:100%;max-height:min(680px,86vh);
+    display:flex;flex-direction:column;box-shadow:0 40px 90px -30px rgba(35,28,32,.6);animation:pmodalIn .25s cubic-bezier(.22,.61,.36,1);}
+  @keyframes pmodalIn{from{opacity:0;transform:translateY(10px) scale(.98);}to{opacity:1;transform:none;}}
+  .pmodal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line);}
+  .pmodal-head h3{font-size:1.12rem;font-weight:800;letter-spacing:-.02em;color:var(--ink);}
+  .pmodal-head button{background:none;border:none;font-size:1.05rem;color:var(--muted);cursor:pointer;line-height:1;padding:4px;}
+  .pmodal-head button:hover{color:var(--ink);}
+  .pmodal-body{padding:22px 24px 26px;overflow-y:auto;color:var(--ink-2);font-size:.92rem;line-height:1.75;}
+  .pmodal-body p{margin-bottom:16px;}
+  .pmodal-body p:last-child{margin-bottom:0;}
+  .mobile-tabbar{display:none;}
+  .top-fab{display:none;}
+  @media(max-width:640px){
+    .mobile-tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px -16px rgba(0,0,0,.18);}
+    .mt-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--muted);font-size:.64rem;font-weight:700;text-decoration:none;padding:2px 0;}
+    .mt-item svg{width:20px;height:20px;}
+    .mt-item.active{color:var(--magenta);}
+    .mt-main{position:relative;margin-top:-24px;}
+    .mt-main-ic{width:46px;height:46px;border-radius:50%;background:var(--magenta);display:grid;place-items:center;box-shadow:0 10px 20px -8px rgba(216,30,99,.65);border:3px solid #fff;}
+    .mt-main-ic svg{width:22px;height:22px;}
+    .mt-main span{color:var(--magenta-deep);font-weight:800;margin-top:3px;}
+    body{padding-bottom:78px;}
+    .mt-item{background:none;border:none;font-family:inherit;cursor:pointer;}
+    .mt-more-sheet{display:none;position:fixed;left:12px;right:12px;bottom:78px;z-index:59;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 -10px 30px -14px rgba(0,0,0,.28);overflow:hidden;}
+    .mt-more-sheet.open{display:block;}
+    .mt-more-links{display:flex;border-bottom:1px solid var(--line);}
+    .mt-more-sheet a{flex:1;display:block;text-align:center;padding:14px 18px;font-size:.92rem;font-weight:700;color:var(--ink);text-decoration:none;font-family:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo",sans-serif;}
+    .mt-more-links a:first-child{border-right:1px solid var(--line);}
+    .mt-more-quick{display:flex;justify-content:space-around;align-items:flex-start;padding:16px 10px;background:#fafafa;border-top:1px solid var(--line);}
+    .mt-more-quick a{display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--ink-2);font-size:.7rem;font-weight:700;padding:0;border-bottom:none;width:auto;}
+    .mt-more-quick .mq-ic{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;box-shadow:0 6px 14px -8px rgba(0,0,0,.3);transition:transform .25s ease;}
+    .mt-more-quick a:active .mq-ic{transform:scale(.92);}
+    .mq-ic.ig{background:linear-gradient(45deg,#feda75 5%,#fa7e1e 30%,#d62976 55%,#962fbf 78%,#4f5bd5 100%);color:#fff;}
+    .mq-ic.naver{background:#03C75A;color:#fff;font-weight:900;font-size:1.3rem;font-family:Arial,Helvetica,sans-serif;line-height:1;}
+    .mq-ic.kakao{background:#FFE812;}
+    .ct-launcher{bottom:84px;width:46px;height:46px;}
+    .ct-launcher svg{width:21px;height:21px;}
+    .top-fab{display:grid;position:fixed;right:19px;bottom:140px;z-index:151;width:46px;height:46px;border-radius:50%;background:#fff;border:1.5px solid var(--magenta-soft);place-items:center;box-shadow:0 12px 26px -12px rgba(216,30,99,.3);cursor:pointer;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .2s ease;}
+    .top-fab svg{width:18px;height:18px;}
+    .top-fab.show{opacity:1;pointer-events:auto;}
+    .top-fab:active{transform:scale(.94);}
+    .rail{display:none !important;}
+    body.more-open .top-fab,body.more-open .ct-launcher{opacity:0 !important;pointer-events:none !important;}
+  }
+</style>
+</head>
+<body>
+<div data-site-nav></div>
+<script src="/assets/site-layout.js"></script>
+
+<main>
+  <div class="page-head">
+    <div class="wrap">
+      <span class="eyebrow">SPECIAL PROGRAM</span>
+      <h1>지금 만나는 특별한 <span class="mg">디어데이</span></h1>
+      <p>지금 신청 가능한 공연, 강연을 무료로 만나보세요.</p>
+    </div>
+  </div>
+  <section class="events" aria-label="예약 가능한 행사">
+    <div class="ev-wrap">
+      <div class="ev-search reveal">
+        <svg class="ev-search-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="evSearch" placeholder="공연명 또는 지역으로 검색" autocomplete="off">
+      </div>
+      <div class="tabs reveal" role="tablist" aria-label="카테고리">
+        <button class="tab active" data-cat="전체" role="tab" aria-selected="true">전체</button>
+        <button class="tab" data-cat="공연" role="tab">공연</button>
+        <button class="tab" data-cat="토크/코미디" role="tab">토크/코미디</button>
+        <button class="tab" data-cat="강연" role="tab">강연</button>
+        <button class="tab" data-cat="원데이클래스" role="tab">원데이클래스</button>
+      </div>
+      <div class="ev-grid" id="evGrid">
+        <a class="ex" data-cat="강연" href="/event-ai/?id=jeonju" aria-label="AI 실전 무료 클래스 전주 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-04.jpg" alt="AI 실전 무료 클래스 - 전주 베스트웨스턴플러스" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">전주 베스트웨스턴플러스</p>
+            <p class="daterange">2026.07.01 (수)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=seongnam" aria-label="이상준 힐링토크쇼 성남 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-05.jpg" alt="이상준 힐링토크쇼 - 성남 코리아디자인센터" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">성남 코리아디자인센터</p>
+            <p class="daterange">2026.07.02 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=yongin" aria-label="AI 실전 무료 클래스 용인 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-06.jpg" alt="AI 실전 무료 클래스 - 용인 센트럴코업호텔" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">용인 센트럴코업호텔</p>
+            <p class="daterange">2026.07.02 (목)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=nowon" aria-label="AI 실전 무료 클래스 노원 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-07.jpg" alt="AI 실전 무료 클래스 - 노원 JW컨벤션웨딩홀" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">노원 JW컨벤션웨딩홀</p>
+            <p class="daterange">2026.07.03 (금)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=gwangmyeong" aria-label="AI 실전 무료 클래스 광명 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-08.jpg" alt="AI 실전 무료 클래스 - 광명 신한금융플러스 감탄본부" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">광명 신한금융플러스 감탄본부</p>
+            <p class="daterange">2026.07.05 (일)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=ulsan" aria-label="AI 실전 무료 클래스 울산 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-09.jpg" alt="AI 실전 무료 클래스 - 울산 아트홀마당" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">울산 아트홀마당</p>
+            <p class="daterange">2026.07.07 (화)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=chungju" aria-label="이상준 힐링토크쇼 충주 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-10.jpg" alt="이상준 힐링토크쇼 - 충주 호텔 더베이스" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">충주 호텔 더베이스</p>
+            <p class="daterange">2026.07.08 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=gangneung" aria-label="이상준 힐링토크쇼 강릉 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-11.jpg" alt="이상준 힐링토크쇼 - 강릉 세인트컨벤션웨딩" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">강릉 세인트컨벤션웨딩</p>
+            <p class="daterange">2026.07.09 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=busan" aria-label="AI 실전 무료 클래스 부산 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-12.jpg" alt="AI 실전 무료 클래스 - 부산 HJ컨벤션센터 부산점" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">부산 HJ컨벤션센터 부산점</p>
+            <p class="daterange">2026.07.09 (목)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=changwon" aria-label="AI 실전 무료 클래스 창원 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-13.jpg" alt="AI 실전 무료 클래스 - 창원 창원컨벤션센터" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">창원 창원컨벤션센터</p>
+            <p class="daterange">2026.07.10 (금)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=gimhae" aria-label="AI 실전 무료 클래스 김해 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-14.jpg" alt="AI 실전 무료 클래스 - 김해 남명아트홀" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">김해 남명아트홀</p>
+            <p class="daterange">2026.07.11 (토)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="공연" href="/event-haru/" aria-label="하루 무료 콘서트 고양 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-15.jpg" alt="하루 무료 콘서트 - 고양 킨텍스" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>하루 무료 콘서트</h3>
+            <p class="venue">고양 킨텍스</p>
+            <p class="daterange">2026.07.12 · 오후 4시 50분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=jinju" aria-label="AI 실전 무료 클래스 진주 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-16.jpg" alt="AI 실전 무료 클래스 - 진주 엠비씨컨벤션진주" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">진주 엠비씨컨벤션진주</p>
+            <p class="daterange">2026.07.12 (일)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=jeonju" aria-label="이상준 힐링토크쇼 전주 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-17.jpg" alt="이상준 힐링토크쇼 - 전주 그랜드힐스턴" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">전주 그랜드힐스턴</p>
+            <p class="daterange">2026.07.13 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=bucheon" aria-label="이상준 힐링토크쇼 부천 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-18.jpg" alt="이상준 힐링토크쇼 - 부천 서울신학대학교" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">부천 서울신학대학교</p>
+            <p class="daterange">2026.07.14 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=ansan" aria-label="이상준 힐링토크쇼 안산 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-19.jpg" alt="이상준 힐링토크쇼 - 안산 한양대학교 ERICA캠퍼스" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">안산 한양대학교 ERICA캠퍼스</p>
+            <p class="daterange">2026.07.16 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-claude/?id=geumcheon" aria-label="클로드 무료특강 금천 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-20.jpg" alt="클로드 무료특강 - 금천" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>클로드 무료특강</h3>
+            <p class="venue">금천</p>
+            <p class="daterange">2026.07.16 (목) · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leesangjun/?id=daegu" aria-label="이상준 힐링토크쇼 대구 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-21.jpg" alt="이상준 힐링토크쇼 - 대구 그랜드호텔" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이상준 힐링토크쇼</h3>
+            <p class="venue">대구 그랜드호텔</p>
+            <p class="daterange">2026.07.22 · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-ai/?id=gangnam" aria-label="AI 실전 무료 클래스 강남 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-22.jpg" alt="AI 실전 무료 클래스 - 강남 SETEC컨벤션센터" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>AI 실전 무료 클래스</h3>
+            <p class="venue">강남 SETEC컨벤션센터</p>
+            <p class="daterange">2026.07.23 (목)</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="강연" href="/event-claude/?id=daejeon" aria-label="클로드 무료특강 대전 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-23.jpg" alt="클로드 무료특강 - 대전" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>클로드 무료특강</h3>
+            <p class="venue">대전</p>
+            <p class="daterange">2026.07.24 (금) · 오후 7시 20분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="토크/코미디" href="/event-leejegyu/" aria-label="이제규 스탠드업 코미디 중랑 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-24.jpg" alt="이제규 스탠드업 코미디 - 중랑 서일대학교" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이제규 스탠드업 코미디</h3>
+            <p class="venue">중랑 서일대학교</p>
+            <p class="daterange">2026.07.26 · 오후 3시</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+        <a class="ex" data-cat="공연" href="/event-irune/" aria-label="이루네 무료 콘서트 광주 상세보기">
+          <div class="ex-imgwrap"><img class="ex-img" src="/images/common-25.jpg" alt="이루네 무료 콘서트 - 광주 김대중컨벤션센터" loading="lazy"><span class="ex-rank">1</span></div>
+          <div class="ex-body">
+            <h3>이루네 무료 콘서트</h3>
+            <p class="venue">광주 김대중컨벤션센터</p>
+            <p class="daterange">2026.08.02 · 오후 4시 50분</p>
+            <span class="ex-tag">전액 무료</span>
+          </div>
+        </a>
+      </div>
+      <div class="empty" id="evEmpty">아직 준비 중인 행사예요. 곧 새로운 라인업으로 찾아올게요!</div>
+      <div class="ev-pagination" id="evPagination"></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="applyModal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="amTitle">
+    <button class="modal-x" id="amClose" aria-label="닫기">&times;</button>
+    <h3 class="modal-title" id="amTitle">행사 신청</h3>
+    <p class="modal-sub" id="amSub">신청하실 행사</p>
+    <form id="applyForm" class="modal-form" novalidate>
+      <label class="mf"><span>이름</span><input type="text" id="afName" placeholder="이름을 입력해주세요" autocomplete="name"></label>
+      <label class="mf"><span>연락처</span><input type="tel" id="afPhone" placeholder="010-0000-0000" autocomplete="tel"></label>
+      <label class="mf"><span>연령대</span>
+        <div class="cd" id="afAgeCd"><button type="button" class="cd-btn" id="afAgeBtn" aria-haspopup="listbox" aria-expanded="false"><span id="afAgeLabel">연령대 선택</span><span class="cd-arrow">&#9662;</span></button><ul class="cd-list" id="afAgeList" role="listbox" hidden><li role="option" data-value="20세 이하">20세 이하</li><li role="option" data-value="21세">21세</li><li role="option" data-value="22세">22세</li><li role="option" data-value="23세">23세</li><li role="option" data-value="24세">24세</li><li role="option" data-value="25세">25세</li><li role="option" data-value="26세">26세</li><li role="option" data-value="27세">27세</li><li role="option" data-value="28세">28세</li><li role="option" data-value="29세">29세</li><li role="option" data-value="30세">30세</li><li role="option" data-value="31세">31세</li><li role="option" data-value="32세">32세</li><li role="option" data-value="33세">33세</li><li role="option" data-value="34세">34세</li><li role="option" data-value="35세">35세</li><li role="option" data-value="36세">36세</li><li role="option" data-value="37세">37세</li><li role="option" data-value="38세">38세</li><li role="option" data-value="39세">39세</li><li role="option" data-value="40세">40세</li><li role="option" data-value="41세">41세</li><li role="option" data-value="42세">42세</li><li role="option" data-value="43세">43세</li><li role="option" data-value="44세">44세</li><li role="option" data-value="45세">45세</li><li role="option" data-value="46세">46세</li><li role="option" data-value="47세">47세</li><li role="option" data-value="48세">48세</li><li role="option" data-value="49세">49세</li><li role="option" data-value="50세">50세</li><li role="option" data-value="51세">51세</li><li role="option" data-value="52세">52세</li><li role="option" data-value="53세">53세</li><li role="option" data-value="54세">54세</li><li role="option" data-value="55세">55세</li><li role="option" data-value="56세">56세</li><li role="option" data-value="57세">57세</li><li role="option" data-value="58세">58세</li><li role="option" data-value="59세">59세</li><li role="option" data-value="60세">60세</li><li role="option" data-value="61세">61세</li><li role="option" data-value="62세">62세</li><li role="option" data-value="63세">63세</li><li role="option" data-value="64세">64세</li><li role="option" data-value="65세 이상">65세 이상</li></ul><input type="hidden" id="afAge"></div>
+      </label>
+      <label class="mf-agree"><input type="checkbox" id="afAgree"> <a href="#" id="afPrivacy" class="js-privacy-link">개인정보 수집 및 이용</a>에 동의합니다.</label>
+      <button type="submit" class="modal-submit">신청하기</button>
+    </form>
+    <div class="modal-done" id="amDone" hidden>
+      <div class="done-ic">&#10003;</div>
+      <h4>신청이 접수되었습니다!</h4>
+      <p>당첨 문자를 통해 참석 안내를 드릴 예정이니<br>문자를 꼭 확인해주세요.</p>
+      <button type="button" class="modal-submit" id="amDoneClose">확인</button>
+    </div>
+  </div>
+</div>
+
+<div data-site-alert></div>
+
+<div data-site-footer></div>
+<script>window.DeardayLayout && window.DeardayLayout.renderAll();</script>
+
+<div class="rail" aria-label="빠른 메뉴">
+  <a href="https://www.instagram.com/dearday.class/" class="rail-item" target="_blank" rel="noopener" aria-label="인스타그램">
+    <span class="ic ig"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="#fff" stroke="none"/></svg></span><span class="lb">인스타그램</span>
+  </a>
+  <a href="https://blog.naver.com/deardayclass" class="rail-item" target="_blank" rel="noopener" aria-label="네이버 블로그">
+    <span class="ic naver">N</span><span class="lb">네이버 블로그</span>
+  </a>
+  <a href="https://pf.kakao.com/_SBxoqX" class="rail-item" target="_blank" rel="noopener" aria-label="카카오톡">
+    <span class="ic kakao"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="#391B1B" d="M12 4.2C6.9 4.2 2.8 7.4 2.8 11.3c0 2.5 1.7 4.7 4.2 6-0.2 0.7-1 3.3-1.1 3.6 0 0-0.1 0.3 0.1 0.4 0.2 0.1 0.4 0 0.4 0 0.3-0.1 3.6-2.4 4.2-2.8 0.5 0.1 1 0.1 1.4 0.1 5.1 0 9.2-3.2 9.2-7.3S17.1 4.2 12 4.2z"/></svg></span><span class="lb">카카오톡</span>
+  </a>
+  <button class="rail-item top" id="toTop" aria-label="맨 위로"><span class="ic top-ic">&#8593;</span><span class="lb">TOP</span></button>
+</div>
+<div data-site-tabbar></div>
+<div data-site-more-sheet></div>
+
+<button class="ct-launcher" id="ctLauncher" aria-label="채널톡 상담">
+  <svg viewBox="0 0 24 24" width="26" height="26"><path fill="#fff" d="M12 2C6.48 2 2 5.94 2 10.8c0 2.72 1.44 5.14 3.7 6.78-.12.98-.46 2.66-.6 3.3-.06.28.22.5.48.36 1.02-.54 2.94-1.62 3.68-2.06.9.2 1.84.3 2.74.3 5.52 0 10-3.94 10-8.68S17.52 2 12 2z"/></svg>
+</button>
+<div data-site-top-fab></div>
+<div class="chatbot" id="chatbot" hidden>
+  <div class="ct-top">
+    <div class="ct-avatar">&#128049;</div>
+    <div class="ct-topinfo"><strong>디어데이클래스 고객센터</strong><span class="ct-hours-link">운영시간 보기 &#8250;</span></div>
+    <button id="cbClose" aria-label="닫기">&#10005;</button>
+  </div>
+  <div class="ct-greet" id="ctGreet">
+    <div class="ct-greet-row">
+      <div class="ct-greet-avatar">&#128049;</div>
+      <div class="ct-greet-card">
+        <strong>디어데이클래스 고객센터</strong>
+        <p>방문해주셔서 감사합니다 :) 어떻게 도와드릴까요?</p>
+        <button type="button" class="ct-cta" id="ctAsk">문의하기 &#9992;</button>
+      </div>
+    </div>
+    <p class="ct-hours-note">&#128337; 평일 오전 10:00부터 운영해요</p>
+  </div>
+  <div class="cb-body" id="cbBody" hidden>
+    <div class="cb-msg bot">안녕하세요! 디어데이클래스입니다. 행사 신청·일정·장소 등 궁금하신 점을 남겨주세요.</div>
+  </div>
+  <form class="cb-input" id="cbForm" hidden>
+    <input id="cbText" type="text" placeholder="문의 내용을 입력하세요" autocomplete="off" aria-label="문의 내용">
+    <button type="submit" aria-label="전송">&#10148;</button>
+  </form>
+  <div class="ct-settings" id="ctSettings" hidden>
+    <p class="ct-settings-row"><strong>운영시간</strong><br>평일 오전 10:00 ~ 오후 6:00</p>
+    <p class="ct-settings-row"><strong>대표전화</strong><br>010-5078-5221</p>
+    <p class="ct-settings-row"><strong>이메일</strong><br>help@deardayclass.com</p>
+  </div>
+  <div class="ct-foot"><span class="ct-foot-ic"></span>디어데이클래스 상담 서비스 이용중</div>
+  <div class="ct-nav" role="tablist">
+    <button type="button" class="ct-nav-item active" id="ctNavHome" data-view="greet" aria-label="홈"><span class="ct-nav-ic">&#8962;</span><span>홈</span></button>
+    <button type="button" class="ct-nav-item" id="ctNavChat" data-view="chat" aria-label="대화"><span class="ct-nav-ic">&#128172;</span><span>대화</span></button>
+    <button type="button" class="ct-nav-item" id="ctNavSettings" data-view="settings" aria-label="설정"><span class="ct-nav-ic">&#9881;</span><span>설정</span></button>
+  </div>
+</div>
+
+<div class="pmodal" id="privacyModal" hidden aria-hidden="true">
+  <div class="pmodal-back" id="privacyModalBack"></div>
+  <div class="pmodal-box" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+    <div class="pmodal-head">
+      <h3 id="privacyModalTitle">개인정보 수집 및 이용 동의</h3>
+      <button id="privacyModalClose" aria-label="닫기">&#10005;</button>
+    </div>
+    <div class="pmodal-body">
+      <p>디어데이(이하 '회사')은 정보통신망 이용촉진 및 정보보호 등에 관한 법률을 준수하고 있으며 이에 따라 개인정보취급방침을 통하여 회원이 제공한 개인정보를 어떤 용도와 방식으로 이용하고자 하는지를 알려드림으로써 개인정보를 효과적이고 적극적으로 보호하기 위해 항상 노력하고 있습니다.</p>
+      <p>수집된 개인정보는 행사정보 안내(문자/전화), 경품배송, 이벤트 참여 및 추첨, 제휴사 상품 안내(문자/전화) 및 상담, 이벤트 혜택제공 등 목적으로 활용하며, 개인정보 처리방침에서 고지한 정보주체의 사전 동의없이 수집항목의 범위를 초과하여 제휴사에 게 제공하지 않습니다.</p>
+      <p>1.개인정보 수집항목<br>성명, 연락처(휴대전화), 생년월일, 주소, 설문조사내용 등</p>
+      <p>2.제휴사 : 디어데이, 한국교육개발진흥원, ㈜어센트금융그룹 여의도 사업본부, ㈜기업특판사업단</p>
+      <p>3.개인정보 보유 및 이용기간 : 정보수입 및 활용동의일로부터 2년 (단, 관련법규에 별도 규정이 있는 경우 법규를 따름)</p>
+      <p>[행사장 안전사고 배상책임]<br>행사장 내에서 본인 부주의로 발생된 안전사고는 행사관계자가 책임지지 않으므로 안전에 각별히 유의해야 합니다.</p>
+      <p>※ 상기 내용이 변경되는 경우 본 게시를 통해 그 내용을 안내해 드립니다.<br>※ 본 약관에 동의하는 것은 개인정보 취급 및 활용동의, 행사장 안전사고 배상책임 내용을 숙지한 것으로 간주합니다.</p>
+    </div>
+  </div>
+</div>
+<div class="pmodal" id="policyModal" hidden aria-hidden="true">
+  <div class="pmodal-back" id="policyModalBack"></div>
+  <div class="pmodal-box" role="dialog" aria-modal="true" aria-labelledby="policyModalTitle">
+    <div class="pmodal-head">
+      <h3 id="policyModalTitle">개인정보처리방침</h3>
+      <button id="policyModalClose" aria-label="닫기">&#10005;</button>
+    </div>
+    <div class="pmodal-body">
+      <p>디어데이(이하 '회사')는 이용자의 개인정보를 중요시하며, 「개인정보 보호법」 등 관련 법령을 준수하고 있습니다. 회사는 본 개인정보처리방침을 통하여 이용자가 제공하는 개인정보가 어떠한 목적과 방식으로 이용되고 있으며, 개인정보 보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.</p>
+      <p><strong>1. 수집하는 개인정보의 항목 및 수집방법</strong><br>수집 항목 : 성명, 연락처(휴대전화번호), 생년월일, 주소, 설문조사 내용 등<br>수집 방법 : 홈페이지 신청 폼, 이벤트 참가 신청, 전화상담 등</p>
+      <p><strong>2. 개인정보의 수집 및 이용목적</strong><br>행사(공연·강연·클래스) 참가 신청 접수 및 당첨·안내, 행사 관련 정보 안내(문자/전화), 경품 배송 및 이벤트 참여·추첨, 제휴사 상품·서비스 안내 및 상담, 민원사항 처리 및 고객상담</p>
+      <p><strong>3. 개인정보의 보유 및 이용기간</strong><br>회사는 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 다만 정보수집 및 활용 동의일로부터 2년간 보존하며, 관계 법령에 별도 규정이 있는 경우 해당 법령을 따릅니다.</p>
+      <p><strong>4. 개인정보의 제3자 제공</strong><br>회사는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만 이용자가 사전에 동의한 경우, 또는 제휴사(디어데이, 한국교육개발진흥원, ㈜어센트금융그룹 여의도 사업본부, ㈜기업특판사업단)의 행사 혜택 제공 목적에 한하여 사전 동의한 범위 내에서 제공할 수 있습니다.</p>
+      <p><strong>5. 개인정보처리의 위탁</strong><br>회사는 서비스 향상을 위하여 개인정보 처리업무를 외부에 위탁할 수 있으며, 위탁 시 관계 법령에 따라 개인정보가 안전하게 관리될 수 있도록 필요한 사항을 규정하고 관리·감독합니다.</p>
+      <p><strong>6. 정보주체의 권리·의무 및 행사방법</strong><br>이용자는 언제든지 등록되어 있는 자신의 개인정보를 조회, 수정, 삭제하거나 처리정지를 요청할 수 있으며, 개인정보 처리에 대한 동의를 철회할 수 있습니다. 다만 동의 철회 시 서비스 이용에 제한이 있을 수 있습니다.</p>
+      <p><strong>7. 개인정보의 파기</strong><br>회사는 개인정보 보유기간이 경과하거나 처리목적이 달성된 경우 해당 개인정보를 지체 없이 파기합니다. 전자적 파일 형태의 정보는 복구가 불가능한 방법으로 삭제하며, 종이 문서에 기록된 개인정보는 분쇄하거나 소각합니다.</p>
+      <p><strong>8. 개인정보 보호책임자</strong><br>성명 : 김영주 (대표자)<br>연락처 : 010-5078-5221</p>
+      <p><strong>9. 고지의 의무</strong><br>본 개인정보처리방침은 관련 법령 및 회사 정책 변경에 따라 내용이 추가·삭제·수정될 수 있으며, 변경 시 홈페이지 공지사항을 통해 사전에 안내드립니다.</p>
+      <p>시행일자 : 2026년 1월 1일</p>
+    </div>
+  </div>
+</div>
+
+<div class="pmodal" id="termsModal" hidden aria-hidden="true">
+  <div class="pmodal-back" id="termsModalBack"></div>
+  <div class="pmodal-box" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+    <div class="pmodal-head">
+      <h3 id="termsModalTitle">이용약관</h3>
+      <button id="termsModalClose" aria-label="닫기">&#10005;</button>
+    </div>
+    <div class="pmodal-body">
+      <p><strong>제1조 (목적)</strong><br>이 약관은 디어데이(이하 '회사')가 운영하는 디어데이클래스 웹사이트(이하 '서비스')를 이용함에 있어 회사와 이용자 간의 권리, 의무 및 책임사항, 이용조건 및 절차 등 기본적인 사항을 규정함을 목적으로 합니다.</p>
+      <p><strong>제2조 (용어의 정의)</strong><br>① '서비스'라 함은 회사가 제공하는 공연, 강연, 원데이클래스 등 각종 행사 정보 제공 및 참가신청 서비스를 의미합니다.<br>② '이용자'라 함은 서비스에 접속하여 이 약관에 따라 서비스를 이용하는 자를 말합니다.<br>③ '신청자'라 함은 서비스를 통해 행사 참가를 신청한 이용자를 말합니다.</p>
+      <p><strong>제3조 (약관의 효력 및 변경)</strong><br>① 이 약관은 서비스를 이용하고자 하는 모든 이용자에게 효력이 발생합니다.<br>② 회사는 관련 법령을 위반하지 않는 범위에서 이 약관을 변경할 수 있으며, 변경된 약관은 홈페이지에 공지함으로써 효력이 발생합니다.</p>
+      <p><strong>제4조 (서비스의 제공 및 변경)</strong><br>① 회사는 공연·강연·원데이클래스 등 행사 정보 제공, 행사 참가 신청 접수 및 당첨자 안내, 후원사 제공 혜택 안내 등의 서비스를 제공합니다.<br>② 회사는 운영상 또는 기술상 필요에 따라 제공하는 서비스의 전부 또는 일부를 변경할 수 있습니다.</p>
+      <p><strong>제5조 (서비스 이용신청 및 제한)</strong><br>① 이용자는 회사가 정한 절차에 따라 행사 참가 신청을 할 수 있습니다.<br>② 참가 대상자는 선착순 또는 추첨을 통해 결정되며, 신청 후 0~14일 이내 당첨 결과가 문자로 안내됩니다.<br>③ 참가가 어려운 경우 회사가 안내하는 불참 접수 절차를 통해 신청을 취소할 수 있습니다.</p>
+      <p><strong>제6조 (이용자의 의무)</strong><br>이용자는 신청 시 정확한 정보를 제공하여야 하며, 허위 정보 제공으로 발생하는 불이익에 대해 회사는 책임을 지지 않습니다.</p>
+      <p><strong>제7조 (행사장 안전사고에 대한 책임)</strong><br>행사장 내에서 이용자 본인의 부주의로 발생한 안전사고에 대해서는 회사 및 행사관계자가 책임을 지지 않으며, 이용자는 행사 참가 시 안전에 각별히 유의하여야 합니다.</p>
+      <p><strong>제8조 (서비스 이용의 중지 및 제한)</strong><br>회사는 이용자가 허위 정보로 신청하거나, 타인의 정보를 도용하거나, 그 밖에 서비스 운영을 방해하는 행위를 한 경우 서비스 제공을 중지하거나 신청을 제한할 수 있습니다.</p>
+      <p><strong>제9조 (면책조항)</strong><br>① 회사는 천재지변 등 불가항력적 사유로 서비스를 제공할 수 없는 경우 책임이 면제됩니다.<br>② 회사는 이용자의 귀책사유로 인한 서비스 이용 장애에 대해 책임을 지지 않습니다.</p>
+      <p><strong>제10조 (분쟁해결)</strong><br>이 약관과 관련하여 분쟁이 발생한 경우 회사와 이용자는 원만한 해결을 위해 노력하며, 해결되지 않을 경우 관할 법원은 민사소송법에 따른 법원으로 합니다.</p>
+      <p>부칙 : 이 약관은 2026년 1월 1일부터 시행합니다.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>10),{passive:true});
+
+  const tt=document.getElementById('toTop');
+  tt&&tt.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+  const cbBtn=document.getElementById('ctLauncher'),cb=document.getElementById('chatbot'),cbClose=document.getElementById('cbClose'),cbForm=document.getElementById('cbForm'),cbText=document.getElementById('cbText'),cbBody=document.getElementById('cbBody'),ctGreet=document.getElementById('ctGreet'),ctAsk=document.getElementById('ctAsk'),ctSettings=document.getElementById('ctSettings'),ctNavs=[...document.querySelectorAll('.ct-nav-item')];
+  function cbOpen(o){if(!cb)return;if(o){cb.hidden=false;requestAnimationFrame(()=>cb.classList.add('open'));}else{cb.classList.remove('open');setTimeout(()=>cb.hidden=true,200);}}
+  function ctShowView(v){ctGreet.hidden=v!=='greet';cbBody.hidden=v!=='chat';cbForm.hidden=v!=='chat';ctSettings.hidden=v!=='settings';ctNavs.forEach(b=>b.classList.toggle('active',b.dataset.view===v));if(v==='chat')cbText.focus();}
+  ctNavs.forEach(b=>b.addEventListener('click',()=>ctShowView(b.dataset.view)));
+  cbBtn&&cbBtn.addEventListener('click',()=>{const willOpen=cb.hidden;cbOpen(willOpen);if(willOpen)ctShowView('greet');});
+  ctAsk&&ctAsk.addEventListener('click',()=>ctShowView('chat'));
+  cbClose&&cbClose.addEventListener('click',()=>cbOpen(false));
+  cbForm&&cbForm.addEventListener('submit',e=>{e.preventDefault();const v=cbText.value.trim();if(!v)return;const u=document.createElement('div');u.className='cb-msg user';u.textContent=v;cbBody.appendChild(u);cbText.value='';setTimeout(()=>{const b=document.createElement('div');b.className='cb-msg bot';b.textContent='문의 주셔서 감사합니다! 담당자가 빠르게 확인 후 안내드리겠습니다.';cbBody.appendChild(b);cbBody.scrollTop=cbBody.scrollHeight;},500);cbBody.scrollTop=cbBody.scrollHeight;});
+  const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  const tabs=[...document.querySelectorAll('.tab')],exs=[...document.querySelectorAll('.ev-grid .ex')],empty=document.getElementById('evEmpty');
+  exs.forEach(ex=>{ex.classList.add('reveal');io.observe(ex);});
+  const evSearch=document.getElementById('evSearch'),evPagination=document.getElementById('evPagination');
+  const evMobileMq=window.matchMedia('(max-width:520px)');
+  function getPageSize(){return evMobileMq.matches?8:9;}
+  let PAGE_SIZE=getPageSize();
+  let currentCat='전체',currentPage=1;
+  function matchesSearch(ex,q){
+    if(!q)return true;
+    const title=ex.querySelector('h3')?ex.querySelector('h3').textContent:'';
+    const venue=ex.querySelector('.venue')?ex.querySelector('.venue').textContent:'';
+    return (title+' '+venue).toLowerCase().includes(q);
+  }
+  function getFiltered(){
+    const q=(evSearch&&evSearch.value||'').trim().toLowerCase();
+    return exs.filter(ex=>(currentCat==='전체'||ex.dataset.cat===currentCat)&&matchesSearch(ex,q));
+  }
+  function renderPagination(totalPages){
+    if(!evPagination)return;
+    evPagination.innerHTML='';
+    if(totalPages<=1)return;
+    const mk=(label,disabled,onClick,extraClass)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.disabled=!!disabled;if(extraClass)b.className=extraClass;b.addEventListener('click',onClick);return b;};
+    evPagination.appendChild(mk('‹',currentPage===1,()=>{currentPage--;renderPage(true);},'ev-page-arrow'));
+    for(let p=1;p<=totalPages;p++){
+      const b=mk(String(p),false,()=>{currentPage=p;renderPage(true);});
+      if(p===currentPage)b.classList.add('active');
+      evPagination.appendChild(b);
+    }
+    evPagination.appendChild(mk('›',currentPage===totalPages,()=>{currentPage++;renderPage(true);},'ev-page-arrow'));
+  }
+  function renderPage(scroll){
+    const list=getFiltered();
+    const totalPages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+    if(currentPage>totalPages)currentPage=totalPages;
+    if(currentPage<1)currentPage=1;
+    exs.forEach(ex=>{ex.style.display='none';});
+    const start=(currentPage-1)*PAGE_SIZE;
+    list.slice(start,start+PAGE_SIZE).forEach((ex,i)=>{ex.style.display='';const r=ex.querySelector('.ex-rank');if(r)r.textContent=start+i+1;});
+    empty&&empty.classList.toggle('show',list.length===0);
+    renderPagination(totalPages);
+    if(scroll){const sec=document.querySelector('.events');if(sec)window.scrollTo({top:sec.offsetTop-90,behavior:'smooth'});}
+  }
+  tabs.forEach(t=>t.addEventListener('click',()=>{currentCat=t.dataset.cat;currentPage=1;tabs.forEach(x=>{const on=x===t;x.classList.toggle('active',on);x.setAttribute('aria-selected',on?'true':'false');});renderPage();}));
+  evSearch&&evSearch.addEventListener('input',()=>{currentPage=1;renderPage();});
+  const handleEvMqChange=()=>{
+    const list=getFiltered();
+    const firstIndex=(currentPage-1)*PAGE_SIZE;
+    PAGE_SIZE=getPageSize();
+    currentPage=Math.floor(firstIndex/PAGE_SIZE)+1;
+    renderPage();
+  };
+  evMobileMq.addEventListener?evMobileMq.addEventListener('change',handleEvMqChange):evMobileMq.addListener(handleEvMqChange);
+  renderPage();
+
+  // ----- shared apply modal (all events) -----
+  (function(){
+    const modal=document.getElementById('applyModal'); if(!modal) return;
+    const amSub=document.getElementById('amSub');
+    const form=document.getElementById('applyForm');
+    const done=document.getElementById('amDone');
+    function openModal(sub){
+      amSub.textContent=sub||'신청하실 행사';
+      form.hidden=false; done.hidden=true; form.reset();
+      modal.hidden=false; document.body.classList.add('modal-open');
+      setTimeout(()=>document.getElementById('afName').focus(),60);
+    }
+    function closeModal(){ modal.hidden=true; document.body.classList.remove('modal-open'); }
+    modal.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',closeModal));
+    document.getElementById('amClose').addEventListener('click',closeModal);
+    document.getElementById('amDoneClose').addEventListener('click',closeModal);
+  (function(){
+    var sa=document.getElementById('siteAlert');
+    if(!sa) return;
+    var msgEl=document.getElementById('siteAlertMsg');
+    window.siteAlert=function(msg){ if(msgEl) msgEl.textContent=msg; sa.hidden=false; };
+    function shut(){ sa.hidden=true; }
+    sa.querySelectorAll('[data-close]').forEach(function(el){el.addEventListener('click',shut);});
+    document.getElementById('siteAlertClose').addEventListener('click',shut);
+    addEventListener('keydown',function(e){ if(e.key==='Escape'&&!sa.hidden) shut(); });
+  })();
+    addEventListener('keydown',e=>{ if(e.key==='Escape'&&!modal.hidden) closeModal(); });
+    
+    form.addEventListener('submit',function(ev){
+      ev.preventDefault();
+      var name=document.getElementById('afName').value.trim();
+      var phone=document.getElementById('afPhone').value.trim();
+      var age=document.getElementById('afAge').value;
+      var agree=document.getElementById('afAgree').checked;
+      if(!name){siteAlert('이름을 입력해주세요.');document.getElementById('afName').focus();return;}
+      if(!phone){siteAlert('연락처를 입력해주세요.');document.getElementById('afPhone').focus();return;}if(!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)){siteAlert('연락처는 숫자만 정확하게 입력해주세요. (예: 010-1234-5678)');document.getElementById('afPhone').focus();return;}
+      if(!age){siteAlert('연령대를 선택해주세요.');document.getElementById('afAge').focus();return;}
+      if(!agree){siteAlert('개인정보 수집 및 이용에 동의해주세요.');return;}
+      form.hidden=true; done.hidden=false;
+      modal.querySelector('.modal-card').scrollTop=0;
+    });
+  })();
+  (function(){
+    const links=document.querySelectorAll('.js-privacy-link'), modal=document.getElementById('privacyModal'),
+          back=document.getElementById('privacyModalBack'), close=document.getElementById('privacyModalClose');
+    if(!links.length||!modal) return;
+    function open(){modal.hidden=false;modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+    function shut(){modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+    links.forEach(l=>l.addEventListener('click',e=>{e.preventDefault();open();}));
+    close&&close.addEventListener('click',shut);
+    back&&back.addEventListener('click',shut);
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)shut();});
+  })();
+  (function(){
+    function wireModal(linkSel, modalId, backId, closeId){
+      const links=document.querySelectorAll(linkSel), modal=document.getElementById(modalId),
+            back=document.getElementById(backId), close=document.getElementById(closeId);
+      if(!links.length||!modal) return;
+      function open(){modal.hidden=false;modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';}
+      function shut(){modal.hidden=true;modal.setAttribute('aria-hidden','true');document.body.style.overflow='';}
+      links.forEach(l=>l.addEventListener('click',e=>{e.preventDefault();open();}));
+      close&&close.addEventListener('click',shut);
+      back&&back.addEventListener('click',shut);
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden)shut();});
+    }
+    wireModal('.js-policy-link','policyModal','policyModalBack','policyModalClose');
+    wireModal('.js-terms-link','termsModal','termsModalBack','termsModalClose');
+  })();
+</script>
+<script src="/assets/phone-format.js"></script>
+<script src="/assets/age-select.js"></script>
+
+
+<script src="/assets/mobile-tabbar.js"></script>
+
+<script src="/assets/top-fab.js"></script>
+</body>
+</html>

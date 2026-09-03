@@ -8,6 +8,20 @@
   };
 
   var PRIVATE_STORAGE_BUCKETS = {};
+  // 이 사이트의 브랜드. 표를 읽을 때 이 브랜드 것만 읽고, 새로 넣을 때 이 값을 붙입니다.
+  // 한 표에 여러 브랜드가 같이 있어서, 이게 없으면 다른 브랜드 자료가 이 사이트에 섞여 나옵니다.
+  var SITE_ID = 'dearday';
+  var SITE_SCOPED_TABLES = {
+    courses: true,
+    lecture_applications: true,
+    corporate_inquiries: true,
+    instructor_applications: true,
+    site_banners: true,
+    site_faqs: true,
+    instructors: true,
+    form_options: true
+  };
+
   var SENSITIVE_INSERT_TABLES = {
     lecture_applications: true,
     corporate_inquiries: true,
@@ -253,6 +267,10 @@
     }
     if (options && options.order) params.set('order', options.order);
     if (options && options.limit) params.set('limit', String(options.limit));
+    // 이 브랜드 것만. 부르는 쪽이 site_id 를 직접 준 경우에는 그쪽을 존중합니다.
+    if (SITE_SCOPED_TABLES[table] && !(options && options.filters && options.filters.site_id)) {
+      params.append('site_id', 'eq.' + SITE_ID);
+    }
     return request('/rest/v1/' + table + '?' + params.toString(), {
       headers: {
         Accept: 'application/json',
@@ -261,8 +279,17 @@
     }) || [];
   }
 
+  // 새로 넣거나 고칠 줄에 이 사이트의 브랜드를 붙입니다.
+  function stampSiteId(table, rows) {
+    if (!SITE_SCOPED_TABLES[table]) return rows;
+    return rows.map(function (row) {
+      if (row && row.site_id) return row;
+      return Object.assign({}, row, { site_id: SITE_ID });
+    });
+  }
+
   async function upsertRows(table, rows, conflictKey) {
-    var items = Array.isArray(rows) ? rows : [rows];
+    var items = stampSiteId(table, Array.isArray(rows) ? rows : [rows]);
     return request('/rest/v1/' + table + '?on_conflict=' + encodeURIComponent(conflictKey || 'id'), {
       method: 'POST',
       headers: {
@@ -276,7 +303,7 @@
   }
 
   async function insertRows(table, rows) {
-    var items = Array.isArray(rows) ? rows : [rows];
+    var items = stampSiteId(table, Array.isArray(rows) ? rows : [rows]);
     var result = await request('/rest/v1/' + table, {
       method: 'POST',
       headers: {

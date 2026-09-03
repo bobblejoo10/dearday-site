@@ -12,7 +12,15 @@ const maxFileCount = 20_000;
 // Editable pages stay grouped by business category. Only the generated dist
 // artifact uses one index.html per clean public URL.
 const pageRoutes = [
-  ['src/pages/index.html', ['index.html']]
+  ['src/pages/index.html', ['index.html']],
+  ['src/pages/events.html', ['events/index.html']],
+  ['src/pages/event-review.html', ['event-review/index.html']],
+  ['src/pages/event-ai.html', ['event-ai/index.html']],
+  ['src/pages/event-claude.html', ['event-claude/index.html']],
+  ['src/pages/event-haru.html', ['event-haru/index.html']],
+  ['src/pages/event-irune.html', ['event-irune/index.html']],
+  ['src/pages/event-leejegyu.html', ['event-leejegyu/index.html']],
+  ['src/pages/event-leesangjun.html', ['event-leesangjun/index.html']]
 ];
 
 const directoryCopies = [
