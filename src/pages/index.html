@@ -81,6 +81,23 @@
   .hero p.lead{font-size:clamp(1rem,1.4vw,1.18rem);color:var(--ink-2);margin:1.4em 0 0;max-width:31ch;font-weight:500;}
   .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
   .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:2.1em;}
+
+  /* ===== 배너 문구·단추 자리 (관리자에서 고른 값) =====
+     관리자에서 고르지 않으면 아래 클래스가 안 붙어서 지금 모습이 그대로 유지됩니다.
+     문구는 왼쪽 칸 안에서 움직입니다. 오른쪽 추천 행사 카드와 겹치지 않게요. */
+  .hero.hero-v-top .hero-copy{align-self:start;}
+  .hero.hero-v-middle .hero-copy{align-self:center;}
+  .hero.hero-v-bottom .hero-copy{align-self:end;}
+  .hero.hero-h-left .hero-copy{justify-self:start;}
+  .hero.hero-h-center .hero-copy{justify-self:center;}
+  .hero.hero-h-right .hero-copy{justify-self:end;}
+  .hero.hero-ta-left .hero-copy{text-align:left;}
+  .hero.hero-ta-center .hero-copy{text-align:center;}
+  .hero.hero-ta-right .hero-copy{text-align:right;}
+  .hero.hero-ta-center .hero p.lead,.hero.hero-ta-right .hero p.lead{max-width:none;}
+  .hero.hero-cta-left .hero-actions{justify-content:flex-start;}
+  .hero.hero-cta-center .hero-actions{justify-content:center;}
+  .hero.hero-cta-right .hero-actions{justify-content:flex-end;}
   .hero-dots{display:flex;gap:9px;align-items:center;margin-top:2.4em;}
   .hero-dots i{width:8px;height:8px;border-radius:50%;background:var(--magenta-soft);display:block;transition:.3s;}
   .hero-dots i.on{width:26px;border-radius:6px;background:var(--magenta);}
@@ -1030,6 +1047,7 @@
 <script>window.DeardayLayout && window.DeardayLayout.renderAll();</script>
 <script src="/assets/supabase-store-common.js"></script>
 <script src="/assets/rich-text.js"></script>
+<script src="/assets/banner-layout.js"></script>
 <script src="/assets/site-content-store.js"></script>
 <script src="/assets/hero-banner.js"></script>
 

@@ -1,6 +1,9 @@
 (function (global) {
   'use strict';
 
+  var BANNER_POSITIONS = ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'];
+  var BANNER_ALIGNS = ['left', 'center', 'right'];
+
   var api = global.AiLeadersSupabase;
   var utils = global.AiLeadersUtils || api || {};
   var clone = utils.clone;
@@ -60,6 +63,10 @@
     // 서식본(HTML). 비어 있으면 위의 평문을 씁니다.
     item.titleHtml = text(item.titleHtml);
     item.subtitleHtml = text(item.subtitleHtml);
+    // 문구·단추 자리. 빈 값이면 페이지에 적힌 그대로 두고 아무것도 바꾸지 않습니다.
+    item.contentPosition = BANNER_POSITIONS.indexOf(text(item.contentPosition)) >= 0 ? text(item.contentPosition) : '';
+    item.textAlign = BANNER_ALIGNS.indexOf(text(item.textAlign)) >= 0 ? text(item.textAlign) : '';
+    item.ctaAlign = BANNER_ALIGNS.indexOf(text(item.ctaAlign)) >= 0 ? text(item.ctaAlign) : '';
     item.eyebrow = text(item.eyebrow);
     item.desktopImage = normalizeAssetUrl(item.desktopImage, 'images');
     item.mobileImage = normalizeAssetUrl(item.mobileImage, 'images');
@@ -132,6 +139,9 @@
       subtitle: row.subtitle,
       titleHtml: row.title_html,
       subtitleHtml: row.subtitle_html,
+      contentPosition: row.content_position,
+      textAlign: row.text_align,
+      ctaAlign: row.cta_align,
       eyebrow: row.eyebrow,
       desktopImage: row.desktop_image,
       mobileImage: row.mobile_image,
@@ -163,6 +173,9 @@
       subtitle: item.subtitle || null,
       title_html: item.titleHtml || null,
       subtitle_html: item.subtitleHtml || null,
+      content_position: item.contentPosition || '',
+      text_align: item.textAlign || '',
+      cta_align: item.ctaAlign || '',
       eyebrow: item.eyebrow || null,
       desktop_image: item.desktopImage || null,
       mobile_image: item.mobileImage || null,
