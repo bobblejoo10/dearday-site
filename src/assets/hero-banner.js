@@ -19,6 +19,13 @@
     // 배너 이미지가 있으면 영상이 뜨기 전에 보여줄 그림으로 씁니다.
     if (banner.desktopImage) video.setAttribute('poster', banner.desktopImage);
 
+    // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 없으면 페이지에 적힌 문구를 그대로 둡니다.
+    var rich = global.RichText;
+    var titleEl = document.querySelector('.hero h1');
+    var leadEl = document.querySelector('.hero .lead');
+    if (rich && titleEl && banner.titleHtml) rich.set(titleEl, banner.titleHtml, banner.title);
+    if (rich && leadEl && banner.subtitleHtml) rich.set(leadEl, banner.subtitleHtml, banner.subtitle);
+
     if (!banner.videoUrl) return;
     if (video.getAttribute('src') === banner.videoUrl) return;
     video.setAttribute('src', banner.videoUrl);

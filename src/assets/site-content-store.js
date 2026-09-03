@@ -57,6 +57,9 @@
     item.placement = text(item.placement) || 'home_hero';
     item.title = text(item.title);
     item.subtitle = text(item.subtitle);
+    // 서식본(HTML). 비어 있으면 위의 평문을 씁니다.
+    item.titleHtml = text(item.titleHtml);
+    item.subtitleHtml = text(item.subtitleHtml);
     item.eyebrow = text(item.eyebrow);
     item.desktopImage = normalizeAssetUrl(item.desktopImage, 'images');
     item.mobileImage = normalizeAssetUrl(item.mobileImage, 'images');
@@ -127,6 +130,8 @@
       placement: row.placement,
       title: row.title,
       subtitle: row.subtitle,
+      titleHtml: row.title_html,
+      subtitleHtml: row.subtitle_html,
       eyebrow: row.eyebrow,
       desktopImage: row.desktop_image,
       mobileImage: row.mobile_image,
@@ -156,6 +161,8 @@
       placement: item.placement,
       title: item.title || null,
       subtitle: item.subtitle || null,
+      title_html: item.titleHtml || null,
+      subtitle_html: item.subtitleHtml || null,
       eyebrow: item.eyebrow || null,
       desktop_image: item.desktopImage || null,
       mobile_image: item.mobileImage || null,
