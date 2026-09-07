@@ -570,16 +570,15 @@
     </div>
   </div>
   <div class="wrap applybar-pos">
-    <form id="apply" class="applybar" onsubmit="return false;">
+    <form id="apply" class="applybar">
       <span class="lab">빠른 예약 신청</span>
-      <div class="field"><input type="text" placeholder="이름" aria-label="이름"></div>
-      <div class="field"><input type="tel" placeholder="연락처" aria-label="연락처"></div>
-      <div class="field"><select aria-label="신청 일정 선택">
-        <option>신청 일정 선택</option>
-        <option>07.02 성남 · 이상준</option><option>07.08 충주 · 이상준</option><option>07.09 강릉 · 이상준</option>
-        <option>07.12 고양 · 하루</option><option>07.13 전주 · 이상준</option><option>07.26 중랑 · 이제규</option>
+      <div class="field"><input type="text" id="qaName" placeholder="이름" aria-label="이름" autocomplete="name"></div>
+      <div class="field"><input type="tel" id="qaPhone" placeholder="연락처" aria-label="연락처" autocomplete="tel"></div>
+      <!-- 일정은 관리자 [행사 관리] 자료로 quick-apply.js 가 채웁니다. -->
+      <div class="field"><select id="qaSession" aria-label="신청 일정 선택">
+        <option value="">신청 일정 선택</option>
       </select></div>
-      <label class="agree"><input type="checkbox"> <a href="#" id="privacyLink" class="js-privacy-link">개인정보 수집 및 이용 동의</a></label>
+      <label class="agree"><input type="checkbox" id="qaAgree"> <a href="#" id="privacyLink" class="js-privacy-link">개인정보 수집 및 이용 동의</a></label>
       <button class="submit" type="submit">신청하기</button>
     </form>
   </div>
@@ -1050,6 +1049,9 @@
 <script src="/assets/banner-layout.js"></script>
 <script src="/assets/site-content-store.js"></script>
 <script src="/assets/hero-banner.js"></script>
+<script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
+<script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
+<script src="/assets/quick-apply.js?v=20260903-dd-events-1"></script>
 
 <script>
   const nav=document.querySelector('header.nav');

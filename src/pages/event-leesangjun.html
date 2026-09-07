@@ -757,31 +757,36 @@
 </div>
 
 <script>
-const DATA={"seongnam":{venue:"성남 코리아디자인센터",date:"2026-07-02",time:"오후 7시 20분",banner:"/images/event-leesangjun-06.jpg"},
-"chungju":{venue:"충주 호텔 더베이스",date:"2026-07-08",time:"오후 7시 20분",banner:"/images/event-leesangjun-07.jpg"},
-"gangneung":{venue:"강릉 세인트컨벤션웨딩",date:"2026-07-09",time:"오후 7시 20분",banner:"/images/event-leesangjun-08.jpg"},
-"jeonju":{venue:"전주 그랜드힐스턴",date:"2026-07-13",time:"오후 7시 20분",banner:"/images/event-leesangjun-09.jpg"},
-"bucheon":{venue:"부천 서울신학대학교",date:"2026-07-14",time:"오후 7시 20분",banner:"/images/event-leesangjun-10.jpg"},
-"ansan":{venue:"안산 한양대학교 ERICA캠퍼스",date:"2026-07-16",time:"오후 7시 20분",banner:"/images/event-leesangjun-11.jpg"},
-"daegu":{venue:"대구 그랜드호텔",date:"2026-07-22",time:"오후 7시 20분",banner:"/images/event-leesangjun-12.jpg"}};
-  const wk=['일','월','화','수','목','금','토'];
-  const p=new URLSearchParams(location.search);
-  const id=(p.get('id')&&DATA[p.get('id')])?p.get('id'):'seongnam';
-  const d=DATA[id];
-  document.getElementById('evBanner').src=d.banner;
-  const dt=new Date(d.date+'T00:00:00');
-  document.getElementById('mDate').textContent=`${dt.getFullYear()}년 ${dt.getMonth()+1}월 ${dt.getDate()}일 (${wk[dt.getDay()]})`;
-  document.getElementById('mVenue').textContent=d.venue;
-  document.getElementById('mTime').textContent=d.time;
-  const today=new Date(); today.setHours(0,0,0,0);
-  const diff=Math.round((dt-today)/86400000);
-  var mDdayEl=document.getElementById('mDday');
-  mDdayEl.textContent=diff>0?('D-'+diff):(diff===0?'D-DAY':'행사 종료');
-  if(diff<0){mDdayEl.classList.add('is-ended');}
-  var dsDateEl=document.getElementById('dsDate'); if(dsDateEl) dsDateEl.textContent=document.getElementById('mDate').textContent;
-  var dsVenueEl=document.getElementById('dsVenue'); if(dsVenueEl) dsVenueEl.textContent=d.venue;
-  var dsTimeEl=document.getElementById('dsTime'); if(dsTimeEl) dsTimeEl.textContent=d.time;
-  if(diff<0){document.querySelectorAll('.js-apply').forEach(b=>{b.textContent='마감';b.disabled=true;b.classList.add('is-closed');});}
+// 회차 자료는 관리자 [행사 관리] 에서 가져옵니다 (event-detail.js).
+var COURSE_ID="free-dd-leesangjun";
+var DATA={};
+var DEFAULT_ID="seongnam";
+
+  // 고른 회차. 신청 팝업도 이 값을 씁니다.
+  let d=null, dt=null;
+  function renderEvent(){
+    const wk=['일','월','화','수','목','금','토'];
+    const p=new URLSearchParams(location.search);
+    const id=(p.get('id')&&DATA[p.get('id')])?p.get('id'):DEFAULT_ID;
+    d=DATA[id];
+    document.getElementById('evBanner').src=d.banner;
+    dt=new Date(d.date+'T00:00:00');
+    document.getElementById('mDate').textContent=`${dt.getFullYear()}년 ${dt.getMonth()+1}월 ${dt.getDate()}일 (${wk[dt.getDay()]})`;
+    document.getElementById('mVenue').textContent=d.venue;
+    document.getElementById('mTime').textContent=d.time;
+    const today=new Date(); today.setHours(0,0,0,0);
+    const diff=Math.round((dt-today)/86400000);
+    var mDdayEl=document.getElementById('mDday');
+    mDdayEl.textContent=diff>0?('D-'+diff):(diff===0?'D-DAY':'행사 종료');
+    if(diff<0){mDdayEl.classList.add('is-ended');}
+    var dsDateEl=document.getElementById('dsDate'); if(dsDateEl) dsDateEl.textContent=document.getElementById('mDate').textContent;
+    var dsVenueEl=document.getElementById('dsVenue'); if(dsVenueEl) dsVenueEl.textContent=d.venue;
+    var dsTimeEl=document.getElementById('dsTime'); if(dsTimeEl) dsTimeEl.textContent=d.time;
+    if(diff<0){document.querySelectorAll('.js-apply').forEach(b=>{b.textContent='마감';b.disabled=true;b.classList.add('is-closed');});}
+  }
+  // 자료가 채워지면 event-detail.js 가 이 함수를 부릅니다.
+  window.__ddRenderEvent=renderEvent;
+
   // chrome
   const nav=document.getElementById('nav');
   addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>10),{passive:true});
@@ -804,6 +809,7 @@ const DATA={"seongnam":{venue:"성남 코리아디자인센터",date:"2026-07-02
     const form=document.getElementById('applyForm');
     const done=document.getElementById('amDone');
     function open(){
+      if(!d||!dt){ if(window.siteAlert) siteAlert('행사 정보를 불러오는 중이에요. 잠시 후 다시 눌러주세요.'); return; }
       try{ amSub.textContent='이상준 힐링토크쇼 · '+d.venue+' · '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일'; }catch(e){}
       form.hidden=false; done.hidden=true; form.reset();
       modal.hidden=false; document.body.classList.add('modal-open');
@@ -836,8 +842,12 @@ const DATA={"seongnam":{venue:"성남 코리아디자인센터",date:"2026-07-02
       if(!phone){siteAlert('연락처를 입력해주세요.');document.getElementById('afPhone').focus();return;}if(!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)){siteAlert('연락처는 숫자만 정확하게 입력해주세요. (예: 010-1234-5678)');document.getElementById('afPhone').focus();return;}
       if(!age){siteAlert('연령대를 선택해주세요.');document.getElementById('afAge').focus();return;}
       if(!agree){siteAlert('개인정보 수집 및 이용에 동의해주세요.');return;}
-      form.hidden=true; done.hidden=false;
-      modal.querySelector('.modal-card').scrollTop=0;
+      const btn=form.querySelector('.modal-submit');
+      if(btn){btn.disabled=true;btn.dataset.label=btn.textContent;btn.textContent='접수 중…';}
+      window.DeardayApply.submit({name:name,phone:phone,age:age,source:'dearday-detail'})
+        .then(()=>{form.hidden=true; done.hidden=false; modal.querySelector('.modal-card').scrollTop=0;})
+        .catch(err=>{window.DeardayApply.warn(err&&err.message);})
+        .then(()=>{if(btn){btn.disabled=false;btn.textContent=btn.dataset.label||'신청하기';}});
     });
   })();
 
@@ -870,6 +880,11 @@ const DATA={"seongnam":{venue:"성남 코리아디자인센터",date:"2026-07-02
 </script>
 <script src="/assets/phone-format.js"></script>
 <script src="/assets/age-select.js"></script>
+<script src="/assets/supabase-store-common.js?v=20260903-dd-events-1"></script>
+<script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
+<script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
+<script src="/assets/event-detail.js?v=20260903-dd-events-1"></script>
+<script src="/assets/apply-form.js?v=20260903-dd-events-1"></script>
 
 
 <script src="/assets/mobile-tabbar.js"></script>

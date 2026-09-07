@@ -779,30 +779,38 @@
 </div>
 
 <script>
-var DATA={"geumcheon":{venue:"금천",date:"2026-07-16",banner:"/images/event-claude-02.jpg"},
-"daejeon":{venue:"대전",date:"2026-07-24",banner:"/images/event-claude-03.jpg"}};
+// 회차 자료는 관리자 [행사 관리] 에서 가져옵니다 (event-detail.js).
+var COURSE_ID="free-dd-claude";
+var DATA={};
 var TITLE="\ud074\ub85c\ub4dc \ubb34\ub8cc\ud2b9\uac15";
 var DEFAULT_ID="geumcheon";
 
 (function(){
   var wk=['일','월','화','수','목','금','토'];
-  var p=new URLSearchParams(location.search);
-  var id=(p.get('id')&&DATA[p.get('id')])?p.get('id'):DEFAULT_ID;
-  var d=DATA[id];
-  document.getElementById('evBanner').src=d.banner;
-  var dt=new Date(d.date+'T00:00:00');
-  document.getElementById('mDate').textContent=dt.getFullYear()+'년 '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일 ('+wk[dt.getDay()]+')';
-  document.getElementById('mVenue').textContent=d.venue;
-  var today=new Date(); today.setHours(0,0,0,0);
-  var diff=Math.round((dt-today)/86400000);
-  var dd=diff>0?('D-'+diff):(diff===0?'D-DAY':'행사 종료');
-  var mDdayEl=document.getElementById('mDday');
-  mDdayEl.textContent=dd;
-  if(diff<0){mDdayEl.classList.add('is-ended');}
-  var dsTitleEl=document.getElementById('dsTitle'); if(dsTitleEl) dsTitleEl.textContent=TITLE;
-  var dsDateEl=document.getElementById('dsDate'); if(dsDateEl) dsDateEl.textContent=document.getElementById('mDate').textContent;
-  var dsVenueEl=document.getElementById('dsVenue'); if(dsVenueEl) dsVenueEl.textContent=d.venue;
-  if(diff<0){document.querySelectorAll('.js-apply').forEach(function(b){b.textContent='마감';b.disabled=true;b.classList.add('is-closed');});}
+  // 고른 회차. 신청 팝업(openModal)도 이 값을 씁니다.
+  var d=null, dt=null;
+  function renderEvent(){
+    var p=new URLSearchParams(location.search);
+    var id=(p.get('id')&&DATA[p.get('id')])?p.get('id'):DEFAULT_ID;
+    d=DATA[id];
+    document.getElementById('evBanner').src=d.banner;
+    dt=new Date(d.date+'T00:00:00');
+    document.getElementById('mDate').textContent=dt.getFullYear()+'년 '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일 ('+wk[dt.getDay()]+')';
+    document.getElementById('mVenue').textContent=d.venue;
+    var today=new Date(); today.setHours(0,0,0,0);
+    var diff=Math.round((dt-today)/86400000);
+    var dd=diff>0?('D-'+diff):(diff===0?'D-DAY':'행사 종료');
+    var mDdayEl=document.getElementById('mDday');
+    mDdayEl.textContent=dd;
+    if(diff<0){mDdayEl.classList.add('is-ended');}
+    var dsTitleEl=document.getElementById('dsTitle'); if(dsTitleEl) dsTitleEl.textContent=TITLE;
+    var dsDateEl=document.getElementById('dsDate'); if(dsDateEl) dsDateEl.textContent=document.getElementById('mDate').textContent;
+    var dsVenueEl=document.getElementById('dsVenue'); if(dsVenueEl) dsVenueEl.textContent=d.venue;
+    if(diff<0){document.querySelectorAll('.js-apply').forEach(function(b){b.textContent='마감';b.disabled=true;b.classList.add('is-closed');});}
+  }
+  // 자료가 채워지면 event-detail.js 가 이 함수를 부릅니다.
+  window.__ddRenderEvent=renderEvent;
+
   var nav=document.getElementById('nav');
   addEventListener('scroll',function(){nav.classList.toggle('scrolled',scrollY>10);},{passive:true});
 
@@ -817,7 +825,7 @@ var DEFAULT_ID="geumcheon";
   cbForm&&cbForm.addEventListener('submit',function(e){e.preventDefault();var v=cbText.value.trim();if(!v)return;var u=document.createElement('div');u.className='cb-msg user';u.textContent=v;cbBody.appendChild(u);cbText.value='';setTimeout(function(){var b=document.createElement('div');b.className='cb-msg bot';b.textContent='문의 주셔서 감사합니다! 담당자가 빠르게 확인 후 안내드리겠습니다.';cbBody.appendChild(b);cbBody.scrollTop=cbBody.scrollHeight;},500);cbBody.scrollTop=cbBody.scrollHeight;});
   var modal=document.getElementById('applyModal');
   var amSub=document.getElementById('amSub'), form=document.getElementById('applyForm'), done=document.getElementById('amDone');
-  function openModal(){ amSub.textContent=TITLE+' · '+d.venue+' · '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일'; form.hidden=false; done.hidden=true; form.reset(); modal.hidden=false; document.body.classList.add('modal-open'); setTimeout(function(){document.getElementById('afName').focus();},60); }
+  function openModal(){ if(!d||!dt){ if(window.siteAlert) siteAlert('행사 정보를 불러오는 중이에요. 잠시 후 다시 눌러주세요.'); return; } amSub.textContent=TITLE+' · '+d.venue+' · '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일'; form.hidden=false; done.hidden=true; form.reset(); modal.hidden=false; document.body.classList.add('modal-open'); setTimeout(function(){document.getElementById('afName').focus();},60); }
   function closeModal(){ modal.hidden=true; document.body.classList.remove('modal-open'); }
   document.querySelectorAll('.js-apply').forEach(function(b){b.addEventListener('click',openModal);});
   modal.querySelectorAll('[data-close]').forEach(function(el){el.addEventListener('click',closeModal);});
@@ -835,7 +843,7 @@ var DEFAULT_ID="geumcheon";
   })();
   addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeModal();});
   
-  form.addEventListener('submit',function(e){e.preventDefault();var name=document.getElementById('afName').value.trim();var phone=document.getElementById('afPhone').value.trim();var age=document.getElementById('afAge').value;var agree=document.getElementById('afAgree').checked;if(!name){siteAlert('이름을 입력해주세요.');document.getElementById('afName').focus();return;}if(!phone){siteAlert('연락처를 입력해주세요.');document.getElementById('afPhone').focus();return;}if(!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)){siteAlert('연락처는 숫자만 정확하게 입력해주세요. (예: 010-1234-5678)');document.getElementById('afPhone').focus();return;}if(!age){siteAlert('연령대를 선택해주세요.');document.getElementById('afAge').focus();return;}if(!agree){siteAlert('개인정보 수집 및 이용에 동의해주세요.');return;}form.hidden=true;done.hidden=false;modal.querySelector('.modal-card').scrollTop=0;});
+  form.addEventListener('submit',function(e){e.preventDefault();var name=document.getElementById('afName').value.trim();var phone=document.getElementById('afPhone').value.trim();var age=document.getElementById('afAge').value;var agree=document.getElementById('afAgree').checked;if(!name){siteAlert('이름을 입력해주세요.');document.getElementById('afName').focus();return;}if(!phone){siteAlert('연락처를 입력해주세요.');document.getElementById('afPhone').focus();return;}if(!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)){siteAlert('연락처는 숫자만 정확하게 입력해주세요. (예: 010-1234-5678)');document.getElementById('afPhone').focus();return;}if(!age){siteAlert('연령대를 선택해주세요.');document.getElementById('afAge').focus();return;}if(!agree){siteAlert('개인정보 수집 및 이용에 동의해주세요.');return;}var btn=form.querySelector('.modal-submit');if(btn){btn.disabled=true;btn.dataset.label=btn.textContent;btn.textContent='접수 중…';}window.DeardayApply.submit({name:name,phone:phone,age:age,source:'dearday-detail'}).then(function(){form.hidden=true;done.hidden=false;modal.querySelector('.modal-card').scrollTop=0;}).catch(function(err){window.DeardayApply.warn(err&&err.message);}).then(function(){if(btn){btn.disabled=false;btn.textContent=btn.dataset.label||'신청하기';}});});
 })();
 
   (function(){
@@ -867,6 +875,11 @@ var DEFAULT_ID="geumcheon";
 </script>
 <script src="/assets/phone-format.js"></script>
 <script src="/assets/age-select.js"></script>
+<script src="/assets/supabase-store-common.js?v=20260903-dd-events-1"></script>
+<script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
+<script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
+<script src="/assets/event-detail.js?v=20260903-dd-events-1"></script>
+<script src="/assets/apply-form.js?v=20260903-dd-events-1"></script>
 
 
 <script src="/assets/mobile-tabbar.js"></script>
