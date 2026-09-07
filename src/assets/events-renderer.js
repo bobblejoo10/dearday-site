@@ -1,15 +1,20 @@
 (function (global) {
   'use strict';
 
-  // 디어데이클래스 · /events/ 목록을 관리자 [행사 관리] 자료로 그립니다.
+  // 디어데이클래스 · 행사 카드를 관리자 [행사 관리] 자료로 그립니다.
   //
-  // 예전에는 카드 22장이 events.html 안에 그대로 박혀 있었습니다.
+  // 예전에는 카드 22장이 events.html 과 index.html 에 각각 박혀 있었습니다.
   // 이제 courses 표의 회차(sessions)를 읽어 같은 모양의 카드를 만듭니다.
   // 카드 마크업·글자 서식은 원래 페이지와 한 글자도 다르지 않게 맞췄습니다.
+  //
+  // 그리는 곳 두 군데. 같은 자료·같은 순서(날짜 오름차순)를 씁니다.
+  //   #evGrid   /events/ 목록.  전체를 넣고 탭·검색·쪽나눔이 걸러 냅니다
+  //   #rankRow  홈 [곧 마감되는 인기 프로그램].  전체를 넣고 홈 코드가 앞 10장만 보여줍니다
 
   var store = global.CourseStore;
   var grid = document.getElementById('evGrid');
-  if (!store || !grid) return;
+  var rankRow = document.getElementById('rankRow');
+  if (!store || (!grid && !rankRow)) return;
 
   var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -91,16 +96,29 @@
 
   function render() {
     var cards = collectCards(store.getCourses());
-    if (!cards.length) return;
-    grid.innerHTML = cards.map(function (card) {
+    var html = cards.map(function (card) {
       return cardHtml(card.course, card.session);
     }).join('');
-    if (typeof global.__evRefresh === 'function') global.__evRefresh();
+
+    if (grid) {
+      if (cards.length) grid.innerHTML = html;
+      // 카드를 새로 넣었으니 목록의 탭·검색·쪽나눔이 다시 세어야 합니다.
+      if (typeof global.__evRefresh === 'function') global.__evRefresh();
+    }
+    if (rankRow) {
+      if (cards.length) rankRow.innerHTML = html;
+      // 홈은 앞 10장만 보여줍니다. 순번도 다시 매겨야 하고,
+      // 0건이어도 불러야 "준비 중" 안내가 제때 뜹니다.
+      if (typeof global.__rankRefresh === 'function') global.__rankRefresh();
+    }
   }
 
-  store.ready().then(render).catch(function (error) {
-    // 자료를 못 불러오면 화면에 "아직 준비 중인 행사예요" 안내가 남습니다.
+  function failed(error) {
+    // 자료를 못 불러오면 각 화면의 "준비 중" 안내가 그대로 남습니다.
     if (global.console && console.warn) console.warn('[디어데이] 행사 목록을 불러오지 못했습니다.', error);
-  });
+    if (typeof global.__rankFailed === 'function') global.__rankFailed();
+  }
+
+  store.ready().then(render).catch(failed);
   if (store.subscribe) store.subscribe(render);
 })(window);
