@@ -55,8 +55,15 @@
     return dotted + ' (' + WEEKDAYS[date.getDay()] + ')';
   }
 
+  // 저장소에 올린 그림은 중계(/img/)를 거칩니다.
+  // 사이트에 박힌 그림(/images/...)은 그대로 나갑니다.
+  function 미디어주소_(value) {
+    var media = window.DeardayPublicMedia;
+    return media && typeof media.resolve === 'function' ? media.resolve(value) : value;
+  }
+
   function cardImage(course, session) {
-    return String(session.cardImg || session.banner || store.courseThumbnail(course) || '').trim();
+    return 미디어주소_(String(session.cardImg || session.banner || store.courseThumbnail(course) || '').trim());
   }
 
   function cardHtml(course, session) {

@@ -11,6 +11,13 @@
   var video = document.querySelector('[data-site-hero-video]');
   if (!store || !video) return;
 
+  // 저장소에 올린 영상·그림은 중계(/img/)를 거칩니다.
+  // 그 파일이 없거나 중계 파일이 없으면 원래 주소를 그대로 씁니다.
+  function 미디어주소_(value) {
+    var media = global.DeardayPublicMedia;
+    return media && typeof media.resolve === 'function' ? media.resolve(value) : value;
+  }
+
   function apply() {
     var banners = store.getBanners ? store.getBanners('home_hero') : [];
     var banner = banners && banners.length ? banners[0] : null;
@@ -20,7 +27,8 @@
     if (global.BannerLayout) global.BannerLayout.apply(document.querySelector('.hero'), banner);
 
     // 배너 이미지가 있으면 영상이 뜨기 전에 보여줄 그림으로 씁니다.
-    if (banner.desktopImage) video.setAttribute('poster', banner.desktopImage);
+    // 중계(/img/)를 거칩니다. 소스에 Supabase 주소가 안 남고 R2 로 옮겨집니다.
+    if (banner.desktopImage) video.setAttribute('poster', 미디어주소_(banner.desktopImage));
 
     // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 없으면 페이지에 적힌 문구를 그대로 둡니다.
     var rich = global.RichText;
@@ -57,8 +65,9 @@
     }
 
     if (!banner.videoUrl) return;
-    if (video.getAttribute('src') === banner.videoUrl) return;
-    video.setAttribute('src', banner.videoUrl);
+    var videoSrc = 미디어주소_(banner.videoUrl);
+    if (video.getAttribute('src') === videoSrc) return;
+    video.setAttribute('src', videoSrc);
     video.load();
     // autoplay muted 라 대개 알아서 재생되지만, 늦게 붙는 경우를 위해 한 번 더 부릅니다.
     var attempt = video.play();
