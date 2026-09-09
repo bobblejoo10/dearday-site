@@ -503,27 +503,19 @@
     }) || null;
   }
 
-  // 디어데이는 행사마다 디자인이 다른 전용 페이지를 씁니다.
-  // 새 행사를 추가하려면 페이지를 하나 만들고 이 표에 한 줄 넣어야 합니다.
-  // 표에 없는 행사는 목록(/events/)으로 보냅니다.
-  var DETAIL_PATH_BY_COURSE = {
-    'free-dd-ai': '/event-ai/',
-    'free-dd-claude': '/event-claude/',
-    'free-dd-haru': '/event-haru/',
-    'free-dd-irune': '/event-irune/',
-    'free-dd-leejegyu': '/event-leejegyu/',
-    'free-dd-leesangjun': '/event-leesangjun/'
-  };
-
-  function courseDetailPath(course) {
-    return DETAIL_PATH_BY_COURSE[String(course && course.id || '').trim()] || '';
+  // 상세는 페이지 하나(/event/)가 전부 그립니다. 리더스(/course/)와 같은 규격입니다.
+  // 관리자에 행사를 올리면 공개코드가 붙고, 그 코드로 상세가 바로 열립니다.
+  // 행사를 추가할 때 코드를 고칠 일이 없습니다.
+  function courseDetailPath() {
+    return '/event/';
   }
 
   function courseDetailUrl(course, session) {
-    var path = courseDetailPath(course);
-    if (!path) return '/events/';
-    var slug = String(session && session.slug || '').trim();
-    return slug ? path + '?id=' + encodeURIComponent(slug) : path;
+    var code = getCoursePublicCode(course);
+    if (!code) return '/events/';
+    var url = '/event/?c=' + encodeURIComponent(code);
+    var sessionId = String(session && session.id || '').trim();
+    return sessionId ? url + '&s=' + encodeURIComponent(sessionId) : url;
   }
 
   function formatMoney(value) {

@@ -15,12 +15,7 @@ const pageRoutes = [
   ['src/pages/index.html', ['index.html']],
   ['src/pages/events.html', ['events/index.html']],
   ['src/pages/event-review.html', ['event-review/index.html']],
-  ['src/pages/event-ai.html', ['event-ai/index.html']],
-  ['src/pages/event-claude.html', ['event-claude/index.html']],
-  ['src/pages/event-haru.html', ['event-haru/index.html']],
-  ['src/pages/event-irune.html', ['event-irune/index.html']],
-  ['src/pages/event-leejegyu.html', ['event-leejegyu/index.html']],
-  ['src/pages/event-leesangjun.html', ['event-leesangjun/index.html']]
+  ['src/pages/event-detail.html', ['event/index.html']]
 ];
 
 const directoryCopies = [
@@ -31,6 +26,7 @@ const directoryCopies = [
 
 const fileCopies = [
   ['src/static/_headers', '_headers'],
+  ['src/static/_redirects', '_redirects'],
   ['src/static/favicon.ico', 'favicon.ico'],
   ['src/static/robots.txt', 'robots.txt'],
   ['src/static/shared.css', 'shared.css'],

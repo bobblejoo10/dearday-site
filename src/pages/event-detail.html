@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이루네 무료 콘서트 · 디어데이클래스</title>
-<meta name="description" content="이루네 무료 콘서트 - 전액 무료. 지금 신청하세요.">
+<title>행사 상세 · 디어데이클래스</title>
+<meta name="description" content="디어데이클래스 행사 상세 안내. 전액 무료로 진행됩니다.">
 <link rel="icon" type="image/png" href="/images/common-01.png">
 <link rel="apple-touch-icon" href="/images/common-02.png">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -566,6 +566,25 @@
     .rail{display:none !important;}
     body.more-open .top-fab,body.more-open .ct-launcher{opacity:0 !important;pointer-events:none !important;}
   }
+
+  /* 회차 선택 · 통합 상세에서만 씁니다 (회차가 2개 이상일 때만 나옵니다) */
+  .ev-sessions{ margin:14px 0 4px; }
+  .ev-sessions-title{ margin:0 0 8px; font-size:13px; font-weight:800; color:var(--ink-2); letter-spacing:-.01em; }
+  .ev-sessions-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .ev-session{ position:relative; display:flex; flex-direction:column; gap:2px; align-items:flex-start;
+    padding:10px 14px; border:1px solid var(--line-2); border-radius:14px; background:#fff;
+    font:inherit; color:var(--ink); cursor:pointer; text-align:left; transition:.15s; }
+  .ev-session:hover:not(:disabled){ border-color:var(--pink-mid); background:var(--pink-3); }
+  .ev-session.is-on{ border-color:var(--magenta); background:var(--pink-tint); box-shadow:0 0 0 1px var(--magenta) inset; }
+  .ev-session-when{ font-size:14px; font-weight:800; letter-spacing:-.01em; }
+  .ev-session-where{ font-size:12px; color:var(--muted); }
+  .ev-session.is-closed{ opacity:.45; cursor:not-allowed; }
+  .ev-session.is-closed .ev-session-when{ text-decoration:line-through; }
+  .ev-session-tag{ position:absolute; top:6px; right:8px; font-size:10px; font-weight:800; color:var(--muted); }
+  .req-foot{ margin:10px 0 0; font-size:12px; color:var(--muted); line-height:1.6; }
+  .ev-missing{ padding:60px 20px; text-align:center; color:var(--muted); font-size:15px; line-height:1.8; }
+  .ev-missing a{ color:var(--magenta); font-weight:800; }
+  @media (max-width:700px){ .ev-sessions-list{ gap:6px; } .ev-session{ padding:9px 12px; } }
 </style>
 </head>
 <body>
@@ -575,49 +594,40 @@
 <main class="detail">
   <a class="crumb" href="/events/">&#8592; 전체 행사 보기</a>
   <div class="hero-detail">
-  <h1 class="ev-title hero-detail-title">이루네 무료 콘서트</h1>
+  <h1 class="ev-title hero-detail-title" id="evTitle">행사 정보를 불러오는 중입니다</h1>
   <p class="ev-sub hero-detail-subtitle" id="mDday">-</p>
   <div class="hero-detail-info">
   <div class="meta-card"><div class="meta">
     <div class="row"><span class="k">일정</span><span class="v" id="mDate">-</span></div>
     <div class="row"><span class="k">장소</span><span class="v" id="mVenue">-</span></div>
-    <div class="row"><span class="k">시간</span><span class="v">오후 4시 50분</span></div>
     <div class="row"><span class="k">신청대상자</span><span class="v">성인남녀 (미성년자 입장불가)</span></div>
   </div></div>
   <button type="button" class="apply-btn js-apply hero-detail-cta-mobile">신청하기</button>
-  <details class="req-card hero-detail-req" open>
-  <summary class="req-title">필수 확인 사항</summary>
-  <ul class="req-list">
-    <li>본 행사는 후원사<strong>(보람상조)</strong>의 상품 홍보가 진행됩니다.</li>
-    <li>후원사 상품 홍보 시간을 제외하고 행사만 참석하는 것은 불가합니다.</li>
-    <li>신청 후, <strong>당첨 문자</strong>를 받으신 분만 참석이 가능합니다. 문자를 꼭 확인해주세요.</li>
-    <li><strong>입장 마감(오후 4시 50분)</strong> 시간 이후로는 절대로 입장이 불가합니다.</li>
-    <li>현장 안내에 따라 선착순으로 좌석이 배정됩니다. (좌석이 없을 경우 스탠딩 또는 입장이 제한될 수 있는 점 양해 바랍니다.)</li>
-    <li>본 행사는 디어데이클래스에서 주최하는 행사로 대관 장소와는 무관하며, 사정에 따라 일정 및 장소가 변경될 수 있습니다.</li>
-  </ul>
+  <div class="ev-sessions" id="evSessions" hidden></div>
+  <details class="req-card hero-detail-req" id="reqCard" open hidden>
+  <summary class="req-title" id="reqTitle">필수 확인 사항</summary>
+  <ul class="req-list" id="reqList"></ul>
+  <p class="req-foot" id="reqFoot" hidden></p>
   </details>
   </div>
   <div class="hero-detail-visual-col">
-  <div class="detail-banner hero-detail-visual"><img id="evBanner" src="" alt="이루네 무료 콘서트 포스터"></div>
+  <div class="detail-banner hero-detail-visual"><img id="evBanner" src="" alt="행사 포스터" hidden></div>
   <button type="button" class="apply-btn js-apply hero-detail-cta">신청하기</button>
   </div>
   </div>
 <div class="detail-cols">
   <div class="detail-imgs-col">
-  <div class="detail-imgs">
-        <img src="/images/event-irune-01.jpg" alt="이루네 무료 콘서트 안내" loading="lazy">
-  </div>
+  <div class="detail-imgs" id="detailImgs"></div>
   <button type="button" class="apply-btn js-apply">신청하기</button>
   </div>
   <aside class="detail-side">
     <div class="detail-side-card">
       <p class="ds-eyebrow">DEARDAY CLASS</p>
       <h3 class="ds-title" id="dsTitle">-</h3>
-      <p class="ds-sub">콘서트 · 전액 무료 · 성인 관람 (미성년자 입장불가)</p>
+      <p class="ds-sub" id="dsSub">전액 무료 · 성인 관람 (미성년자 입장불가)</p>
       <div class="ds-meta">
         <div class="row"><span class="k">일정</span><span class="v" id="dsDate">-</span></div>
         <div class="row"><span class="k">장소</span><span class="v" id="dsVenue">-</span></div>
-        <div class="row"><span class="k">시간</span><span class="v">오후 4시 50분</span></div>
       </div>
       <button type="button" class="apply-btn js-apply">신청하기</button>
     </div>
@@ -780,33 +790,21 @@
 
 <script>
 // 회차 자료는 관리자 [행사 관리] 에서 가져옵니다 (event-detail.js).
-var COURSE_ID="free-dd-irune";
-var DATA={};
-var TITLE="이루네 무료 콘서트";
-var DEFAULT_ID="gwangju";
+// 이 페이지는 행사 하나마다 파일을 만들지 않습니다.
+// 주소의 ?c=<공개코드> 로 관리자에 등록된 행사를 찾아 화면을 채웁니다.
+// 채우는 일은 전부 /assets/event-detail.js 가 합니다.
+var TITLE="";
 
 (function(){
   var wk=['일','월','화','수','목','금','토'];
   // 고른 회차. 신청 팝업(openModal)도 이 값을 씁니다.
   var d=null, dt=null;
   function renderEvent(){
-    var p=new URLSearchParams(location.search);
-    var id=(p.get('id')&&DATA[p.get('id')])?p.get('id'):DEFAULT_ID;
-    d=DATA[id];
-    document.getElementById('evBanner').src=d.banner;
-    dt=new Date(d.date+'T00:00:00');
-    document.getElementById('mDate').textContent=dt.getFullYear()+'년 '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일 ('+wk[dt.getDay()]+')';
-    document.getElementById('mVenue').textContent=d.venue;
-    var today=new Date(); today.setHours(0,0,0,0);
-    var diff=Math.round((dt-today)/86400000);
-    var dd=diff>0?('D-'+diff):(diff===0?'D-DAY':'행사 종료');
-    var mDdayEl=document.getElementById('mDday');
-    mDdayEl.textContent=dd;
-    if(diff<0){mDdayEl.classList.add('is-ended');}
-    var dsTitleEl=document.getElementById('dsTitle'); if(dsTitleEl) dsTitleEl.textContent=TITLE;
-    var dsDateEl=document.getElementById('dsDate'); if(dsDateEl) dsDateEl.textContent=document.getElementById('mDate').textContent;
-    var dsVenueEl=document.getElementById('dsVenue'); if(dsVenueEl) dsVenueEl.textContent=d.venue;
-    if(diff<0){document.querySelectorAll('.js-apply').forEach(function(b){b.textContent='마감';b.disabled=true;b.classList.add('is-closed');});}
+    var ev = window.DEARDAY_EVENT;
+    if(!ev) return;
+    d = { venue: ev.venue, date: ev.date, time: ev.time, banner: ev.banner };
+    dt = ev.date ? new Date(ev.date+'T00:00:00') : null;
+    TITLE = ev.title || '';
   }
   // 자료가 채워지면 event-detail.js 가 이 함수를 부릅니다.
   window.__ddRenderEvent=renderEvent;
@@ -825,7 +823,7 @@ var DEFAULT_ID="gwangju";
   cbForm&&cbForm.addEventListener('submit',function(e){e.preventDefault();var v=cbText.value.trim();if(!v)return;var u=document.createElement('div');u.className='cb-msg user';u.textContent=v;cbBody.appendChild(u);cbText.value='';setTimeout(function(){var b=document.createElement('div');b.className='cb-msg bot';b.textContent='문의 주셔서 감사합니다! 담당자가 빠르게 확인 후 안내드리겠습니다.';cbBody.appendChild(b);cbBody.scrollTop=cbBody.scrollHeight;},500);cbBody.scrollTop=cbBody.scrollHeight;});
   var modal=document.getElementById('applyModal');
   var amSub=document.getElementById('amSub'), form=document.getElementById('applyForm'), done=document.getElementById('amDone');
-  function openModal(){ if(!d||!dt){ if(window.siteAlert) siteAlert('행사 정보를 불러오는 중이에요. 잠시 후 다시 눌러주세요.'); return; } amSub.textContent=TITLE+' · '+d.venue+' · '+(dt.getMonth()+1)+'월 '+dt.getDate()+'일'; form.hidden=false; done.hidden=true; form.reset(); modal.hidden=false; document.body.classList.add('modal-open'); setTimeout(function(){document.getElementById('afName').focus();},60); }
+  function openModal(){ if(!d||!dt){ if(window.siteAlert) siteAlert('행사 정보를 불러오는 중이에요. 잠시 후 다시 눌러주세요.'); return; } amSub.textContent=[TITLE, d.venue, (dt.getMonth()+1)+'월 '+dt.getDate()+'일'].filter(Boolean).join(' · '); form.hidden=false; done.hidden=true; form.reset(); modal.hidden=false; document.body.classList.add('modal-open'); setTimeout(function(){document.getElementById('afName').focus();},60); }
   function closeModal(){ modal.hidden=true; document.body.classList.remove('modal-open'); }
   document.querySelectorAll('.js-apply').forEach(function(b){b.addEventListener('click',openModal);});
   modal.querySelectorAll('[data-close]').forEach(function(el){el.addEventListener('click',closeModal);});
@@ -875,13 +873,12 @@ var DEFAULT_ID="gwangju";
 </script>
 <script src="/assets/phone-format.js"></script>
 <script src="/assets/age-select.js"></script>
-<script src="/assets/supabase-store-common.js?v=20260903-dd-events-1"></script>
-<script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
-<script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
-<script src="/assets/event-detail.js?v=20260903-dd-events-1"></script>
-<script src="/assets/apply-form.js?v=20260903-dd-events-1"></script>
-
-
+<script src="/assets/public-media-overrides.js?v=20260909-dd-unified-1"></script>
+<script src="/assets/supabase-store-common.js?v=20260909-dd-unified-1"></script>
+<script src="/assets/courses-store.js?v=20260909-dd-unified-1"></script>
+<script src="/assets/applications-store.js?v=20260909-dd-unified-1"></script>
+<script src="/assets/event-detail.js?v=20260909-dd-unified-1"></script>
+<script src="/assets/apply-form.js?v=20260909-dd-unified-1"></script>
 <script src="/assets/mobile-tabbar.js"></script>
 
 <script src="/assets/top-fab.js"></script>

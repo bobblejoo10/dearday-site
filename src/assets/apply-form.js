@@ -16,21 +16,16 @@
     }).join(' ').trim();
   }
 
-  // 지금 페이지에서 고른 회차 (상세 페이지 전용).
-  // 전역 DATA / COURSE_ID / DEFAULT_ID 는 상세 페이지가 미리 만들어 둡니다.
+  // 지금 화면에서 고른 회차.
+  // 통합 상세(event-detail.js)가 global.DEARDAY_EVENT 에 넣어 둡니다.
   function currentSession() {
-    var data = global.DATA;
-    if (!data) return null;
-    var params = new URLSearchParams(global.location.search);
-    var asked = params.get('id');
-    var slug = (asked && data[asked]) ? asked : String(global.DEFAULT_ID || '');
-    var item = data[slug];
-    if (!item) return null;
+    var event = global.DEARDAY_EVENT;
+    if (!event) return null;
     return {
-      slug: slug,
-      venue: item.venue || '',
-      eventDate: item.date || '',
-      eventTime: item.time || ''
+      slug: String(event.sessionId || ''),
+      venue: event.venue || '',
+      eventDate: event.date || '',
+      eventTime: event.time || ''
     };
   }
 
@@ -43,10 +38,11 @@
   // 신청 한 건을 보냅니다. 실패하면 reject 하므로,
   // 부르는 쪽에서 "접수되었습니다" 를 띄우기 전에 반드시 기다려야 합니다.
   function submit(extra) {
+    var course = global.DEARDAY_COURSE;
     var payload = Object.assign({
-      courseId: String(global.COURSE_ID || '').trim(),
+      courseId: String((course && course.id) || global.COURSE_ID || '').trim(),
       courseTitle: courseTitle(),
-      courseType: 'free',
+      courseType: String((course && course.type) || 'free'),
       source: 'dearday'
     }, extra || {});
 

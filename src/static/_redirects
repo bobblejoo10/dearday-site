@@ -1,0 +1,9 @@
+# 옛 행사 상세 주소 → 전체 행사 목록
+# 2026-09-09 : 행사마다 있던 페이지를 /event/?c=<공개코드> 하나로 합쳤습니다.
+# 광고·SNS·카페에 남아 있는 옛 링크가 404 가 되지 않게 목록으로 넘깁니다.
+/event-ai/*          /events/  301
+/event-claude/*      /events/  301
+/event-haru/*        /events/  301
+/event-irune/*       /events/  301
+/event-leejegyu/*    /events/  301
+/event-leesangjun/*  /events/  301
