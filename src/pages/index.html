@@ -78,6 +78,8 @@
   .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
   .hero h1{font-weight:800;font-size:clamp(3rem,7vw,5.8rem);line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
   .hero h1 .mg{color:var(--magenta);display:block;margin-top:.06em;}
+  /* 제목 기본이 800 이라 <b> 기본값(700)이면 굵게가 거꾸로 가늘어졌습니다. */
+  .hero h1 b,.hero h1 strong{font-weight:900;}
   .hero p.lead{font-size:clamp(1rem,1.4vw,1.18rem);color:var(--ink-2);margin:1.4em 0 0;max-width:31ch;font-weight:500;}
   .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
   .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:2.1em;}
@@ -848,7 +850,7 @@
 <div data-site-footer></div>
 <script>window.DeardayLayout && window.DeardayLayout.renderAll();</script>
 <script src="/assets/supabase-store-common.js"></script>
-<script src="/assets/rich-text.js"></script>
+<script src="/assets/rich-text.js?v=20260909-bold-1"></script>
 <script src="/assets/banner-layout.js"></script>
 <script src="/assets/site-content-store.js"></script>
 <script src="/assets/public-media-overrides.js?v=20260908-r2-1"></script>
