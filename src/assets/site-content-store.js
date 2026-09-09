@@ -15,6 +15,9 @@
   // 업로드 시 항상 "Bucket not found"로 실패했음. 배너/강사 SQL 마이그레이션에서
   // 실제로 만들고 RLS 정책까지 세팅해 둔 'instructor-portfolio' 버킷을 재사용한다.
   var CONTENT_ASSETS_BUCKET = 'instructor-portfolio';
+  // 강연 카테고리(course_category)는 여기 목록에 넣지 않습니다.
+  // 폼 드롭다운이 아니라 홈페이지 탭을 결정하는 값이라, [강연 카테고리] 탭에서 따로 다룹니다.
+  // 강사는 form_options 를 쓰지 않고 instructors 표(강사진)를 그대로 씁니다.
   var OPTION_GROUPS = {
     corporate_region: '출강 문의 지역',
     corporate_preferred_instructor: '출강 문의 선호 강사',

@@ -18,15 +18,10 @@
 
   var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
-  // 사이트 탭 ← 관리자 카테고리.
-  // 토크/코미디는 공연에 포함시켜 탭을 3개(공연·강연·원데이클래스)로 씁니다.
-  var TAB_BY_CATEGORY = {
-    '공연': '공연',
-    '토크/코미디': '공연',
-    '강연': '강연',
-    '원데이': '원데이클래스',
-    '원데이클래스': '원데이클래스'
-  };
+  /* 분류 탭은 [사이트 콘텐츠 > 강연 카테고리] 의 활성 목록을 그대로 씁니다.
+     예전에는 여기 표에 카테고리 이름을 손으로 적어 뒀습니다. 그래서 관리자에서
+     카테고리를 더하거나 끄더라도 탭이 그대로였습니다.
+     탭에 보이는 이름은 그 목록의 [표시명], 카드에 붙는 값은 [저장값] 입니다. */
 
   function esc(value) {
     return String(value == null ? '' : value)
@@ -67,7 +62,7 @@
   }
 
   function cardHtml(course, session) {
-    var tab = TAB_BY_CATEGORY[String(course.category || '').trim()] || String(course.category || '').trim();
+    var tab = String(course.category || '').trim();
     var href = store.courseDetailUrl(course, session);
     var venue = venueText(session);
     var img = cardImage(course, session);
@@ -81,6 +76,64 @@
       + '<p class="daterange">' + esc(dateText(session)) + '</p>'
       + '<span class="ex-tag">전액 무료</span>'
       + '</div></a>';
+  }
+
+  /* 탭 단추. 페이지에는 [전체] 하나만 적혀 있고 나머지는 여기서 붙입니다.
+     행사가 하나도 없는 카테고리는 세우지 않습니다 — 늘 0건인 빈 탭이 되니까요.
+     목록에 없는 값을 쓰는 행사가 있으면 그 값도 뒤에 붙입니다. 어느 탭에도
+     안 걸려 [전체] 에서만 보이는 행사가 생기지 않게요. */
+  var 카테고리목록_ = null;
+  var 탭모양_ = '';
+
+  async function 카테고리읽기_() {
+    var api = window.AiLeadersSupabase;
+    if (!api || typeof api.selectRows !== 'function') { 카테고리목록_ = []; return; }
+    try {
+      var rows = await api.selectRows('form_options', {
+        select: 'label,value,sort_order,is_active,option_group',
+        filters: { option_group: 'course_category', is_active: true },
+        order: 'sort_order.asc'
+      });
+      카테고리목록_ = (Array.isArray(rows) ? rows : []).map(function (row) {
+        var value = String((row && (row.value || row.label)) || '').trim();
+        return { value: value, label: String((row && (row.label || row.value)) || '').trim() || value };
+      }).filter(function (item) { return !!item.value; });
+    } catch (error) {
+      카테고리목록_ = [];   // 못 읽으면 행사가 쓰는 값만 세웁니다
+    }
+  }
+
+  function 탭그리기_(cards) {
+    var box = document.querySelector('.tabs');
+    if (!box) return;
+    var used = {};
+    (cards || []).forEach(function (card) {
+      var value = String((card.course && card.course.category) || '').trim();
+      if (value) used[value] = true;
+    });
+    var listed = {};
+    var tabs = [];
+    (카테고리목록_ || []).forEach(function (item) {
+      listed[item.value] = true;
+      if (used[item.value]) tabs.push(item);
+    });
+    Object.keys(used).sort().forEach(function (value) {
+      if (!listed[value]) tabs.push({ value: value, label: value });
+    });
+    var current = box.querySelector('.tab.active');
+    var currentCat = current ? current.getAttribute('data-cat') : '전체';
+    var html = '<button class="tab" type="button" data-cat="전체" role="tab">전체</button>'
+      + tabs.map(function (item) {
+        return '<button class="tab" type="button" data-cat="' + esc(item.value) + '" role="tab">' + esc(item.label) + '</button>';
+      }).join('');
+    // 자료를 다시 읽어도 탭 줄이 같으면 건드리지 않습니다.
+    // 다시 쓰면 방문자가 고른 탭이 풀립니다.
+    if (탭모양_ === html) return;
+    탭모양_ = html;
+    box.innerHTML = html;
+    // 고른 탭이 사라졌으면 [전체] 로 돌립니다.
+    var keep = box.querySelector('[data-cat="' + String(currentCat || '전체').replace(/"/g, '') + '"]') || box.firstElementChild;
+    if (keep) { keep.classList.add('active'); keep.setAttribute('aria-selected', 'true'); }
   }
 
   function collectCards(courses) {
@@ -103,6 +156,7 @@
 
   function render() {
     var cards = collectCards(store.getCourses());
+    탭그리기_(cards);
     var html = cards.map(function (card) {
       return cardHtml(card.course, card.session);
     }).join('');
@@ -126,6 +180,7 @@
     if (typeof global.__rankFailed === 'function') global.__rankFailed();
   }
 
-  store.ready().then(render).catch(failed);
+  // 카테고리 목록을 먼저 읽고 나서 그립니다. 목록을 못 읽어도 행사 카드로 탭을 세웁니다.
+  카테고리읽기_().then(function () { return store.ready(); }).then(render).catch(failed);
   if (store.subscribe) store.subscribe(render);
 })(window);
