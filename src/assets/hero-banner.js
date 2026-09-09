@@ -23,9 +23,12 @@
   // 화면은 계속 CSS 기본색(마젠타)이었습니다.
   // 값이 비어 있으면 style 을 비워서 원래 CSS 모습으로 되돌립니다.
 
+  /* 관리자가 정한 색은 #rrggbb 또는 #rrggbbaa 입니다.
+     투명도를 담을 칸이 DB 에 없어서 뒤 두 자리에 얹어 옵니다.
+     CSS 가 8자리 hex 를 그대로 알아들으므로 글자·단추 색은 그냥 넣습니다. */
   function 안전한색_(value) {
     var raw = String(value == null ? '' : value).trim();
-    return /^#[0-9a-fA-F]{6}$/.test(raw) ? raw : '';
+    return /^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(raw) ? raw : '';
   }
 
   function 글자색_(el, value) {
@@ -50,8 +53,10 @@
       var r = parseInt(color.slice(1, 3), 16);
       var g = parseInt(color.slice(3, 5), 16);
       var b = parseInt(color.slice(5, 7), 16);
-      var base = 'rgba(' + r + ',' + g + ',' + b + ',';
-      el.style.background = 'linear-gradient(180deg,' + base + '.10) 0%,' + base + '.55) 100%)';
+      // 8자리면 뒤 두 자리가 투명도입니다. 막의 두 단계에 곱합니다.
+      var a = color.length === 9 ? parseInt(color.slice(7), 16) / 255 : 1;
+      var at = function (base) { return 'rgba(' + r + ',' + g + ',' + b + ',' + (base * a).toFixed(3) + ')'; };
+      el.style.background = 'linear-gradient(180deg,' + at(0.10) + ' 0%,' + at(0.55) + ' 100%)';
     } else {
       el.style.background = '';
     }
