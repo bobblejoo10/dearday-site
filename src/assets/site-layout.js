@@ -68,8 +68,26 @@
     Array.prototype.forEach.call(root.querySelectorAll('a[href^="/#"]'), function (link) {
       link.setAttribute('href', link.getAttribute('href').slice(1));
     });
+    // 홈에서 로고를 누르면 새로 불러오지 않고 맨 위로 올립니다.
+    // 예전에는 href 를 '#nav' 로 바꿨는데, 네비바가 position:sticky 라
+    // 늘 화면 맨 위에 있어서 스크롤 대상이 되지 못했습니다.
+    // 그래서 주소만 #nav 로 바뀌고 화면은 그대로 있었습니다.
+    // href 는 '/' 로 남겨 둡니다. 가운데 클릭·[새 탭에서 열기] 는 계속 됩니다.
     Array.prototype.forEach.call(root.querySelectorAll('a.brand[href="/"]'), function (link) {
-      link.setAttribute('href', '#nav');
+      if (link.getAttribute('data-brand-top') === '1') return;
+      link.setAttribute('data-brand-top', '1');
+      link.addEventListener('click', function (event) {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault();
+        if (global.location.hash) {
+          try {
+            global.history.pushState(null, '', global.location.pathname + global.location.search);
+          } catch (error) {
+            global.location.hash = '';
+          }
+        }
+        global.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     });
   }
 

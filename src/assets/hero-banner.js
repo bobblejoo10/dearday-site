@@ -18,6 +18,46 @@
     return media && typeof media.resolve === 'function' ? media.resolve(value) : value;
   }
 
+  // ── 관리자에서 저장한 색 ────────────────────────────
+  // 예전에는 이 파일이 색을 아예 다루지 않아서, 관리자에서 무슨 색을 넣어도
+  // 화면은 계속 CSS 기본색(마젠타)이었습니다.
+  // 값이 비어 있으면 style 을 비워서 원래 CSS 모습으로 되돌립니다.
+
+  function 안전한색_(value) {
+    var raw = String(value == null ? '' : value).trim();
+    return /^#[0-9a-fA-F]{6}$/.test(raw) ? raw : '';
+  }
+
+  function 글자색_(el, value) {
+    if (!el) return;
+    el.style.color = 안전한색_(value);
+  }
+
+  function 단추색_(el, textColor, bgColor) {
+    if (!el) return;
+    var fg = 안전한색_(textColor);
+    var bg = 안전한색_(bgColor);
+    el.style.color = fg;
+    el.style.backgroundColor = bg;
+  }
+
+  // 오버레이 — 사진·영상 위에 깔리는 막입니다.
+  // 관리자에서 색을 정하면 그 색으로, 끄면 투명하게 만듭니다.
+  function 오버레이_(el, hex, enabled) {
+    if (!el) return;
+    var color = 안전한색_(hex);
+    if (color) {
+      var r = parseInt(color.slice(1, 3), 16);
+      var g = parseInt(color.slice(3, 5), 16);
+      var b = parseInt(color.slice(5, 7), 16);
+      var base = 'rgba(' + r + ',' + g + ',' + b + ',';
+      el.style.background = 'linear-gradient(180deg,' + base + '.10) 0%,' + base + '.55) 100%)';
+    } else {
+      el.style.background = '';
+    }
+    el.style.opacity = enabled === false ? '0' : '';
+  }
+
   function apply() {
     var banners = store.getBanners ? store.getBanners('home_hero') : [];
     var banner = banners && banners.length ? banners[0] : null;
@@ -37,6 +77,11 @@
     if (rich && titleEl && banner.titleHtml) rich.set(titleEl, banner.titleHtml, banner.title);
     if (rich && leadEl && banner.subtitleHtml) rich.set(leadEl, banner.subtitleHtml, banner.subtitle);
 
+    // 직접 지정한 색이 있으면 그 색으로, 비어 있으면 원래 CSS 색 그대로.
+    글자색_(titleEl, banner.titleColor);
+    글자색_(leadEl, banner.subtitleColor);
+    오버레이_(document.querySelector('.hero-overlay'), banner.overlayColor, banner.overlayEnabled);
+
     // 단추 — 디어데이 홈에는 원래 1개만 있습니다.
     // 2차는 관리자에서 켜고 이름을 넣었을 때만 같은 모양으로 하나 더 만듭니다.
     var actions = document.querySelector('.hero-actions');
@@ -46,6 +91,7 @@
         if (banner.primaryLabel) first.textContent = banner.primaryLabel;
         if (banner.primaryUrl) first.setAttribute('href', banner.primaryUrl);
         first.style.display = banner.primaryEnabled === false ? 'none' : '';
+        단추색_(first, banner.primaryTextColor, banner.primaryBgColor);
       }
       var second = actions.querySelector('[data-cta-secondary]');
       var wantSecond = banner.secondaryEnabled !== false && !!banner.secondaryLabel;
@@ -59,6 +105,7 @@
         second.textContent = banner.secondaryLabel;
         second.setAttribute('href', banner.secondaryUrl || '#');
         second.style.display = '';
+        단추색_(second, banner.secondaryTextColor, banner.secondaryBgColor);
       } else if (second) {
         second.style.display = 'none';
       }
