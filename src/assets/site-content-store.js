@@ -112,6 +112,8 @@
     item.landingDetails = parseArray(item.landingDetails);
     item.sortOrder = toNumber(item.sortOrder, 0);
     item.isActive = toBoolean(item.isActive, true);
+    // 홈페이지 강사진 소개에 내보낼지. 끄면 강연 강사 드롭다운에는 그대로 남습니다.
+    item.showOnSite = toBoolean(item.showOnSite, true);
     return item;
   }
 
@@ -221,7 +223,9 @@
       careerItems: row.career_items,
       landingDetails: row.landing_details,
       sortOrder: row.sort_order,
-      isActive: row.is_active
+      isActive: row.is_active,
+      // 옛 자료에는 이 칸이 없습니다. 없으면 내보내는 것으로 봅니다.
+      showOnSite: row.show_on_site == null ? true : row.show_on_site
     });
   }
 
@@ -239,7 +243,8 @@
       career_items: item.careerItems,
       landing_details: item.landingDetails,
       sort_order: item.sortOrder,
-      is_active: item.isActive
+      is_active: item.isActive,
+      show_on_site: item.showOnSite
     };
   }
 

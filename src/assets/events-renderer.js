@@ -85,22 +85,36 @@
   var 카테고리목록_ = null;
   var 탭모양_ = '';
 
+  /* 카테고리는 관리자에서 무료·유료로 나뉘어 있습니다. 이 화면은 한 페이지에
+     다 보여 주므로 둘 다 읽습니다. 구분 없던 옛 값(course_category)도 함께요. */
+  var 카테고리그룹_ = ['course_category_free', 'course_category_paid', 'course_category'];
+
   async function 카테고리읽기_() {
     var api = window.AiLeadersSupabase;
     if (!api || typeof api.selectRows !== 'function') { 카테고리목록_ = []; return; }
-    try {
-      var rows = await api.selectRows('form_options', {
-        select: 'label,value,sort_order,is_active,option_group',
-        filters: { option_group: 'course_category', is_active: true },
-        order: 'sort_order.asc'
-      });
-      카테고리목록_ = (Array.isArray(rows) ? rows : []).map(function (row) {
-        var value = String((row && (row.value || row.label)) || '').trim();
-        return { value: value, label: String((row && (row.label || row.value)) || '').trim() || value };
-      }).filter(function (item) { return !!item.value; });
-    } catch (error) {
-      카테고리목록_ = [];   // 못 읽으면 행사가 쓰는 값만 세웁니다
+    var 모음 = [];
+    for (var i = 0; i < 카테고리그룹_.length; i += 1) {
+      try {
+        var rows = await api.selectRows('form_options', {
+          select: 'label,value,sort_order,is_active,option_group',
+          filters: { option_group: 카테고리그룹_[i], is_active: true },
+          order: 'sort_order.asc'
+        });
+        (Array.isArray(rows) ? rows : []).forEach(function (row) {
+          var value = String((row && (row.value || row.label)) || '').trim();
+          if (!value) return;
+          모음.push({ value: value, label: String((row && (row.label || row.value)) || '').trim() || value });
+        });
+      } catch (error) {
+        // 한 그룹을 못 읽어도 나머지는 씁니다.
+      }
     }
+    var 봤다 = {};
+    카테고리목록_ = 모음.filter(function (item) {
+      if (봤다[item.value]) return false;
+      봤다[item.value] = true;
+      return true;
+    });
   }
 
   function 탭그리기_(cards) {
