@@ -88,8 +88,11 @@
     container-type:size;}
   /* 좌우 여백 자리 — 히어로 바깥은 이 띠 색으로 채웁니다. */
   .hero-band{background:var(--pink-3,#FFF2F7);}
+  /* 문구 칸도 히어로 폭 기준입니다. .wrap 의 고정 폭(1280px)과 창 너비 여백(vw)을
+     그대로 두면 히어로 폭이 바뀔 때 문구 시작 위치가 제각각이 됩니다.
+     실측 : 히어로 1440 에서 5.56%, 1783 에서 14.11%, 1228 에서 0% 로 어긋났습니다. */
   .hero-grid{display:grid;grid-template-columns:1fr;gap:2.8cqw;align-items:center;
-    height:100%;padding:0;}
+    height:100%;max-width:none;padding:0 5.56cqw;}
   .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
   /* cqw = 히어로 칸 폭의 1%. 칸이 커지든 작아지든 문구 비율이 그대로입니다. */
   .hero h1{font-weight:800;font-size:6.44cqw;line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
