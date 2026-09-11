@@ -98,33 +98,15 @@
     글자색_(leadEl, banner.subtitleColor);
     오버레이_(document.querySelector('.hero-overlay'), banner.overlayColor, banner.overlayEnabled);
 
-    // 단추 — 디어데이 홈에는 원래 1개만 있습니다.
-    // 2차는 관리자에서 켜고 이름을 넣었을 때만 같은 모양으로 하나 더 만듭니다.
+    // 단추 — 세 저장소가 함께 쓰는 banner-cta.js 가 맞춥니다.
+    // 디어데이 홈에는 단추가 원래 하나뿐이라, 2차를 켜면 만들어 넣습니다.
     var actions = document.querySelector('.hero-actions');
-    if (actions) {
-      var first = actions.querySelector('a:not([data-cta-secondary])');
-      if (first) {
-        if (banner.primaryLabel) first.textContent = banner.primaryLabel;
-        if (banner.primaryUrl) first.setAttribute('href', banner.primaryUrl);
-        first.style.display = banner.primaryEnabled === false ? 'none' : '';
-        단추색_(first, banner.primaryTextColor, banner.primaryBgColor);
-      }
-      var second = actions.querySelector('[data-cta-secondary]');
-      var wantSecond = banner.secondaryEnabled !== false && !!banner.secondaryLabel;
-      if (wantSecond) {
-        if (!second) {
-          second = document.createElement('a');
-          second.className = first ? first.className : 'btn';
-          second.setAttribute('data-cta-secondary', '');
-          actions.appendChild(second);
+    if (global.BannerCta && actions) {
+      global.BannerCta.apply(actions, banner, {
+        applyColor: function (el, textColor, bgColor) {
+          단추색_(el, textColor, bgColor);
         }
-        second.textContent = banner.secondaryLabel;
-        second.setAttribute('href', banner.secondaryUrl || '#');
-        second.style.display = '';
-        단추색_(second, banner.secondaryTextColor, banner.secondaryBgColor);
-      } else if (second) {
-        second.style.display = 'none';
-      }
+      });
     }
 
     if (!banner.videoUrl) return;
