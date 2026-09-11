@@ -56,7 +56,10 @@
       // 8자리면 뒤 두 자리가 투명도입니다. 막의 두 단계에 곱합니다.
       var a = color.length === 9 ? parseInt(color.slice(7), 16) / 255 : 1;
       var at = function (base) { return 'rgba(' + r + ',' + g + ',' + b + ',' + (base * a).toFixed(3) + ')'; };
-      el.style.background = 'linear-gradient(180deg,' + at(0.10) + ' 0%,' + at(0.55) + ' 100%)';
+      // 세 단계 — 리더스와 관리자 미리보기가 쓰는 것과 같은 식입니다.
+      // 예전에는 여기만 두 단계(0.10 → 0.55)라, 관리자에서 같은 색·투명도를 넣어도
+      // 두 사이트가 다르게 보였습니다.
+      el.style.background = 'linear-gradient(180deg, ' + at(0.34) + ' 0%, ' + at(0.14) + ' 40%, ' + at(0.66) + ' 100%)';
     } else {
       el.style.background = '';
     }
@@ -73,7 +76,15 @@
 
     // 배너 이미지가 있으면 영상이 뜨기 전에 보여줄 그림으로 씁니다.
     // 중계(/img/)를 거칩니다. 소스에 Supabase 주소가 안 남고 R2 로 옮겨집니다.
-    if (banner.desktopImage) video.setAttribute('poster', 미디어주소_(banner.desktopImage));
+    //
+    // 좁은 화면에서는 모바일용 그림을 먼저 씁니다. 리더스와 같은 규칙입니다.
+    // 예전에는 이 파일이 desktopImage 만 봐서, 관리자에 모바일 그림을 올려도
+    // 디어데이에는 반영되지 않았습니다.
+    var narrow = global.matchMedia ? global.matchMedia('(max-width:880px)').matches : false;
+    var poster = narrow
+      ? (banner.mobileImage || banner.desktopImage)
+      : (banner.desktopImage || banner.mobileImage);
+    if (poster) video.setAttribute('poster', 미디어주소_(poster));
 
     // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 없으면 페이지에 적힌 문구를 그대로 둡니다.
     var rich = global.RichText;
