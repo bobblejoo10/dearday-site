@@ -99,11 +99,11 @@
   .hero-copy{width:max-content;max-width:100%;}
   .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
   /* cqw = 히어로 칸 폭의 1%. 칸이 커지든 작아지든 문구 비율이 그대로입니다. */
-  .hero h1{font-weight:800;font-size:3cqw;line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
+  .hero h1{font-weight:800;font-size:5cqw;line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
   .hero h1 .mg{color:var(--magenta);display:block;margin-top:.06em;}
   /* 제목 기본이 800 이라 <b> 기본값(700)이면 굵게가 거꾸로 가늘어졌습니다. */
   .hero h1 b,.hero h1 strong{font-weight:900;}
-  .hero p.lead{font-size:1cqw;color:var(--ink-2);margin:1.4em 0 0;font-weight:500;}
+  .hero p.lead{font-size:2cqw;color:var(--ink-2);margin:1.4em 0 0;font-weight:500;}
   .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
   /* 단추 줄은 문구 칸 폭을 그대로 씁니다. 그래야 [단추 정렬] 이 문구 기준으로 움직입니다. */
   .hero-actions{display:flex;gap:0.83cqw;flex-wrap:wrap;margin-top:2.1em;align-self:stretch;}
@@ -394,7 +394,7 @@
 
   /* ===== hero eyebrow handwriting + lead line ===== */
   .hero-eyebrow{font-family:'Nanum Pen Script','Pretendard',cursive;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:400;letter-spacing:0;line-height:1.02;margin-bottom:6px;color:var(--pink-mid);text-transform:none;}
-  .hero p.lead{font-size:1cqw;}
+  .hero p.lead{font-size:2cqw;}
 
   /* ===== gallery marquee ===== */
   .gallery{background:#fff;overflow:hidden;}
@@ -518,8 +518,8 @@
   }
   /* ===== 모바일 문구·단추 비율 =====
      모바일 히어로는 3:2 고정입니다. 칸 폭이 390 안팎으로 좁아서, PC 와 같은
-     비율(제목 3cqw = 11.7px)을 쓰면 글자가 너무 작아 읽히지 않습니다.
-     그래서 모바일에서는 문구·단추에만 더 큰 비율을 씁니다(제목 6 · 설명 3 · 단추 3).
+     비율(제목 5cqw = 19.5px)을 쓰면 글자가 너무 작아 읽히지 않습니다.
+     그래서 모바일 문구는 PC 의 1.5 배를 씁니다(제목 7.5 · 설명 3). 단추는 3 그대로입니다.
      비율은 여전히 고정이고, 칸을 채우는 정도만 PC 와 다릅니다.
      이 값은 관리자 sites-store.js 의 HERO_SPEC_FALLBACK 과 같아야 합니다.
      맨 아래에 두는 이유 — 위쪽에 같은 굵기의 규칙들이 있어서 나중에 와야 이깁니다. */
@@ -527,7 +527,7 @@
     /* 모바일 히어로는 3:2 입니다. 16:9 로 두면 390 폭에서 높이가 219px 뿐이라
        문구가 들어갈 자리가 모자랍니다. 3:2 면 260px 이 됩니다. */
     .hero{aspect-ratio:3/2;width:min(100%,calc(var(--hero-avail) * 3 / 2));}
-    .hero h1{font-size:6cqw;}
+    .hero h1{font-size:7.5cqw;}
     .hero p.lead{font-size:3cqw;margin-top:1.2em;}
     .hero-actions{gap:2cqw;margin-top:1.4em;}
     .hero .btn{font-size:3cqw;padding:1.9cqw 3.8cqw;}
