@@ -70,6 +70,10 @@
     item.contentPosition = BANNER_POSITIONS.indexOf(text(item.contentPosition)) >= 0 ? text(item.contentPosition) : '';
     item.textAlign = BANNER_ALIGNS.indexOf(text(item.textAlign)) >= 0 ? text(item.textAlign) : '';
     item.ctaAlign = BANNER_ALIGNS.indexOf(text(item.ctaAlign)) >= 0 ? text(item.ctaAlign) : '';
+    // 모바일 자리 — 비어 있으면 PC 값을 그대로 씁니다(banner-layout.js 가 처리).
+    item.mobileContentPosition = BANNER_POSITIONS.indexOf(text(item.mobileContentPosition)) >= 0 ? text(item.mobileContentPosition) : '';
+    item.mobileTextAlign = BANNER_ALIGNS.indexOf(text(item.mobileTextAlign)) >= 0 ? text(item.mobileTextAlign) : '';
+    item.mobileCtaAlign = BANNER_ALIGNS.indexOf(text(item.mobileCtaAlign)) >= 0 ? text(item.mobileCtaAlign) : '';
     // 단추를 보일지. 끄면 공개 페이지에서 그 단추가 사라집니다.
     item.primaryEnabled = toBoolean(item.primaryEnabled, true);
     item.secondaryEnabled = toBoolean(item.secondaryEnabled, true);
@@ -148,6 +152,9 @@
       titleHtml: row.title_html,
       subtitleHtml: row.subtitle_html,
       contentPosition: row.content_position,
+      mobileContentPosition: row.mobile_content_position,
+      mobileTextAlign: row.mobile_text_align,
+      mobileCtaAlign: row.mobile_cta_align,
       textAlign: row.text_align,
       ctaAlign: row.cta_align,
       primaryEnabled: row.primary_enabled,
@@ -184,6 +191,9 @@
       title_html: item.titleHtml || null,
       subtitle_html: item.subtitleHtml || null,
       content_position: item.contentPosition || '',
+      mobile_content_position: item.mobileContentPosition || '',
+      mobile_text_align: item.mobileTextAlign || '',
+      mobile_cta_align: item.mobileCtaAlign || '',
       text_align: item.textAlign || '',
       cta_align: item.ctaAlign || '',
       primary_enabled: item.primaryEnabled !== false,

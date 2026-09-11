@@ -528,6 +528,22 @@
     .hero-actions{gap:2cqw;margin-top:1.4em;}
     .hero .btn{font-size:3cqw;padding:1.9cqw 3.8cqw;}
     .hero-grid{gap:1.5cqw;}
+
+    /* 모바일 자리 — 관리자에서 모바일을 따로 고르면 붙습니다.
+       안 고르면 PC 값이 그대로 들어와(banner-layout.js) 같은 자리가 됩니다.
+       위의 가운데 정렬 규칙보다 뒤에 있고 더 자세해서 이깁니다. */
+    .hero.hero-m-v-top .hero-copy{align-self:start;}
+    .hero.hero-m-v-middle .hero-copy{align-self:center;}
+    .hero.hero-m-v-bottom .hero-copy{align-self:end;}
+    .hero.hero-m-h-left .hero-copy{justify-self:start;}
+    .hero.hero-m-h-center .hero-copy{justify-self:center;}
+    .hero.hero-m-h-right .hero-copy{justify-self:end;}
+    .hero.hero-m-ta-left .hero-copy{text-align:left;}
+    .hero.hero-m-ta-center .hero-copy{text-align:center;}
+    .hero.hero-m-ta-right .hero-copy{text-align:right;}
+    .hero.hero-m-cta-left .hero-actions{justify-content:flex-start;}
+    .hero.hero-m-cta-center .hero-actions{justify-content:center;}
+    .hero.hero-m-cta-right .hero-actions{justify-content:flex-end;}
   }
 </style>
 </head>
