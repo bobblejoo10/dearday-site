@@ -77,7 +77,6 @@
     // 단추를 보일지. 끄면 공개 페이지에서 그 단추가 사라집니다.
     item.primaryEnabled = toBoolean(item.primaryEnabled, true);
     item.secondaryEnabled = toBoolean(item.secondaryEnabled, true);
-    item.eyebrow = text(item.eyebrow);
     item.desktopImage = normalizeAssetUrl(item.desktopImage, 'images');
     item.mobileImage = normalizeAssetUrl(item.mobileImage, 'images');
     item.videoUrl = text(item.videoUrl);
@@ -159,7 +158,6 @@
       ctaAlign: row.cta_align,
       primaryEnabled: row.primary_enabled,
       secondaryEnabled: row.secondary_enabled,
-      eyebrow: row.eyebrow,
       desktopImage: row.desktop_image,
       mobileImage: row.mobile_image,
       videoUrl: row.video_url,
@@ -198,7 +196,6 @@
       cta_align: item.ctaAlign || '',
       primary_enabled: item.primaryEnabled !== false,
       secondary_enabled: item.secondaryEnabled !== false,
-      eyebrow: item.eyebrow || null,
       desktop_image: item.desktopImage || null,
       mobile_image: item.mobileImage || null,
       video_url: item.videoUrl || null,
