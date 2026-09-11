@@ -82,7 +82,7 @@
      76 으로 두면 히어로 아래끝이 화면을 1px 넘어갑니다(실측). */
   .hero{--hero-avail:calc(100svh - 77px);
     position:relative;background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);overflow:hidden;
-    aspect-ratio:16/9;width:min(100%,calc(var(--hero-avail) * 16 / 9));max-height:var(--hero-avail);
+    aspect-ratio:16/9;--hero-hw:0.5625;width:min(100%,calc(var(--hero-avail) * 16 / 9));max-height:var(--hero-avail);
     margin-inline:auto;box-sizing:border-box;
     /* 문구·단추 크기를 이 칸 폭에 비례시키려고 컨테이너로 선언합니다(cqw 단위). */
     container-type:size;}
@@ -96,18 +96,28 @@
   /* 문구 칸은 글 길이에 맞춰 늘고 줄어듭니다(히어로 폭까지). 고정 폭으로 두면
      줄을 바꾸지 않은 자리에서도 글이 접혔습니다. 단추 줄도 이 칸 안에 있어
      같은 폭을 쓰고, [단추 정렬] 은 이 폭 안에서 움직입니다. */
-  .hero-copy{width:max-content;max-width:100%;}
+  /* 세부 위치 — 자리(9칸)로 잡은 뒤 여기서 더 밉니다. 양수면 오른쪽·아래입니다.
+     1cqw·1cqh 는 히어로 칸 폭·높이의 1% 라, 화면이 커져도 같은 자리에 남습니다. */
+  /* 세로 밀기는 1cqh 를 쓰지 않습니다. 크로미움에서 aspect-ratio 로 높이가 정해진 칸은
+     1cqh 가 실제 높이와 다르게 나옵니다(히어로 810px 인데 100cqh 가 580px 로 나왔습니다).
+     대신 폭에 세로/가로 비를 곱합니다. 이 값은 바로 위 aspect-ratio 와 같은 비입니다. */
+  .hero-copy{width:max-content;max-width:100%;
+    transform:translate(calc(var(--hero-dx) * 1cqw), calc(var(--hero-dy) * var(--hero-hw) * 1cqw));}
   .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
   /* cqw = 히어로 칸 폭의 1%. 칸이 커지든 작아지든 문구 비율이 그대로입니다. */
-  .hero h1{font-weight:800;font-size:5cqw;line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
+  /* 글자 비율과 세부 위치는 관리자에서 배너마다 정합니다.
+     기본값 숫자는 여기에 두지 않습니다 — 세 저장소가 함께 쓰는 banner-layout.js 한 곳에만
+     있고, 그 파일이 --hero-* 변수를 늘 채워 넣습니다. 여기에 숫자를 또 적으면 값이
+     세 벌이 되어 관리자에서 한 번에 못 바꿉니다. 1cqw = 히어로 칸 폭의 1%. */
+  .hero h1{font-weight:800;font-size:calc(var(--hero-title-vw) * 1cqw);line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
   .hero h1 .mg{color:var(--magenta);display:block;margin-top:.06em;}
   /* 제목 기본이 800 이라 <b> 기본값(700)이면 굵게가 거꾸로 가늘어졌습니다. */
   .hero h1 b,.hero h1 strong{font-weight:900;}
-  .hero p.lead{font-size:2cqw;color:var(--ink-2);margin:1.4em 0 0;font-weight:500;}
+  .hero p.lead{font-size:calc(var(--hero-sub-vw) * 1cqw);color:var(--ink-2);margin:1.4em 0 0;font-weight:500;}
   .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
   /* 단추 줄은 문구 칸 폭을 그대로 씁니다. 그래야 [단추 정렬] 이 문구 기준으로 움직입니다. */
   .hero-actions{display:flex;gap:0.83cqw;flex-wrap:wrap;margin-top:2.1em;align-self:stretch;}
-  .hero .btn{font-size:1.04cqw;padding:0.83cqw 1.67cqw;}
+  .hero .btn{font-size:calc(var(--hero-cta-vw) * 1cqw);padding:0.8em 1.6em;}
 
   /* ===== 배너 문구·단추 자리 (관리자에서 고른 값) =====
      관리자에서 고르지 않으면 아래 클래스가 안 붙어서 지금 모습이 그대로 유지됩니다.
@@ -394,7 +404,7 @@
 
   /* ===== hero eyebrow handwriting + lead line ===== */
   .hero-eyebrow{font-family:'Nanum Pen Script','Pretendard',cursive;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:400;letter-spacing:0;line-height:1.02;margin-bottom:6px;color:var(--pink-mid);text-transform:none;}
-  .hero p.lead{font-size:2cqw;}
+  .hero p.lead{font-size:calc(var(--hero-sub-vw) * 1cqw);}
 
   /* ===== gallery marquee ===== */
   .gallery{background:#fff;overflow:hidden;}
@@ -526,11 +536,14 @@
   @media(max-width:880px){
     /* 모바일 히어로는 3:2 입니다. 16:9 로 두면 390 폭에서 높이가 219px 뿐이라
        문구가 들어갈 자리가 모자랍니다. 3:2 면 260px 이 됩니다. */
-    .hero{aspect-ratio:3/2;width:min(100%,calc(var(--hero-avail) * 3 / 2));}
-    .hero h1{font-size:7.5cqw;}
-    .hero p.lead{font-size:3cqw;margin-top:1.2em;}
+    .hero{aspect-ratio:3/2;--hero-hw:0.66667;width:min(100%,calc(var(--hero-avail) * 3 / 2));}
+    .hero h1{font-size:calc(var(--hero-m-title-vw) * 1cqw);}
+    .hero p.lead{font-size:calc(var(--hero-m-sub-vw) * 1cqw);margin-top:1.2em;}
     .hero-actions{gap:2cqw;margin-top:1.4em;}
-    .hero .btn{font-size:3cqw;padding:1.9cqw 3.8cqw;}
+    .hero .btn{font-size:calc(var(--hero-m-cta-vw) * 1cqw);padding:0.6333em 1.2667em;}
+    /* 모바일 세부 위치 — 안 정하면 PC 값을 씁니다(자리 칸과 같은 규칙). */
+    .hero-copy{transform:translate(calc(var(--hero-m-dx) * 1cqw),
+                                   calc(var(--hero-m-dy) * var(--hero-hw) * 1cqw));}
     .hero-grid{gap:1.5cqw;}
 
     /* 모바일 자리 — 관리자에서 모바일을 따로 고르면 붙습니다.

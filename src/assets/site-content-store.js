@@ -57,6 +57,18 @@
     return utils.parseList(value, { json: true, separator: 'line' });
   }
 
+  // 숫자 칸 — 비어 있으면 '' 로, 숫자면 숫자로 둡니다.
+  // 0 은 "안 밈" 이라는 뜻이 있어서 빈 값과 섞이면 안 됩니다.
+  function numOrBlank(value) {
+    if (value === null || value === undefined || value === '') return '';
+    var n = Number(value);
+    return isFinite(n) ? n : '';
+  }
+  function nullIfBlank(value) {
+    var n = numOrBlank(value);
+    return n === '' ? null : n;
+  }
+
   function normalizeBanner(banner) {
     var item = Object.assign({}, banner || {});
     item.id = text(item.id);
@@ -66,6 +78,18 @@
     // 서식본(HTML). 비어 있으면 위의 평문을 씁니다.
     item.titleHtml = text(item.titleHtml);
     item.subtitleHtml = text(item.subtitleHtml);
+    // 세부 위치와 글자 비율 — 비워 두면 코드의 기본값을 씁니다.
+    // 0 은 뜻이 있는 값(안 밈)이라 빈 값과 구분해야 합니다. 그래서 '' 또는 숫자로 둡니다.
+    item.contentOffsetX = numOrBlank(item.contentOffsetX);
+    item.contentOffsetY = numOrBlank(item.contentOffsetY);
+    item.mobileContentOffsetX = numOrBlank(item.mobileContentOffsetX);
+    item.mobileContentOffsetY = numOrBlank(item.mobileContentOffsetY);
+    item.titleVw = numOrBlank(item.titleVw);
+    item.subtitleVw = numOrBlank(item.subtitleVw);
+    item.ctaVw = numOrBlank(item.ctaVw);
+    item.mobileTitleVw = numOrBlank(item.mobileTitleVw);
+    item.mobileSubtitleVw = numOrBlank(item.mobileSubtitleVw);
+    item.mobileCtaVw = numOrBlank(item.mobileCtaVw);
     // 모바일 문구 — 비워 두면 PC 문구를 그대로 씁니다(모바일 자리 칸과 같은 규칙).
     item.mobileTitle = text(item.mobileTitle);
     item.mobileTitleHtml = text(item.mobileTitleHtml);
@@ -155,6 +179,16 @@
       subtitle: row.subtitle,
       titleHtml: row.title_html,
       subtitleHtml: row.subtitle_html,
+      contentOffsetX: row.content_offset_x,
+      contentOffsetY: row.content_offset_y,
+      mobileContentOffsetX: row.mobile_content_offset_x,
+      mobileContentOffsetY: row.mobile_content_offset_y,
+      titleVw: row.title_vw,
+      subtitleVw: row.subtitle_vw,
+      ctaVw: row.cta_vw,
+      mobileTitleVw: row.mobile_title_vw,
+      mobileSubtitleVw: row.mobile_subtitle_vw,
+      mobileCtaVw: row.mobile_cta_vw,
       mobileTitle: row.mobile_title,
       mobileTitleHtml: row.mobile_title_html,
       mobileSubtitle: row.mobile_subtitle,
@@ -197,6 +231,16 @@
       subtitle: item.subtitle || null,
       title_html: item.titleHtml || null,
       subtitle_html: item.subtitleHtml || null,
+      content_offset_x: nullIfBlank(item.contentOffsetX),
+      content_offset_y: nullIfBlank(item.contentOffsetY),
+      mobile_content_offset_x: nullIfBlank(item.mobileContentOffsetX),
+      mobile_content_offset_y: nullIfBlank(item.mobileContentOffsetY),
+      title_vw: nullIfBlank(item.titleVw),
+      subtitle_vw: nullIfBlank(item.subtitleVw),
+      cta_vw: nullIfBlank(item.ctaVw),
+      mobile_title_vw: nullIfBlank(item.mobileTitleVw),
+      mobile_subtitle_vw: nullIfBlank(item.mobileSubtitleVw),
+      mobile_cta_vw: nullIfBlank(item.mobileCtaVw),
       mobile_title: item.mobileTitle || null,
       mobile_title_html: item.mobileTitleHtml || null,
       mobile_subtitle: item.mobileSubtitle || null,
