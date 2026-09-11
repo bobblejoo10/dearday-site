@@ -65,6 +65,27 @@
     return out;
   }
 
+  // 좁은 화면에서 쓸 문구를 고릅니다. 세 저장소가 같은 규칙을 쓰도록 여기에 둡니다.
+  // 모바일 칸이 비어 있으면 PC 문구를 그대로 씁니다.
+  // 제목과 설명은 따로 봅니다 — 제목만 모바일용으로 넣고 설명은 그대로 두는 경우가 있습니다.
+  function heroText(banner, narrow) {
+    var b = banner || {};
+    var out = {
+      title: text(b.title), titleHtml: text(b.titleHtml),
+      subtitle: text(b.subtitle), subtitleHtml: text(b.subtitleHtml)
+    };
+    if (!narrow) return out;
+    if (text(b.mobileTitle) || text(b.mobileTitleHtml)) {
+      out.title = text(b.mobileTitle);
+      out.titleHtml = text(b.mobileTitleHtml);
+    }
+    if (text(b.mobileSubtitle) || text(b.mobileSubtitleHtml)) {
+      out.subtitle = text(b.mobileSubtitle);
+      out.subtitleHtml = text(b.mobileSubtitleHtml);
+    }
+    return out;
+  }
+
   function apply(hero, banner) {
     if (!hero) return;
     var wanted = classes(banner);
@@ -73,5 +94,5 @@
     });
   }
 
-  global.BannerLayout = { classes: classes, apply: apply, allClasses: all };
+  global.BannerLayout = { classes: classes, apply: apply, allClasses: all, heroText: heroText };
 })(window);

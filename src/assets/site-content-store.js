@@ -66,6 +66,11 @@
     // 서식본(HTML). 비어 있으면 위의 평문을 씁니다.
     item.titleHtml = text(item.titleHtml);
     item.subtitleHtml = text(item.subtitleHtml);
+    // 모바일 문구 — 비워 두면 PC 문구를 그대로 씁니다(모바일 자리 칸과 같은 규칙).
+    item.mobileTitle = text(item.mobileTitle);
+    item.mobileTitleHtml = text(item.mobileTitleHtml);
+    item.mobileSubtitle = text(item.mobileSubtitle);
+    item.mobileSubtitleHtml = text(item.mobileSubtitleHtml);
     // 문구·단추 자리. 빈 값이면 페이지에 적힌 그대로 두고 아무것도 바꾸지 않습니다.
     item.contentPosition = BANNER_POSITIONS.indexOf(text(item.contentPosition)) >= 0 ? text(item.contentPosition) : '';
     item.textAlign = BANNER_ALIGNS.indexOf(text(item.textAlign)) >= 0 ? text(item.textAlign) : '';
@@ -150,6 +155,10 @@
       subtitle: row.subtitle,
       titleHtml: row.title_html,
       subtitleHtml: row.subtitle_html,
+      mobileTitle: row.mobile_title,
+      mobileTitleHtml: row.mobile_title_html,
+      mobileSubtitle: row.mobile_subtitle,
+      mobileSubtitleHtml: row.mobile_subtitle_html,
       contentPosition: row.content_position,
       mobileContentPosition: row.mobile_content_position,
       mobileTextAlign: row.mobile_text_align,
@@ -188,6 +197,10 @@
       subtitle: item.subtitle || null,
       title_html: item.titleHtml || null,
       subtitle_html: item.subtitleHtml || null,
+      mobile_title: item.mobileTitle || null,
+      mobile_title_html: item.mobileTitleHtml || null,
+      mobile_subtitle: item.mobileSubtitle || null,
+      mobile_subtitle_html: item.mobileSubtitleHtml || null,
       content_position: item.contentPosition || '',
       mobile_content_position: item.mobileContentPosition || '',
       mobile_text_align: item.mobileTextAlign || '',

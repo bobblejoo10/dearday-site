@@ -86,12 +86,24 @@
       : (banner.desktopImage || banner.mobileImage);
     if (poster) video.setAttribute('poster', 미디어주소_(poster));
 
-    // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 없으면 페이지에 적힌 문구를 그대로 둡니다.
+    // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 둘 다 없으면 페이지에 적힌 문구를 그대로 둡니다.
+    // 좁은 화면에서는 모바일 문구를 먼저 씁니다. 모바일 칸이 비면 PC 문구 그대로입니다.
+    // 고르는 규칙은 세 저장소가 함께 쓰는 banner-layout.js 에 있습니다.
+    // 서식 없이 평문만 넣은 경우도 받습니다 — 예전에는 titleHtml 이 있을 때만 넣어서,
+    // 서식 없는 모바일 문구를 채워도 PC 문구가 그대로 남았습니다.
     var rich = global.RichText;
     var titleEl = document.querySelector('.hero h1');
     var leadEl = document.querySelector('.hero .lead');
-    if (rich && titleEl && banner.titleHtml) rich.set(titleEl, banner.titleHtml, banner.title);
-    if (rich && leadEl && banner.subtitleHtml) rich.set(leadEl, banner.subtitleHtml, banner.subtitle);
+    var copy = global.BannerLayout && global.BannerLayout.heroText
+      ? global.BannerLayout.heroText(banner, narrow) : banner;
+    if (titleEl && (copy.titleHtml || copy.title)) {
+      if (rich && copy.titleHtml) rich.set(titleEl, copy.titleHtml, copy.title);
+      else titleEl.textContent = copy.title;
+    }
+    if (leadEl && (copy.subtitleHtml || copy.subtitle)) {
+      if (rich && copy.subtitleHtml) rich.set(leadEl, copy.subtitleHtml, copy.subtitle);
+      else leadEl.textContent = copy.subtitle;
+    }
 
     // 직접 지정한 색이 있으면 그 색으로, 비어 있으면 원래 CSS 색 그대로.
     글자색_(titleEl, banner.titleColor);
