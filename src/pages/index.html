@@ -93,15 +93,20 @@
      실측 : 히어로 1440 에서 5.56%, 1783 에서 14.11%, 1228 에서 0% 로 어긋났습니다. */
   .hero-grid{display:grid;grid-template-columns:1fr;gap:2.8cqw;align-items:center;
     height:100%;max-width:none;padding:0 5.56cqw;}
+  /* 문구 칸은 글 길이에 맞춰 늘고 줄어듭니다(히어로 폭까지). 고정 폭으로 두면
+     줄을 바꾸지 않은 자리에서도 글이 접혔습니다. 단추 줄도 이 칸 안에 있어
+     같은 폭을 쓰고, [단추 정렬] 은 이 폭 안에서 움직입니다. */
+  .hero-copy{width:max-content;max-width:100%;}
   .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
   /* cqw = 히어로 칸 폭의 1%. 칸이 커지든 작아지든 문구 비율이 그대로입니다. */
   .hero h1{font-weight:800;font-size:6.44cqw;line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
   .hero h1 .mg{color:var(--magenta);display:block;margin-top:.06em;}
   /* 제목 기본이 800 이라 <b> 기본값(700)이면 굵게가 거꾸로 가늘어졌습니다. */
   .hero h1 b,.hero h1 strong{font-weight:900;}
-  .hero p.lead{font-size:1.31cqw;color:var(--ink-2);margin:1.4em 0 0;max-width:31ch;font-weight:500;}
+  .hero p.lead{font-size:1.31cqw;color:var(--ink-2);margin:1.4em 0 0;font-weight:500;}
   .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
-  .hero-actions{display:flex;gap:0.83cqw;flex-wrap:wrap;margin-top:2.1em;}
+  /* 단추 줄은 문구 칸 폭을 그대로 씁니다. 그래야 [단추 정렬] 이 문구 기준으로 움직입니다. */
+  .hero-actions{display:flex;gap:0.83cqw;flex-wrap:wrap;margin-top:2.1em;align-self:stretch;}
   .hero .btn{font-size:1.04cqw;padding:0.83cqw 1.67cqw;}
 
   /* ===== 배너 문구·단추 자리 (관리자에서 고른 값) =====
@@ -116,7 +121,6 @@
   .hero.hero-ta-left .hero-copy{text-align:left;}
   .hero.hero-ta-center .hero-copy{text-align:center;}
   .hero.hero-ta-right .hero-copy{text-align:right;}
-  .hero.hero-ta-center .hero p.lead,.hero.hero-ta-right .hero p.lead{max-width:none;}
   .hero.hero-cta-left .hero-actions{justify-content:flex-start;}
   .hero.hero-cta-center .hero-actions{justify-content:center;}
   .hero.hero-cta-right .hero-actions{justify-content:flex-end;}
@@ -390,8 +394,7 @@
 
   /* ===== hero eyebrow handwriting + lead line ===== */
   .hero-eyebrow{font-family:'Nanum Pen Script','Pretendard',cursive;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:400;letter-spacing:0;line-height:1.02;margin-bottom:6px;color:var(--pink-mid);text-transform:none;}
-  .hero p.lead{max-width:none;font-size:1.31cqw;}
-  @media(min-width:881px){.hero .ld1{white-space:nowrap;}}
+  .hero p.lead{font-size:1.31cqw;}
 
   /* ===== gallery marquee ===== */
   .gallery{background:#fff;overflow:hidden;}
@@ -835,7 +838,7 @@
 <div data-site-footer></div>
 <script>window.DeardayLayout && window.DeardayLayout.renderAll();</script>
 <script src="/assets/supabase-store-common.js"></script>
-<script src="/assets/rich-text.js?v=20260909-bold-1"></script>
+<script src="/assets/rich-text.js?v=20260911-size-1"></script>
 <script src="/assets/banner-layout.js"></script>
 <script src="/assets/banner-cta.js?v=20260911-cta-1"></script>
 <script src="/assets/site-content-store.js"></script>

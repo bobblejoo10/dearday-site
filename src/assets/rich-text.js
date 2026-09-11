@@ -15,6 +15,12 @@
   var ALLOWED_STYLES = ['color', 'font-size', 'font-weight', 'font-style', 'text-align', 'text-decoration'];
   var SAFE_VALUE = /^[#0-9a-zA-Z().,%\- ]*$/;
 
+  // 글자 크기는 배수(em)나 백분율(%)만 받습니다.
+  // small·24px 같은 고정값은 자리마다 결과가 어긋납니다. 편집기 칸은 14px 이라
+  // 24px 이 커 보이지만, 히어로 제목은 1440 기준 약 92px 이라 같은 24px 이
+  // 도리어 4분의 1로 작아집니다. 배수는 어느 자리에서나 같은 비율입니다.
+  var SIZE_VALUE = /^\d*\.?\d+(em|%)$/;
+
   // 굵게를 굵기 숫자로 붙여 두면 자리마다 결과가 어긋납니다.
   // 편집기가 넣는 값은 bold(=700) 하나인데, 히어로 제목은 이미 700~800 이라
   // 굵게를 걸어도 그대로거나(리더스 700) 오히려 가늘어졌습니다(디어데이·미리보기 800).
@@ -41,6 +47,8 @@
       // 굵게는 <b> 로 옮기므로 인라인 굵기 값은 버립니다.
       // (normal 이나 400 같은 "굵게 아님" 값은 되돌리기 표현이라 그대로 둡니다)
       if (name === 'font-weight' && isBoldWeight(value)) return;
+      // 고정 크기(px·small·x-large)는 버립니다. 그 자리의 기본 크기가 대신 쓰입니다.
+      if (name === 'font-size' && !SIZE_VALUE.test(value.toLowerCase())) return;
       // url(...) · expression(...) 같은 것이 끼어들 여지를 막습니다.
       if (!SAFE_VALUE.test(value)) return;
       kept.push(name + ':' + value);
