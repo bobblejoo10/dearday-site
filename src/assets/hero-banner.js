@@ -71,14 +71,6 @@
     // 문구·단추 자리 — 관리자에서 고르지 않았으면 아무것도 바꾸지 않습니다.
     if (global.BannerLayout) global.BannerLayout.apply(document.querySelector('.hero'), banner);
 
-    // 히어로 높이 — 등록한 이미지·영상 비율을 따릅니다.
-    // 관리자가 저장해 둔 비율이 있으면 그걸 쓰고, 없으면 영상이 실린 뒤 재서 씁니다.
-    if (global.HeroRatio) {
-      var heroEl = document.querySelector('.hero');
-      var narrow = global.matchMedia ? global.matchMedia('(max-width:880px)').matches : false;
-      global.HeroRatio.apply(heroEl, banner, video, narrow);
-    }
-
     // 배너 이미지가 있으면 영상이 뜨기 전에 보여줄 그림으로 씁니다.
     // 중계(/img/)를 거칩니다. 소스에 Supabase 주소가 안 남고 R2 로 옮겨집니다.
     if (banner.desktopImage) video.setAttribute('poster', 미디어주소_(banner.desktopImage));
