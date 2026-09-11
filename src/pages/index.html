@@ -73,7 +73,7 @@
   
 
   .hero{position:relative;background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);overflow:hidden;}
-  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(24px,4vw,56px);align-items:flex-start;
+  .hero-grid{display:grid;grid-template-columns:1fr;gap:clamp(24px,4vw,56px);align-items:flex-start;
     min-height:clamp(400px,50vh,540px);padding:clamp(24px,2.6vw,36px) 0 clamp(60px,6vw,84px);}
   .hero-eyebrow{display:inline-block;font-size:.85rem;font-weight:800;color:var(--magenta);letter-spacing:.08em;margin-bottom:18px;}
   .hero h1{font-weight:800;font-size:clamp(3rem,7vw,5.8rem);line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
@@ -86,7 +86,7 @@
 
   /* ===== 배너 문구·단추 자리 (관리자에서 고른 값) =====
      관리자에서 고르지 않으면 아래 클래스가 안 붙어서 지금 모습이 그대로 유지됩니다.
-     문구는 왼쪽 칸 안에서 움직입니다. 오른쪽 추천 행사 카드와 겹치지 않게요. */
+     문구는 배너 전체 폭 안에서 움직입니다. */
   .hero.hero-v-top .hero-copy{align-self:start;}
   .hero.hero-v-middle .hero-copy{align-self:center;}
   .hero.hero-v-bottom .hero-copy{align-self:end;}
@@ -107,30 +107,7 @@
     background:rgba(255,255,255,.75);color:var(--ink-2);font-size:1.4rem;line-height:1;display:grid;place-items:center;transition:background .2s,transform .2s;}
   .hero-arrow:hover{background:#fff;transform:scale(1.06);color:var(--magenta);}
   .hero-arrow.left{left:14px;}.hero-arrow.right{right:14px;}
-  .hero-visual{position:relative;display:flex;justify-content:center;}
-  .poster{width:100%;aspect-ratio:1/1;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:6px solid #fff;background:#fff;}
-  .poster img{width:100%;height:100%;object-fit:cover;transition:opacity .35s ease;}
-  .hero-chip{position:absolute;bottom:-18px;left:6%;background:#fff;border:1px solid var(--line);border-radius:14px;
-    padding:13px 17px;box-shadow:var(--shadow);max-width:74%;width:max-content;}
-  .hero-chip .t{font-size:.7rem;font-weight:800;letter-spacing:.08em;color:var(--magenta);}
-  .hero-chip .n{font-size:1.05rem;font-weight:800;margin:3px 0 1px;letter-spacing:-.03em;}
-  .hero-chip .s{font-size:.8rem;color:var(--muted);white-space:nowrap;}
-  .hero-chip .free{color:var(--magenta-deep);font-weight:800;white-space:nowrap;}
-  .hero-chip .city{color:var(--magenta);font-weight:800;}
 
-  .applybar-pos{position:relative;}
-  .applybar{position:absolute;left:50%;bottom:0;transform:translate(-50%,50%);width:min(1100px,calc(100% - 40px));z-index:8;
-    background:var(--ink);border-radius:20px;padding:16px clamp(16px,2vw,24px);display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-    box-shadow:0 34px 70px -32px rgba(35,28,32,.6);}
-  .applybar .lab{color:#fff;font-weight:800;font-size:1.02rem;white-space:nowrap;}
-  .applybar .field{flex:1 1 130px;min-width:0;}
-  .applybar input,.applybar select{width:100%;border:none;border-radius:10px;padding:12px 14px;font-family:inherit;font-size:.92rem;background:#fff;color:var(--ink);}
-  .applybar input::placeholder{color:#aaa;}
-  .applybar .agree{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.78);font-size:.82rem;white-space:nowrap;}
-  .applybar .agree input{width:16px;height:16px;accent-color:var(--magenta);}
-  .applybar .agree a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
-  .applybar .submit{flex:0 0 auto;background:var(--magenta);color:#fff;border:none;border-radius:12px;padding:13px 26px;font-weight:800;font-size:.96rem;transition:background .2s,transform .2s;}
-  .applybar .submit:hover{background:var(--magenta-deep);transform:translateY(-2px);}
 
   .rail{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:150;display:flex;flex-direction:column;gap:13px;align-items:center;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.7);border-radius:20px;padding:14px 10px;box-shadow:0 22px 50px -28px rgba(60,40,46,.5);opacity:0;pointer-events:none;transition:opacity .35s ease;}
   .rail.show{opacity:1;pointer-events:auto;}
@@ -247,9 +224,6 @@
     .hero-grid{grid-template-columns:1fr;min-height:auto;padding-bottom:130px;text-align:center;}
     .hero p.lead{margin-left:auto;margin-right:auto;}
     .hero-actions,.hero-dots{justify-content:center;}
-    .hero-visual{order:-1;margin-bottom:8px;}
-    .hero-chip{left:50%;transform:translateX(-50%);}
-    .hero-visual .hero-feature{width:min(420px,68%);}
     .hero-arrow{display:none;}
     .pgrid,.steps{grid-template-columns:1fr;}
     .rail{flex-direction:column;top:auto;bottom:88px;right:20px;left:auto;transform:none;background:rgba(255,255,255,.94);padding:12px 8px;border-radius:20px;box-shadow:var(--shadow);gap:10px;}
@@ -257,9 +231,6 @@
     .rail-item .ic{width:40px;height:40px;border-radius:12px;}
     .rail .top span{font-size:1rem;}
     .ct-launcher{background:var(--magenta-deep);}
-    .applybar{flex-direction:column;align-items:stretch;}
-    .applybar .field{flex:1 1 auto;}
-    .applybar .agree{justify-content:center;}
     .sec-head h2,.sec-head p,.rv-head h2,.rv-head p,.pitem h4,.pitem p{word-break:keep-all;overflow-wrap:break-word;}
     .pr-break{display:inline;}
     .pitem{text-align:left;}
@@ -414,13 +385,9 @@
   @keyframes marq{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   @media(prefers-reduced-motion:reduce){.marq-track{animation:none;}}
 
-  /* mobile: keep quick-apply bar in normal flow so agreement + submit are never clipped */
+  /* 모바일에서 히어로 아래 여백을 줄입니다. */
   @media(max-width:880px){
     .hero{overflow:visible;}
-    .hero .wrap.applybar-pos{position:static;padding-bottom:32px;}
-    .applybar{position:static;transform:none;left:auto;right:auto;bottom:auto;width:100%;margin:20px auto 0;}
-    .applybar .submit{width:100%;padding:15px;}
-    .applybar .agree{justify-content:flex-start;}
     .hero-grid{padding-bottom:30px;}
   }
 
@@ -445,19 +412,10 @@
   .foot-bottom .copy{white-space:nowrap;color:#fff;}
   @media(max-width:640px){.foot-bottom{flex-direction:column;align-items:flex-start;} .foot-bottom .biz .sep{margin:0 6px;}}
 
-  a.hero-chip{text-decoration:none;color:inherit;cursor:pointer;display:block;transition:transform .2s,box-shadow .2s;}
-  a.hero-chip:hover{transform:translateY(-3px);box-shadow:0 22px 44px -22px rgba(35,20,30,.45);}
 
-  @media(max-width:880px){
-    .hero .wrap.applybar-pos{position:relative;z-index:3;padding-bottom:32px;}
-    .applybar{position:static;transform:none;left:auto;right:auto;bottom:auto;top:auto;width:100%;margin:18px auto 0;}
-  }
 
-  .hero-feature{display:block;position:relative;width:min(420px,86%);margin:0 auto;text-decoration:none;color:inherit;cursor:pointer;transition:transform .25s;}
-  .hero-feature:hover{transform:translateY(-3px);}
-  .hero-feature:hover .hero-chip{box-shadow:0 24px 48px -22px rgba(35,20,30,.5);}
 
-  .apply-btn,.modal-submit,.applybar .submit{border:none;outline:none;}
+  .apply-btn,.modal-submit{border:none;outline:none;}
 
   /* ===== privacy consent modal ===== */
   .pmodal[hidden]{display:none;}
@@ -560,29 +518,6 @@
         <a href="/events/" class="btn">행사 보러가기</a>
       </div>
     </div>
-    <div class="hero-visual reveal">
-      <a class="hero-feature" id="heroFeature" href="/events/" aria-label="추천 공연 자세히 보기">
-        <div class="poster"><img id="heroPosterImg" src="/images/deardayclass-02.jpg" alt="이번 주 추천 행사"></div>
-        <div class="hero-chip">
-          <div class="t">이번 주 추천 행사</div>
-          <div class="n" id="heroChipName">이상준 힐링토크쇼</div>
-          <div class="s" id="heroChipSub">07.02 THU · <span class="city">성남</span> · <span class="free">전액 무료</span></div>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div class="wrap applybar-pos">
-    <form id="apply" class="applybar">
-      <span class="lab">빠른 예약 신청</span>
-      <div class="field"><input type="text" id="qaName" placeholder="이름" aria-label="이름" autocomplete="name"></div>
-      <div class="field"><input type="tel" id="qaPhone" placeholder="연락처" aria-label="연락처" autocomplete="tel"></div>
-      <!-- 일정은 관리자 [행사 관리] 자료로 quick-apply.js 가 채웁니다. -->
-      <div class="field"><select id="qaSession" aria-label="신청 일정 선택">
-        <option value="">신청 일정 선택</option>
-      </select></div>
-      <label class="agree"><input type="checkbox" id="qaAgree"> <a href="#" id="privacyLink" class="js-privacy-link">개인정보 수집 및 이용 동의</a></label>
-      <button class="submit" type="submit">신청하기</button>
-    </form>
   </div>
 </section>
 
@@ -857,7 +792,6 @@
 <script src="/assets/hero-banner.js?v=20260909-alpha-1"></script>
 <script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
-<script src="/assets/quick-apply.js?v=20260903-dd-events-1"></script>
 <script src="/assets/events-renderer.js?v=20260909-category-2"></script>
 
 <script>
@@ -871,7 +805,6 @@
   const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(Math.min(i,6)*60)+'ms';io.observe(el);});
   document.querySelectorAll('.ex-book').forEach(b=>b.addEventListener('click',()=>{const t=b.textContent;b.textContent='신청 접수';b.disabled=true;setTimeout(()=>{b.textContent=t;b.disabled=false;},1400);}));
-  document.querySelector('.applybar .submit').addEventListener('click',function(){const b=this;const t=b.textContent;b.textContent='접수 완료';setTimeout(()=>b.textContent=t,1500);});
 
   (function(){
     const tabs=[...document.querySelectorAll('.tab')];
@@ -971,7 +904,7 @@
     btn.addEventListener('click',()=>{const willOpen=box.hidden;box.hidden=!box.hidden;if(willOpen)ctShowView('greet');});
     ctAsk&&ctAsk.addEventListener('click',()=>ctShowView('chat'));
     close.addEventListener('click',()=>{box.hidden=true;});
-    form.addEventListener('submit',e=>{e.preventDefault();const v=txt.value.trim();if(!v)return;add(v,'user');txt.value='';setTimeout(()=>add('문의 주셔서 감사합니다! 담당자가 확인 후 빠르게 안내드릴게요. 행사 신청은 상단 메뉴 또는 히어로의 빠른 예약 신청에서도 가능합니다.','bot'),500);});
+    form.addEventListener('submit',e=>{e.preventDefault();const v=txt.value.trim();if(!v)return;add(v,'user');txt.value='';setTimeout(()=>add('문의 주셔서 감사합니다! 담당자가 확인 후 빠르게 안내드릴게요. 행사 신청은 상단 메뉴에서 하실 수 있습니다.','bot'),500);});
   })();
 
   (function(){
@@ -1027,67 +960,6 @@
   sa.querySelectorAll('[data-close]').forEach(function(el){el.addEventListener('click',shut);});
   document.getElementById('siteAlertClose').addEventListener('click',shut);
   addEventListener('keydown',function(e){ if(e.key==='Escape'&&!sa.hidden) shut(); });
-})();
-</script>
-<script>
-(function(){
-  var af=document.getElementById('apply');
-  if(!af) return;
-  af.addEventListener('submit',function(e){
-    e.preventDefault();
-    var phoneEl=af.querySelector('input[type="tel"]');
-    var phone=phoneEl?phoneEl.value.trim():'';
-    if(!/^\d{2,3}-\d{3,4}-\d{4}$/.test(phone)){
-      if(window.siteAlert) siteAlert('연락처는 숫자만 정확하게 입력해주세요. (예: 010-1234-5678)'); else alert('연락처는 숫자만 정확하게 입력해주세요. (예: 010-1234-5678)');
-      if(phoneEl) phoneEl.focus();
-    }
-  });
-})();
-</script>
-<script>
-(function(){
-  var WD=['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  var today=new Date(); today.setHours(0,0,0,0);
-  var dow=today.getDay();
-  var diffToMon=(dow===0?-6:1-dow);
-  var monday=new Date(today); monday.setDate(today.getDate()+diffToMon);
-  var sunday=new Date(monday); sunday.setDate(monday.getDate()+6);
-  var cards=[].slice.call(document.querySelectorAll('a.ex[data-cat="공연"],a.ex[data-cat="토크/코미디"]'));
-  var pool=[];
-  cards.forEach(function(c){
-    var dr=c.querySelector('.daterange'); if(!dr) return;
-    var m=dr.textContent.match(/(\d{4})\.(\d{2})\.(\d{2})/); if(!m) return;
-    var d=new Date(+m[1],+m[2]-1,+m[3]); d.setHours(0,0,0,0);
-    pool.push({d:d,
-      title:((c.querySelector('h3')||{}).textContent||'').trim(),
-      venue:((c.querySelector('.venue')||{}).textContent||'').trim(),
-      href:c.getAttribute('href'),
-      img:(c.querySelector('img')||{}).src||''});
-  });
-  var up=pool.filter(function(e){return e.d>=today && e.d<=sunday;}).sort(function(a,b){return a.d-b.d;});
-  var feat=document.getElementById('heroFeature');
-  var img=document.getElementById('heroPosterImg');
-  var nm=document.getElementById('heroChipName');
-  var sub=document.getElementById('heroChipSub');
-  if(!up.length){ if(feat){ feat.removeAttribute('href'); feat.style.cursor='default'; }
-    if(nm) nm.textContent='공연 준비 중';
-    if(sub) sub.textContent='곧 찾아옵니다';
-    return; }
-  function pad(x){return (x<10?'0':'')+x;}
-  function render(i){
-    var p=up[i], d=p.d;
-    var label=pad(d.getMonth()+1)+'.'+pad(d.getDate())+' '+WD[d.getDay()];
-    var city=(p.venue.split(/\s+/)[0])||'';
-    if(feat) feat.setAttribute('href', p.href);
-    if(img && p.img){ img.style.opacity='0'; setTimeout(function(){ img.src=p.img; img.alt=p.title+' - '+p.venue; img.style.opacity='1'; },200); }
-    if(nm) nm.textContent=p.title;
-    if(sub) sub.innerHTML=label+' · <span class="city">'+city+'</span> · <span class="free">전액 무료</span>';
-  }
-  var slideIdx=0;
-  render(slideIdx);
-  if(up.length>1){
-    setInterval(function(){ slideIdx=(slideIdx+1)%up.length; render(slideIdx); },5000);
-  }
 })();
 </script>
 <div class="modal" id="cancelModal" hidden>
