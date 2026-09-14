@@ -41,7 +41,9 @@
     faqs: [],
     events: [],
     eventPage: null,
-    eventPageEnabled: false
+    eventPageEnabled: false,
+    reviews: [],
+    reviewSettings: null
   };
   var loaded = false;
   var lastError = null;
@@ -440,6 +442,81 @@
     return (api && typeof api.currentSiteId === 'function' && api.currentSiteId()) || '';
   }
 
+  // ── 후기 ──────────────────────────────────────────────────────────
+  //
+  // 표는 site_reviews, 메뉴 이름과 사진 사용 여부는 sites 표에 있습니다.
+  // 후기 종류는 form_options 의 review_category 묶음을 씁니다(브랜드마다 다릅니다).
+  //
+  // placement — 이 후기를 어느 화면에 둘지
+  //   home 첫 화면 · page 후기 페이지 · both 둘 다
+  //   리더스는 두 화면의 후기가 서로 다른 글이라 나누어 둡니다.
+  //   디어데이는 첫 화면 하나뿐이라 늘 home 입니다.
+  var REVIEW_PLACEMENTS = { home: '첫 화면', page: '후기 페이지', both: '둘 다' };
+  var REVIEW_CATEGORY_GROUP = 'review_category';
+
+  function normalizeReview(source) {
+    var item = Object.assign({}, source || {});
+    item.id = text(item.id);
+    item.category = text(item.category);
+    item.title = text(item.title);
+    item.authorName = text(item.authorName);
+    item.authorIntro = text(item.authorIntro);
+    item.authorContext = text(item.authorContext);
+    item.rating = Math.max(1, Math.min(5, toNumber(item.rating, 5)));
+    item.bodyLead = text(item.bodyLead);
+    item.body = text(item.body);
+    item.imageUrl = normalizeAssetUrl(item.imageUrl);
+    item.placement = REVIEW_PLACEMENTS[text(item.placement)] ? text(item.placement) : 'home';
+    item.sortOrder = toNumber(item.sortOrder, 0);
+    item.isActive = toBoolean(item.isActive, true);
+    return item;
+  }
+
+  function reviewFromRow(row) {
+    return normalizeReview({
+      id: row.id,
+      category: row.category,
+      title: row.title,
+      authorName: row.author_name,
+      authorIntro: row.author_intro,
+      authorContext: row.author_context,
+      rating: row.rating,
+      bodyLead: row.body_lead,
+      body: row.body,
+      imageUrl: row.image_url,
+      placement: row.placement,
+      sortOrder: row.sort_order,
+      isActive: row.is_active
+    });
+  }
+
+  function reviewToRow(source) {
+    var item = normalizeReview(source);
+    return {
+      id: item.id,
+      category: item.category,
+      title: item.title,
+      author_name: item.authorName,
+      author_intro: item.authorIntro,
+      author_context: item.authorContext,
+      rating: item.rating,
+      body_lead: item.bodyLead,
+      body: item.body,
+      image_url: item.imageUrl || null,
+      placement: item.placement,
+      sort_order: item.sortOrder,
+      is_active: item.isActive
+    };
+  }
+
+  function normalizeReviewSettings(source) {
+    var next = Object.assign({}, source || {});
+    return {
+      label: text(next.label),
+      photoEnabled: toBoolean(next.photoEnabled, false)
+    };
+  }
+
   function sortByOrder(a, b) {
     var order = toNumber(a.sortOrder, 0) - toNumber(b.sortOrder, 0);
     if (order !== 0) return order;
@@ -454,6 +531,8 @@
     cache.events = (next.events || []).map(normalizeEvent).sort(sortByOrder);
     cache.eventPage = normalizeEventPage(next.eventPage);
     cache.eventPageEnabled = toBoolean(next.eventPageEnabled, false);
+    cache.reviews = (next.reviews || []).map(normalizeReview).sort(sortByOrder);
+    cache.reviewSettings = normalizeReviewSettings(next.reviewSettings);
     loaded = true;
     lastError = null;
     notify();
@@ -474,7 +553,8 @@
       api.selectRows('site_faqs', { select: '*' }).catch(function () { return []; }),
       api.selectRows('site_events', { select: '*' }).catch(function () { return []; }),
       // sites 는 브랜드로 걸러 읽는 표가 아니라 세 줄뿐입니다. 지금 브랜드 줄만 골라 씁니다.
-      api.selectRows('sites', { select: 'id,event_page_enabled,event_page' }).catch(function () { return []; })
+      api.selectRows('sites', { select: 'id,event_page_enabled,event_page,reviews_label,reviews_photo_enabled' }).catch(function () { return []; }),
+      api.selectRows('site_reviews', { select: '*' }).catch(function () { return []; })
     ]);
     var siteId = currentSiteId();
     var siteRow = (rows[5] || []).filter(function (row) { return row && row.id === siteId; })[0] || {};
@@ -485,7 +565,9 @@
       faqs: (rows[3] || []).map(faqFromRow),
       events: (rows[4] || []).map(eventFromRow),
       eventPage: siteRow.event_page,
-      eventPageEnabled: siteRow.event_page_enabled
+      eventPageEnabled: siteRow.event_page_enabled,
+      reviews: (rows[6] || []).map(reviewFromRow),
+      reviewSettings: { label: siteRow.reviews_label, photoEnabled: siteRow.reviews_photo_enabled }
     });
   }
 
@@ -680,6 +762,59 @@
     return refresh();
   }
 
+  // placement 가 'both' 인 후기는 두 화면에 모두 나옵니다.
+  function getReviews(placement, includeInactive) {
+    return cache.reviews.filter(function (item) {
+      if (!includeInactive && !item.isActive) return false;
+      if (!placement) return true;
+      return item.placement === placement || item.placement === 'both';
+    }).map(clone);
+  }
+
+  function getReviewSettings() {
+    return clone(cache.reviewSettings);
+  }
+
+  function getReviewCategories(includeInactive) {
+    return getOptions(REVIEW_CATEGORY_GROUP, includeInactive);
+  }
+
+  async function saveReview(source) {
+    var item = normalizeReview(source);
+    if (!item.id) item.id = api.createId('review');
+    await api.upsertRows('site_reviews', [reviewToRow(item)], 'id');
+    return refresh();
+  }
+
+  async function deleteReview(id) {
+    if (!id) return getState();
+    await api.deleteRows('site_reviews', { id: id });
+    return refresh();
+  }
+
+  async function saveReviewOrder(ids) {
+    var rows = orderedRows(cache.reviews, ids, reviewToRow);
+    if (!rows.length) return getState();
+    await api.upsertRows('site_reviews', rows, 'id');
+    return refresh();
+  }
+
+  // 메뉴 이름과 사진 사용 여부는 후기 한 건이 아니라 sites 표에 있습니다.
+  async function saveReviewSettings(patch) {
+    var siteId = currentSiteId();
+    if (!siteId) throw new Error('브랜드를 먼저 고르세요.');
+    var next = {};
+    if (patch && Object.prototype.hasOwnProperty.call(patch, 'label')) {
+      next.reviews_label = text(patch.label);
+    }
+    if (patch && Object.prototype.hasOwnProperty.call(patch, 'photoEnabled')) {
+      next.reviews_photo_enabled = toBoolean(patch.photoEnabled, false);
+    }
+    if (!Object.keys(next).length) return getState();
+    await api.updateRows('sites', { id: siteId }, next);
+    return refresh();
+  }
+
   async function uploadAsset(file, prefix, options) {
     if (!api || !file) throw new Error('업로드할 파일이 없습니다.');
     var path = api.createStoragePath(prefix || 'site-assets', file.name);
@@ -726,6 +861,15 @@
     saveEventOrder: saveEventOrder,
     deleteEvent: deleteEvent,
     saveEventPage: saveEventPage,
+    reviewPlacements: clone(REVIEW_PLACEMENTS),
+    reviewCategoryGroup: REVIEW_CATEGORY_GROUP,
+    getReviews: getReviews,
+    getReviewSettings: getReviewSettings,
+    getReviewCategories: getReviewCategories,
+    saveReview: saveReview,
+    saveReviewOrder: saveReviewOrder,
+    deleteReview: deleteReview,
+    saveReviewSettings: saveReviewSettings,
     uploadAsset: uploadAsset
   };
 

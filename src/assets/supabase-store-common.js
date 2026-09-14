@@ -19,6 +19,7 @@
     site_banners: true,
     site_faqs: true,
     site_events: true,
+    site_reviews: true,
     instructors: true,
     form_options: true
   };
