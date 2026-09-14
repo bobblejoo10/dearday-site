@@ -104,12 +104,19 @@
                        원본이 그만큼 가로로 길면 그 여백까지 그림으로 채웁니다.
                        원본에 없는 만큼은 늘리지 않습니다(원본 비와 max-width:100% 로 제한).
                        그래서 16:9 칸 안에 보이는 그림은 관리자 미리보기와 똑같습니다.
+       --hero-w        히어로 칸의 폭, --hero-h 는 그 높이입니다.
+                       배경 폭을 히어로 높이에서 재려고 따로 둡니다.
+                       폭을 aspect-ratio 로 잡았더니, 화면이 좁아 max-width 에 걸릴 때
+                       높이가 비를 맞추려고 같이 줄어서 배경이 히어로보다 납작해졌습니다(실측).
+                       그래서 높이는 100% 로 고정하고 폭만 셉니다.
        --hero-hw       세로/가로 비. 세부 위치의 상하 값을 잴 때 씁니다. */
   .hero-band{--hero-avail:calc(var(--hero-vh) * 1svh);
     --hero-src-ar:0;--hero-base-ar:calc(16 / 9);
     --hero-media-ar:max(var(--hero-base-ar), var(--hero-src-ar));--hero-hw:calc(1 / var(--hero-base-ar));
+    --hero-w:min(100%, calc(var(--hero-avail) * var(--hero-base-ar)));
+    --hero-h:calc(var(--hero-w) / var(--hero-base-ar));
     position:relative;overflow:hidden;
-    background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);}
+    background:var(--pink-3,#FFF2F7);}
   /* 문구 칸도 히어로 폭 기준입니다. .wrap 의 고정 폭(1280px)과 창 너비 여백(vw)을
      그대로 두면 히어로 폭이 바뀔 때 문구 시작 위치가 제각각이 됩니다.
      실측 : 히어로 1440 에서 5.56%, 1783 에서 14.11%, 1228 에서 0% 로 어긋났습니다. */
@@ -313,9 +320,11 @@
   /* 배경과 오버레이 — 높이는 히어로와 같고, 폭은 원본 비만큼만 넓힙니다.
      aspect-ratio 로 폭이 높이 x 원본비 가 되고, max-width:100% 가 띠 폭에서 자릅니다.
      그래서 여백이 있는 만큼만 채워지고, 원본에 없는 만큼은 늘어나지 않습니다. */
-  .hero-video,.hero-overlay{position:absolute;top:0;bottom:0;left:50%;height:100%;width:auto;
-    aspect-ratio:var(--hero-media-ar);max-width:100%;}
-  .hero-video{object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
+  .hero-video,.hero-overlay{position:absolute;top:0;left:50%;height:100%;
+    width:min(100%, calc(var(--hero-h) * var(--hero-media-ar)));}
+  /* 등록된 것이 없을 때 보이는 바탕입니다. 예전에 .hero 가 갖고 있던 그 색입니다. */
+  .hero-video{background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);
+    object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
     animation:heroBgZoom calc(var(--hero-bg-zoom-secs) * 1s) ease-in-out infinite alternate;}
   @keyframes heroBgZoom{from{transform:translateX(-50%) scale(1);}
                         to{transform:translateX(-50%) scale(var(--hero-bg-zoom));}}
@@ -603,7 +612,7 @@
 <!-- banner-layout.js 는 <head> 에서 읽어야 합니다. 히어로 기본값(--hero-*)을
      :root 규칙으로 먼저 깔아 두는데, 몸통 끝에서 읽으면 히어로를 한 번 그린 뒤에
      값이 들어와 화면이 덜컥 움직입니다. -->
-<script src="/assets/banner-layout.js?v=20260914-bleed-1"></script>
+<script src="/assets/banner-layout.js?v=20260914-bleed-2"></script>
 </head>
 <body>
 <a href="#upcoming" class="skip">본문으로 건너뛰기</a>
