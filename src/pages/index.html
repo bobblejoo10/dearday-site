@@ -64,6 +64,8 @@
     border-bottom:1px solid transparent;transition:background .3s,border-color .3s,box-shadow .3s;}
   header.nav.scrolled{background:rgba(255,255,255,.93);backdrop-filter:blur(12px);
     border-bottom-color:var(--line);box-shadow:0 8px 30px -26px rgba(216,30,99,.3);}
+  /* 메뉴 높이 — 안쪽 76 + 아래 테두리 1 = 77. 히어로가 문구 자리를 비울 때 씁니다. */
+  :root{--nav-h:77px;}
   .nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px;}
   .brand{display:flex;align-items:center;}
   .brand img{height:38px;width:auto;display:block;}
@@ -127,8 +129,19 @@
   /* 문구 칸도 히어로 폭 기준입니다. .wrap 의 고정 폭(1280px)과 창 너비 여백(vw)을
      그대로 두면 히어로 폭이 바뀔 때 문구 시작 위치가 제각각이 됩니다.
      실측 : 히어로 1440 에서 5.56%, 1783 에서 14.11%, 1228 에서 0% 로 어긋났습니다. */
-  .hero-grid{display:grid;grid-template-columns:1fr;gap:2.8cqw;align-items:center;
-    height:100%;max-width:none;padding:0 5.56cqw;}
+  /* 문구가 상단 메뉴 밑으로 들어가지 않게 합니다.
+     위아래에 메뉴 높이만큼의 최소 자리(minmax)를 두고, 남는 자리는 둘이 똑같이 나눕니다.
+       자리가 넉넉하면 : 위 = 아래 = (히어로높이 - 문구높이) / 2  → 지금과 똑같은 가운데
+       자리가 모자라면 : 위 칸이 메뉴 높이에서 더는 안 줄어듦   → 문구가 아래로 밀림
+     그래서 평소 모습은 그대로이고, 좁아져서 닿을 때만 밀립니다. */
+  /* height:100% 를 쓰지 않습니다. 크로미움에서 aspect-ratio 로 높이가 정해진 칸 안에서는
+     100% 가 실제 높이와 다르게 잡힙니다(실측: 히어로 765px 인데 이 칸이 535px).
+     그러면 위아래로 비워 두는 자리도 그만큼 어긋납니다. inset:0 은 정확합니다. */
+  .hero .wrap.hero-grid{position:absolute;inset:0;z-index:2;
+    display:grid;grid-template-columns:1fr;
+    grid-template-rows:minmax(var(--nav-h),1fr) auto minmax(var(--nav-h),1fr);
+    height:auto;max-width:none;padding:0 5.56cqw;box-sizing:border-box;}
+  .hero-copy{grid-row:2;}
   /* 문구 칸은 글 길이에 맞춰 늘고 줄어듭니다(히어로 폭까지). 고정 폭으로 두면
      줄을 바꾸지 않은 자리에서도 글이 접혔습니다. 단추 줄도 이 칸 안에 있어
      같은 폭을 쓰고, [단추 정렬] 은 이 폭 안에서 움직입니다. */
@@ -159,9 +172,10 @@
   /* ===== 배너 문구·단추 자리 (관리자에서 고른 값) =====
      관리자에서 고르지 않으면 아래 클래스가 안 붙어서 지금 모습이 그대로 유지됩니다.
      문구는 배너 전체 폭 안에서 움직입니다. */
-  .hero.hero-v-top .hero-copy{align-self:start;}
-  .hero.hero-v-middle .hero-copy{align-self:center;}
-  .hero.hero-v-bottom .hero-copy{align-self:end;}
+  /* 세로 자리 — 위/아래 칸의 크기로 정합니다. 어느 쪽이든 메뉴 높이는 늘 비워 둡니다. */
+  .hero.hero-v-top .hero-grid{grid-template-rows:var(--nav-h) auto minmax(var(--nav-h),1fr);}
+  .hero.hero-v-middle .hero-grid{grid-template-rows:minmax(var(--nav-h),1fr) auto minmax(var(--nav-h),1fr);}
+  .hero.hero-v-bottom .hero-grid{grid-template-rows:minmax(var(--nav-h),1fr) auto var(--nav-h);}
   .hero.hero-h-left .hero-copy{justify-self:start;}
   .hero.hero-h-center .hero-copy{justify-self:center;}
   .hero.hero-h-right .hero-copy{justify-self:end;}
@@ -606,9 +620,9 @@
     /* 모바일 자리 — 관리자에서 모바일을 따로 고르면 붙습니다.
        안 고르면 PC 값이 그대로 들어와(banner-layout.js) 같은 자리가 됩니다.
        위의 가운데 정렬 규칙보다 뒤에 있고 더 자세해서 이깁니다. */
-    .hero.hero-m-v-top .hero-copy{align-self:start;}
-    .hero.hero-m-v-middle .hero-copy{align-self:center;}
-    .hero.hero-m-v-bottom .hero-copy{align-self:end;}
+    .hero.hero-m-v-top .hero-grid{grid-template-rows:var(--nav-h) auto minmax(var(--nav-h),1fr);}
+    .hero.hero-m-v-middle .hero-grid{grid-template-rows:minmax(var(--nav-h),1fr) auto minmax(var(--nav-h),1fr);}
+    .hero.hero-m-v-bottom .hero-grid{grid-template-rows:minmax(var(--nav-h),1fr) auto var(--nav-h);}
     .hero.hero-m-h-left .hero-copy{justify-self:start;}
     .hero.hero-m-h-center .hero-copy{justify-self:center;}
     .hero.hero-m-h-right .hero-copy{justify-self:end;}
