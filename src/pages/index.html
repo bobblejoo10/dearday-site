@@ -53,10 +53,17 @@
 
   /* 상단 메뉴는 히어로 위에 겹칩니다(리더스와 같은 방식). 자리를 차지하지 않으므로
      히어로가 화면 맨 위에서 시작하고, --hero-vh 안에 메뉴까지 들어갑니다.
-     바탕과 흐림 효과는 그대로 두어 지금 모습을 지킵니다. */
-  header.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(12px);
-    border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s;}
-  header.nav.scrolled{border-bottom-color:var(--line);box-shadow:0 8px 30px -26px rgba(216,30,99,.3);}
+
+     맨 위(히어로 위)에서는 바탕을 옅게 해서 히어로가 비쳐 보이게 합니다.
+     .93 이면 거의 흰 판이라 히어로 문구를 덮어 버렸습니다(좁은 화면에서 특히).
+     스크롤을 내리면(.scrolled) 예전처럼 진하게 돌아가 글자가 잘 읽힙니다.
+     리더스도 같은 방식입니다 — 맨 위는 투명, 내리면 흰 바탕(.nav.scrolled).
+     리더스처럼 완전 투명으로 두지 않는 이유는, 이 메뉴의 글자·로고가 진한 색이라
+     어두운 히어로 영상 위에서 안 보이게 되기 때문입니다. */
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.55);backdrop-filter:blur(10px);
+    border-bottom:1px solid transparent;transition:background .3s,border-color .3s,box-shadow .3s;}
+  header.nav.scrolled{background:rgba(255,255,255,.93);backdrop-filter:blur(12px);
+    border-bottom-color:var(--line);box-shadow:0 8px 30px -26px rgba(216,30,99,.3);}
   .nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px;}
   .brand{display:flex;align-items:center;}
   .brand img{height:38px;width:auto;display:block;}
