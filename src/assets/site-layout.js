@@ -160,6 +160,73 @@
     if (typeof store.subscribe === 'function') store.subscribe(paint);
   }
 
+  // ── 해시로 들어왔을 때 자리 맞추기 ────────────────────────────────
+  //
+  // 주소에 #promise · #reviews · #faq 가 붙어 있으면 브라우저는 HTML 을 읽자마자
+  // 그 자리로 뜁니다. 그런데 그보다 위에 있는 것들은 그 뒤에 채워집니다 —
+  // 행사 목록(Supabase), 갤러리 그림, 히어로 영상, 그리고 후기·FAQ 도 그렇습니다.
+  // 위가 자라면 목표가 아래로 밀리는데 브라우저는 다시 맞춰 주지 않습니다.
+  //
+  // 실측 — /#reviews 로 들어가면 849 ~ 1286px 어긋났습니다. 들어갈 때마다 달랐습니다.
+  // 같은 페이지 안에서 누를 때는 이미 다 채워져 있어서 문제가 없었습니다.
+  //
+  // 그래서 높이가 더 안 바뀔 때까지 지켜보며 따라 붙습니다.
+  // 자리는 같은 페이지에서 누를 때와 똑같이 잡습니다(칸 맨 위를 화면 맨 위로).
+  // 그동안 사람이 직접 스크롤하면 그 뜻이 우선이라 바로 멈춥니다.
+  var ANCHOR_STEP_MS = 120;     // 얼마나 자주 다시 재는지
+  var ANCHOR_STEADY_MS = 480;   // 높이가 이만큼 그대로면 다 자란 것으로 봅니다
+  var ANCHOR_GIVEUP_MS = 3000;  // 아무리 늦어도 여기서 그만둡니다
+
+  function anchorTarget() {
+    var hash = String(global.location.hash || '');
+    if (!hash || hash === '#') return null;
+    var id = hash.slice(1);
+    try { id = decodeURIComponent(id); } catch (error) { /* 그대로 씁니다 */ }
+    return id ? document.getElementById(id) : null;
+  }
+
+  function settleAnchor() {
+    var target = anchorTarget();
+    if (!target) return;
+
+    var startedAt = Date.now();
+    var lastHeight = -1;
+    var steadyFor = 0;
+    var timer = null;
+    var stopped = false;
+
+    function stop() {
+      if (stopped) return;
+      stopped = true;
+      if (timer) { clearTimeout(timer); timer = null; }
+      ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
+        global.removeEventListener(type, stop);
+      });
+    }
+
+    // 사람이 손대면 바로 물러납니다.
+    ['wheel', 'touchstart', 'keydown'].forEach(function (type) {
+      global.addEventListener(type, stop, { passive: true });
+    });
+
+    function step() {
+      if (stopped) return;
+      var height = document.documentElement.scrollHeight;
+      if (height === lastHeight) steadyFor += ANCHOR_STEP_MS;
+      else { steadyFor = 0; lastHeight = height; }
+
+      var top = target.getBoundingClientRect().top + (global.pageYOffset || 0);
+      // behavior:'auto' — html 의 scroll-behavior:smooth 를 여기서만 끕니다.
+      // 안 그러면 따라붙을 때마다 화면이 미끄러져 어지럽습니다.
+      global.scrollTo({ top: Math.max(0, Math.round(top)), behavior: 'auto' });
+
+      if (steadyFor >= ANCHOR_STEADY_MS || Date.now() - startedAt > ANCHOR_GIVEUP_MS) return stop();
+      timer = setTimeout(step, ANCHOR_STEP_MS);
+    }
+
+    step();
+  }
+
   function renderAll() {
     renderNav();
     renderFooter();
@@ -178,5 +245,12 @@
   renderAll();
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderAll);
+  }
+
+  // 해시 자리 맞추기는 화면이 한 번 그려진 뒤에 시작합니다.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', settleAnchor);
+  } else {
+    settleAnchor();
   }
 })(window);
