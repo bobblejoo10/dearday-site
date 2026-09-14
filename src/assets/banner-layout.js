@@ -226,39 +226,6 @@
 
   // 원본 그림·영상의 가로세로 비를 히어로에 알려 줍니다.
   //
-
-  // ── 남는 여백을 원본으로 채웁니다 ──────────────────────
-  // 원본이 띠 폭까지 못 닿으면 좌우에 여백이 생깁니다. 그 자리에 같은 그림·영상을
-  // 띠 전체에 꽉 채워 흐리게 깔아 둡니다. 그 위에 제대로 된 크기의 원본이 올라가므로
-  // 가운데는 선명하고 가장자리만 번져 보입니다.
-  //   kind : 'video' 또는 'img'
-  //   src  : 그 파일 주소. 비면 깔아 둔 것을 치웁니다.
-  function setBleed(heroEl, kind, src) {
-    var band = varTarget(heroEl);
-    if (!band) return;
-    var box = band.querySelector('.hero-bleed');
-    if (!box) return;
-    var url = String(src == null ? '' : src);
-    var tag = kind === 'video' ? 'video' : 'img';
-    if (!url) { box.textContent = ''; return; }
-    var cur = box.firstElementChild;
-    // 같은 것이면 다시 만들지 않습니다. 영상을 다시 만들면 처음부터 재생됩니다.
-    if (cur && cur.tagName.toLowerCase() === tag && cur.getAttribute('src') === url) return;
-    box.textContent = '';
-    var el = document.createElement(tag);
-    if (tag === 'video') {
-      ['muted', 'loop', 'playsinline', 'autoplay'].forEach(function (name) { el.setAttribute(name, ''); });
-      el.muted = true;                                   // 속성만으로는 안 먹는 브라우저가 있습니다
-      el.preload = 'auto';
-    } else {
-      el.setAttribute('alt', '');
-      el.setAttribute('aria-hidden', 'true');
-    }
-    el.setAttribute('src', url);
-    box.appendChild(el);
-    if (tag === 'video') { var p = el.play(); if (p && p.catch) p.catch(function () {}); }
-  }
-
   // 히어로 칸의 비는 늘 고정입니다(16:9 · 모바일 3:2). 이 값이 바꾸는 것은 배경 폭뿐입니다.
   // 화면이 고정 비보다 가로로 길면 히어로 좌우에 띠 여백이 생기는데, 원본이 그만큼
   // 가로로 길면 그 여백까지 그림으로 채웁니다. 원본에 없는 만큼은 늘리지 않습니다.
@@ -305,5 +272,5 @@
   }
 
   global.BannerLayout = { classes: classes, apply: apply, allClasses: all, heroText: heroText, applyVars: applyVars, heroDefaults: heroDefaults,
-    watchHeroMedia: watchHeroMedia, setSourceRatio: setSourceRatio, setBleed: setBleed };
+    watchHeroMedia: watchHeroMedia, setSourceRatio: setSourceRatio };
 })(window);

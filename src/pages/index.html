@@ -342,14 +342,6 @@
      영상이 아직 안 뜬 동안 보일 색은 영상 요소 자신의 바탕으로 옮겼습니다. */
   /* 배경 확대 — 관리자 [배경 확대] 값입니다. 100% 면 animation 이 제자리라 안 움직입니다.
      배율·시간 숫자는 banner-layout.js 한 곳에 있습니다. */
-  /* 남는 여백 채우기 — 같은 그림·영상을 띠 전체에 꽉 채워 흐리게 깝니다.
-     그 위에 제대로 된 크기의 원본이 올라가므로 가운데는 선명하고 가장자리만 번집니다.
-     DOM 에서 원본보다 앞에 있어 같은 z-index 라도 아래에 깔립니다.
-     scale 을 조금 키우는 이유 — 흐리게 하면 가장자리가 투명하게 빠져서 띠 색이 비칩니다. */
-  .hero-bleed{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-  .hero-bleed video,.hero-bleed img{position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;filter:blur(30px) saturate(1.15);transform:scale(1.15);}
-  @media(prefers-reduced-motion:reduce){.hero-bleed video{animation:none;}}
   /* 배경과 오버레이 — 높이는 히어로와 같고, 폭은 원본 비만큼만 넓힙니다.
      aspect-ratio 로 폭이 높이 x 원본비 가 되고, max-width:100% 가 띠 폭에서 자릅니다.
      그래서 여백이 있는 만큼만 채워지고, 원본에 없는 만큼은 늘어나지 않습니다. */
@@ -645,7 +637,7 @@
 <!-- banner-layout.js 는 <head> 에서 읽어야 합니다. 히어로 기본값(--hero-*)을
      :root 규칙으로 먼저 깔아 두는데, 몸통 끝에서 읽으면 히어로를 한 번 그린 뒤에
      값이 들어와 화면이 덜컥 움직입니다. -->
-<script src="/assets/banner-layout.js?v=20260914-bleed-3"></script>
+<script src="/assets/banner-layout.js?v=20260914-bleed-2"></script>
 </head>
 <body>
 <a href="#upcoming" class="skip">본문으로 건너뛰기</a>
@@ -655,8 +647,6 @@
 
 <!-- 히어로는 16:9 고정 칸이라 넓은 화면에서는 좌우에 여백이 생깁니다. 그 자리를 이 띠가 채웁니다. -->
 <div class="hero-band">
-  <!-- 남는 좌우 여백을 채울 흐린 배경. 내용은 banner-layout.js 가 채웁니다. -->
-  <div class="hero-bleed" aria-hidden="true"></div>
   <!-- 배경과 막은 히어로 칸이 아니라 띠 안에 둡니다. 그래야 화면이 16:9 보다
        가로로 길 때 좌우 여백까지 그림으로 채울 수 있습니다(원본이 가진 만큼만). -->
   <!-- 영상 주소는 관리자 [사이트 콘텐츠] → 배너에서 가져옵니다 (hero-banner.js). -->
@@ -943,7 +933,7 @@
 <script src="/assets/banner-cta.js?v=20260911-cta-1"></script>
 <script src="/assets/site-content-store.js"></script>
 <script src="/assets/public-media-overrides.js?v=20260908-r2-1"></script>
-<script src="/assets/hero-banner.js?v=20260914-bleed-3"></script>
+<script src="/assets/hero-banner.js?v=20260914-bleed-1"></script>
 <script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/events-renderer.js?v=20260909-category-2"></script>

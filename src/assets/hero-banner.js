@@ -101,8 +101,6 @@
       } else if (layout.setSourceRatio) {
         layout.setSourceRatio(hero, 0);               // 등록된 것이 없으면 기본 비로 되돌립니다
       }
-      // 영상이 없으면 포스터 그림으로 여백을 채웁니다. 영상이 있으면 아래에서 영상으로 바꿉니다.
-      if (layout.setBleed) layout.setBleed(hero, 'img', poster ? 미디어주소_(poster) : '');
     }
 
     // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 둘 다 없으면 페이지에 적힌 문구를 그대로 둡니다.
@@ -145,10 +143,6 @@
     if (video.getAttribute('src') === videoSrc) return;
     video.setAttribute('src', videoSrc);
     video.load();
-    // 남는 좌우 여백을 같은 영상으로 채웁니다(흐리게).
-    if (global.BannerLayout && global.BannerLayout.setBleed) {
-      global.BannerLayout.setBleed(document.querySelector('.hero'), 'video', videoSrc);
-    }
     // autoplay muted 라 대개 알아서 재생되지만, 늦게 붙는 경우를 위해 한 번 더 부릅니다.
     var attempt = video.play();
     if (attempt && typeof attempt.catch === 'function') attempt.catch(function () {});
