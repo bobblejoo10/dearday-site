@@ -18,6 +18,7 @@
     instructor_applications: true,
     site_banners: true,
     site_faqs: true,
+    site_events: true,
     instructors: true,
     form_options: true
   };
@@ -504,6 +505,7 @@
     normalizeError: normalizeError,
     hasConfig: hasConfig,
     makeError: makeError,
+    currentSiteId: function () { return SITE_ID; },
     createId: createId,
     createStoragePath: createStoragePath,
     selectRows: selectRows,

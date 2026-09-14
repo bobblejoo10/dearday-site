@@ -130,10 +130,41 @@
     dropLeftoverMounts();
   }
 
+  // [이벤트] 메뉴는 관리자에서 켜 두었을 때만 둡니다.
+  //   관리자 [홈페이지 관리 > 이벤트] 의 "이 브랜드에서 이벤트 페이지 사용"
+  //   -> sites 표의 event_page_enabled 칸
+  //
+  // 이 파일은 Supabase 를 직접 읽지 않습니다. 설정을 읽는 화면(SiteContentStore 를
+  // 불러온 화면)에서만 손댑니다. 못 읽는 화면에서는 메뉴를 그대로 둡니다 —
+  // 모르면서 지워 버리는 쪽이 더 나쁩니다.
+  function isEventPath() {
+    var path = String(location.pathname || '').replace(/\/+$/, '') || '/';
+    return path === '/event-review' || path === '/event-review/index.html';
+  }
+
+  function applyEventMenu() {
+    var store = global.SiteContentStore;
+    if (!store || typeof store.isEventPageEnabled !== 'function') return;
+    var paint = function () {
+      var on = store.isEventPageEnabled() === true;
+      var links = document.querySelectorAll('[data-nav-key="review"], [data-tab-key="review"]');
+      for (var i = 0; i < links.length; i++) {
+        links[i].hidden = !on;
+        links[i].style.display = on ? '' : 'none';
+      }
+      // 꺼져 있는데 주소로 바로 들어온 경우에는 첫 화면으로 보냅니다.
+      if (!on && isEventPath()) location.replace('/');
+    };
+    if (typeof store.ready === 'function') store.ready().then(paint).catch(function () {});
+    else paint();
+    if (typeof store.subscribe === 'function') store.subscribe(paint);
+  }
+
   function renderAll() {
     renderNav();
     renderFooter();
     renderChrome();
+    applyEventMenu();
   }
 
   global.DeardayLayout = {

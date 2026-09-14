@@ -393,6 +393,7 @@
 
   /* lightbox */
   .revent-list img{cursor:pointer;}
+  .rv-empty{grid-column:1/-1;text-align:center;color:#8a7f86;padding:48px 0;}
   .rv-item h3{font-size:1.04rem;font-weight:700;line-height:1.4;color:var(--ink);margin:14px 16px 20px;letter-spacing:-.02em;}
   .rv-item .venue{font-size:.88rem;color:#838383;margin:0 16px 16px;}
   #lightbox[hidden]{display:none;}
@@ -521,7 +522,7 @@
 </head>
 <body>
 <div data-site-nav></div>
-<script src="/assets/site-layout.js?v=20260909-logo-1"></script>
+<script src="/assets/site-layout.js?v=20260914-event-1"></script>
 
 <main>
   <div class="page-head"><div class="wrap"><span class="eyebrow">EVENT</span><h1>월별 <span class="mg">후기 이벤트</span></h1><p>디어데이클래스 참석 후 SNS 후기를 남기고 푸짐한 상품을 받아가세요!</p></div></div>
@@ -529,14 +530,6 @@
     <div class="revent-wrap">
       <div class="tabs reveal" role="tablist" aria-label="카테고리"><button class="tab active" data-cat="전체" role="tab" aria-selected="true">전체</button><button class="tab" data-cat="진행중" role="tab">진행중 이벤트</button><button class="tab" data-cat="종료" role="tab">종료된 이벤트</button></div>
       <div class="revent-list reveal">
-      <div class="rv-item is-ended" data-cat="종료"><div class="rv-imgwrap"><img src="/images/event-review-01.jpg" alt="디어데이 카톡채널추가 이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>카카오톡 채널 추가 이벤트</h3></div>
-      <div class="rv-item" data-cat="진행중"><div class="rv-imgwrap"><img src="/images/event-review-03.jpg" alt="디어데이클래스 7월 후기이벤트" data-extra="/images/event-review-04.jpg" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>7월 디어데이 후기 이벤트</h3></div>
-      <div class="rv-item" data-cat="진행중"><div class="rv-imgwrap"><img src="/images/event-review-05.jpg" alt="디어데이클래스 6월 후기이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>6월 디어데이 후기 이벤트</h3></div>
-      <div class="rv-item" data-cat="종료"><div class="rv-imgwrap"><img src="/images/event-review-06.jpg" alt="디어데이클래스 5월 후기이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>5월 디어데이 후기 이벤트</h3></div>
-      <div class="rv-item" data-cat="종료"><div class="rv-imgwrap"><img src="/images/event-review-07.jpg" alt="디어데이클래스 4월 후기이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>4월 디어데이 후기 이벤트</h3></div>
-      <div class="rv-item" data-cat="종료"><div class="rv-imgwrap"><img src="/images/event-review-08.jpg" alt="디어데이클래스 3월 후기이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>3월 디어데이 후기 이벤트</h3></div>
-      <div class="rv-item" data-cat="종료"><div class="rv-imgwrap"><img src="/images/event-review-09.jpg" alt="디어데이클래스 2월 후기이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>2월 디어데이 후기 이벤트</h3></div>
-      <div class="rv-item" data-cat="종료"><div class="rv-imgwrap"><img src="/images/event-review-10.jpg" alt="디어데이클래스 1월 후기이벤트" loading="lazy"><img class="rv-ended-badge" src="/images/event-review-02.png" alt="이벤트 종료" loading="lazy"></div><h3>1월 디어데이 후기 이벤트</h3></div>
       </div>
     </div>
   </section>
@@ -690,51 +683,7 @@
   cbForm&&cbForm.addEventListener('submit',e=>{e.preventDefault();const v=cbText.value.trim();if(!v)return;const u=document.createElement('div');u.className='cb-msg user';u.textContent=v;cbBody.appendChild(u);cbText.value='';setTimeout(()=>{const b=document.createElement('div');b.className='cb-msg bot';b.textContent='문의 주셔서 감사합니다! 담당자가 빠르게 확인 후 안내드리겠습니다.';cbBody.appendChild(b);cbBody.scrollTop=cbBody.scrollHeight;},500);cbBody.scrollTop=cbBody.scrollHeight;});
   const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{threshold:.1});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  (function(){
-    var now=new Date();
-    document.querySelectorAll('.revent-list .rv-item').forEach(function(item){
-      var h3=item.querySelector('h3');
-      if(!h3) return;
-      var m=h3.textContent.match(/(\d{1,2})월/);
-      if(!m) return;
-      var month=parseInt(m[1],10);
-      var cutoff=new Date(now.getFullYear(), month, 1);
-      var ended=now>=cutoff;
-      item.classList.toggle('is-ended', ended);
-      item.dataset.cat=ended?'종료':'진행중';
-    });
-  })();
-  (function(){const tabs=[...document.querySelectorAll('.tabs .tab')];const cards=[...document.querySelectorAll('.revent-list .rv-item')];function filter(cat){cards.forEach(c=>{c.style.display=(cat==='전체'||c.dataset.cat===cat)?'':'none';});}tabs.forEach(t=>t.addEventListener('click',()=>{tabs.forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-selected');});t.classList.add('active');t.setAttribute('aria-selected','true');filter(t.dataset.cat);}));filter('전체');})();
-
-  // ----- lightbox (expand one, blur the rest) -----
-  (function(){
-    const lb=document.getElementById('lightbox'); if(!lb) return;
-    const lbImgs=document.getElementById('lbImgs');
-    function open(img){
-      var extra=img.dataset.extra;
-      var srcs=extra?[img.currentSrc||img.src, extra]:[img.currentSrc||img.src];
-      var alt=img.alt||'';
-      var isKakao=alt==='디어데이 카톡채널추가 이벤트';
-      lb.classList.toggle('show-kakao', isKakao);
-      lb.classList.toggle('show-sns', !isKakao && /후기이벤트/.test(alt));
-      lb.classList.toggle('has-multi', srcs.length>1);
-      lbImgs.innerHTML='';
-      srcs.forEach(function(s){
-        var el=document.createElement('img');
-        el.src=s; el.alt=alt;
-        lbImgs.appendChild(el);
-      });
-      lb.hidden=false; document.body.classList.add('lb-open');
-    }
-    function close(){ lb.hidden=true; document.body.classList.remove('lb-open'); lb.classList.remove('show-kakao'); lb.classList.remove('show-sns'); lb.classList.remove('has-multi'); lbImgs.innerHTML=''; }
-    document.querySelectorAll('.revent-list img').forEach(function(img){
-      if(img.classList.contains('rv-ended-badge')) return;
-      img.addEventListener('click',function(){ open(img); });
-    });
-    lb.querySelectorAll('[data-lbclose]').forEach(el=>el.addEventListener('click',close));
-    document.getElementById('lbClose').addEventListener('click',close);
-    addEventListener('keydown',e=>{ if(e.key==='Escape'&&!lb.hidden) close(); });
-  })();
+  // 카드 그리기·탭·라이트박스는 event-review-renderer.js 가 맡습니다.
   (function(){
     const links=document.querySelectorAll('.js-privacy-link'), modal=document.getElementById('privacyModal'),
           back=document.getElementById('privacyModalBack'), close=document.getElementById('privacyModalClose');
@@ -762,6 +711,10 @@
     wireModal('.js-terms-link','termsModal','termsModalBack','termsModalClose');
   })();
 </script>
+<script src="/assets/supabase-store-common.js?v=20260914-event-1"></script>
+<script src="/assets/site-content-store.js?v=20260914-event-1"></script>
+<script src="/assets/public-media-overrides.js?v=20260908-r2-1"></script>
+<script src="/assets/event-review-renderer.js?v=20260914-event-1"></script>
 <script src="/assets/phone-format.js"></script>
 <div data-site-alert></div>
 <script>

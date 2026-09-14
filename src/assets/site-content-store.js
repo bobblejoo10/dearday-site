@@ -38,7 +38,10 @@
     banners: [],
     instructors: [],
     options: [],
-    faqs: []
+    faqs: [],
+    events: [],
+    eventPage: null,
+    eventPageEnabled: false
   };
   var loaded = false;
   var lastError = null;
@@ -361,6 +364,82 @@
     };
   }
 
+  // ── 이벤트 카드 ────────────────────────────────────────────────────
+  //
+  // 브랜드별 [이벤트] 페이지(디어데이 /event-review/)에 놓이는 카드입니다.
+  // 표는 site_events, 켜기/끄기와 상단 문구는 sites 표의 두 칸에 있습니다.
+  //
+  // 종료 여부는 저장하지 않습니다. 오늘 날짜와 종료일을 그때그때 견줍니다.
+  // 예전에는 제목에서 'N월' 을 뽑아 계산했는데, 제목을 바꾸면 어긋났습니다.
+  var EVENT_CTA_KINDS = { none: '없음', kakao: '카카오톡 채널 추가', sns: '인스타그램 바로가기' };
+
+  function normalizeEvent(source) {
+    var item = Object.assign({}, source || {});
+    item.id = text(item.id);
+    item.title = text(item.title);
+    item.imageUrl = normalizeAssetUrl(item.imageUrl);
+    item.extraImageUrl = normalizeAssetUrl(item.extraImageUrl);
+    item.ctaKind = EVENT_CTA_KINDS[text(item.ctaKind)] ? text(item.ctaKind) : 'none';
+    item.endAt = text(item.endAt).slice(0, 10);
+    item.sortOrder = toNumber(item.sortOrder, 0);
+    item.isActive = toBoolean(item.isActive, true);
+    return item;
+  }
+
+  function eventFromRow(row) {
+    return normalizeEvent({
+      id: row.id,
+      title: row.title,
+      imageUrl: row.image_url,
+      extraImageUrl: row.extra_image_url,
+      ctaKind: row.cta_kind,
+      endAt: row.end_at,
+      sortOrder: row.sort_order,
+      isActive: row.is_active
+    });
+  }
+
+  function eventToRow(source) {
+    var item = normalizeEvent(source);
+    return {
+      id: item.id,
+      title: item.title,
+      image_url: item.imageUrl,
+      extra_image_url: item.extraImageUrl || null,
+      cta_kind: item.ctaKind,
+      end_at: item.endAt || null,
+      sort_order: item.sortOrder,
+      is_active: item.isActive
+    };
+  }
+
+  // 오늘이 종료일을 지났으면 종료입니다. 종료일이 비어 있으면 계속 진행중입니다.
+  function isEventEnded(item, today) {
+    var end = text(item && item.endAt).slice(0, 10);
+    if (!end) return false;
+    var now = today || new Date();
+    var pad = function (n) { return ('0' + n).slice(-2); };
+    var todayText = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+    return todayText > end;
+  }
+
+  function normalizeEventPage(source) {
+    var page = Object.assign({}, source || {});
+    return {
+      eyebrow: text(page.eyebrow),
+      // 제목 앞부분만 좌우 공백을 지우지 않습니다. '월별 ' 처럼 끝의 한 칸이 뜻을 갖습니다.
+      titleLead: String(page.titleLead == null ? '' : page.titleLead),
+      titleAccent: text(page.titleAccent),
+      description: text(page.description),
+      kakaoUrl: text(page.kakaoUrl),
+      instagramUrl: text(page.instagramUrl)
+    };
+  }
+
+  function currentSiteId() {
+    return (api && typeof api.currentSiteId === 'function' && api.currentSiteId()) || '';
+  }
+
   function sortByOrder(a, b) {
     var order = toNumber(a.sortOrder, 0) - toNumber(b.sortOrder, 0);
     if (order !== 0) return order;
@@ -372,6 +451,9 @@
     cache.instructors = (next.instructors || []).map(normalizeInstructor).sort(sortByOrder);
     cache.options = (next.options || []).map(normalizeOption).sort(sortByOrder);
     cache.faqs = (next.faqs || []).map(normalizeFaq).sort(sortByOrder);
+    cache.events = (next.events || []).map(normalizeEvent).sort(sortByOrder);
+    cache.eventPage = normalizeEventPage(next.eventPage);
+    cache.eventPageEnabled = toBoolean(next.eventPageEnabled, false);
     loaded = true;
     lastError = null;
     notify();
@@ -389,13 +471,21 @@
       api.selectRows('site_banners', { select: '*' }),
       api.selectRows('instructors', { select: '*' }),
       api.selectRows('form_options', { select: '*' }),
-      api.selectRows('site_faqs', { select: '*' }).catch(function () { return []; })
+      api.selectRows('site_faqs', { select: '*' }).catch(function () { return []; }),
+      api.selectRows('site_events', { select: '*' }).catch(function () { return []; }),
+      // sites 는 브랜드로 걸러 읽는 표가 아니라 세 줄뿐입니다. 지금 브랜드 줄만 골라 씁니다.
+      api.selectRows('sites', { select: 'id,event_page_enabled,event_page' }).catch(function () { return []; })
     ]);
+    var siteId = currentSiteId();
+    var siteRow = (rows[5] || []).filter(function (row) { return row && row.id === siteId; })[0] || {};
     return setCache({
       banners: rows[0].map(bannerFromRow),
       instructors: rows[1].map(instructorFromRow),
       options: rows[2].map(optionFromRow),
-      faqs: (rows[3] || []).map(faqFromRow)
+      faqs: (rows[3] || []).map(faqFromRow),
+      events: (rows[4] || []).map(eventFromRow),
+      eventPage: siteRow.event_page,
+      eventPageEnabled: siteRow.event_page_enabled
     });
   }
 
@@ -539,6 +629,57 @@
     return refresh();
   }
 
+  function getEvents(includeInactive) {
+    return cache.events.filter(function (item) {
+      return includeInactive || item.isActive;
+    }).map(clone);
+  }
+
+  function getEventPage() {
+    return clone(cache.eventPage);
+  }
+
+  function isEventPageEnabled() {
+    return cache.eventPageEnabled === true;
+  }
+
+  async function saveEvent(source) {
+    var item = normalizeEvent(source);
+    if (!item.id) item.id = api.createId('event');
+    await api.upsertRows('site_events', [eventToRow(item)], 'id');
+    return refresh();
+  }
+
+  async function deleteEvent(id) {
+    if (!id) return getState();
+    await api.deleteRows('site_events', { id: id });
+    return refresh();
+  }
+
+  async function saveEventOrder(ids) {
+    var rows = orderedRows(cache.events, ids, eventToRow);
+    if (!rows.length) return getState();
+    await api.upsertRows('site_events', rows, 'id');
+    return refresh();
+  }
+
+  // 켜기/끄기와 상단 문구·링크는 카드가 아니라 sites 표에 있습니다.
+  // patch.enabled 와 patch.page 를 따로 보낼 수 있습니다.
+  async function saveEventPage(patch) {
+    var siteId = currentSiteId();
+    if (!siteId) throw new Error('브랜드를 먼저 고르세요.');
+    var next = {};
+    if (patch && Object.prototype.hasOwnProperty.call(patch, 'enabled')) {
+      next.event_page_enabled = toBoolean(patch.enabled, false);
+    }
+    if (patch && patch.page) {
+      next.event_page = normalizeEventPage(Object.assign({}, cache.eventPage, patch.page));
+    }
+    if (!Object.keys(next).length) return getState();
+    await api.updateRows('sites', { id: siteId }, next);
+    return refresh();
+  }
+
   async function uploadAsset(file, prefix, options) {
     if (!api || !file) throw new Error('업로드할 파일이 없습니다.');
     var path = api.createStoragePath(prefix || 'site-assets', file.name);
@@ -576,6 +717,15 @@
     saveFaq: saveFaq,
     saveFaqOrder: saveFaqOrder,
     deleteFaq: deleteFaq,
+    eventCtaKinds: clone(EVENT_CTA_KINDS),
+    getEvents: getEvents,
+    isEventEnded: isEventEnded,
+    getEventPage: getEventPage,
+    isEventPageEnabled: isEventPageEnabled,
+    saveEvent: saveEvent,
+    saveEventOrder: saveEventOrder,
+    deleteEvent: deleteEvent,
+    saveEventPage: saveEventPage,
     uploadAsset: uploadAsset
   };
 
