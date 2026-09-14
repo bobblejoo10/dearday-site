@@ -83,26 +83,33 @@
      --hero-avail 은 상단 메뉴(76px)를 뺀 남은 화면 높이입니다. */
   /* 상단 메뉴는 안쪽 76px 에 아래 테두리 1px 을 더해 77px 입니다.
      76 으로 두면 히어로 아래끝이 화면을 1px 넘어갑니다(실측). */
-  /* 히어로 칸 크기
-       --hero-vh     화면 높이의 몇 % 를 히어로가 쓰는지. 상단 메뉴가 위에 겹치므로
-                     메뉴까지 포함한 값입니다. 숫자는 banner-layout.js 한 곳에 있습니다.
-       --hero-src-ar 등록한 그림·영상의 가로세로 비. JS 가 채웁니다(없으면 0).
-       --hero-ar     실제로 쓸 비 = max(기본비, 원본비).
-                     원본이 기본비보다 가로로 길면 그 비를 그대로 씁니다.
-                     그러면 가운데를 잘라내지도, 위아래에 빈 띠가 생기지도 않고
-                     히어로 세로만 짧아져서 바로 아래 내용이 붙습니다.
-                     원본이 더 세로로 길면 기본비를 지키고 잘립니다(지금과 같음).
-       --hero-hw     세로/가로 비. 세부 위치의 상하 값을 잴 때 씁니다. */
-  .hero{--hero-avail:calc(var(--hero-vh) * 1svh);
-    --hero-src-ar:0;--hero-base-ar:calc(16 / 9);
-    --hero-ar:max(var(--hero-base-ar), var(--hero-src-ar));--hero-hw:calc(1 / var(--hero-ar));
-    position:relative;background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);overflow:hidden;
-    aspect-ratio:var(--hero-ar);width:min(100%,calc(var(--hero-avail) * var(--hero-ar)));max-height:var(--hero-avail);
+  /* 히어로 칸 — 비율은 늘 고정입니다(PC 16:9 · 모바일 3:2).
+     문구·단추가 이 칸을 기준으로 놓이므로 어느 화면에서나 구도가 같습니다.
+     변수 설명은 아래 .hero-band 규칙에 적어 두었습니다. */
+  .hero{position:relative;z-index:1;background:transparent;overflow:visible;
+    aspect-ratio:var(--hero-base-ar);width:min(100%,calc(var(--hero-avail) * var(--hero-base-ar)));max-height:var(--hero-avail);
     margin-inline:auto;box-sizing:border-box;
     /* 문구·단추 크기를 이 칸 폭에 비례시키려고 컨테이너로 선언합니다(cqw 단위). */
     container-type:size;}
-  /* 좌우 여백 자리 — 히어로 바깥은 이 띠 색으로 채웁니다. */
-  .hero-band{background:var(--pink-3,#FFF2F7);}
+  /* 좌우 여백 자리 — 배경 그림이 못 닿는 만큼만 이 띠 색이 보입니다.
+     배경과 오버레이는 이제 이 띠 안에 놓여서 히어로 칸보다 넓게 깔립니다. */
+  /* 비율 변수는 띠에 답니다. 배경과 히어로가 둘 다 이 값을 받아야 하는데,
+     배경은 이제 히어로의 형제라 히어로에 달면 못 받습니다(변수는 아래로만 내려갑니다).
+       --hero-vh       화면 높이의 몇 % 를 히어로가 쓰는지. 상단 메뉴가 위에 겹치므로
+                       메뉴까지 포함한 값입니다. 숫자는 banner-layout.js 한 곳에 있습니다.
+       --hero-base-ar  이 화면에서 쓸 고정 비. 히어로 칸은 늘 이 비입니다.
+       --hero-src-ar   등록한 그림·영상의 가로세로 비. JS 가 채웁니다(없으면 0).
+       --hero-media-ar 배경을 그릴 칸의 비 = max(고정 비, 원본 비).
+                       화면이 고정 비보다 가로로 길면 히어로 좌우에 띠 여백이 생기는데,
+                       원본이 그만큼 가로로 길면 그 여백까지 그림으로 채웁니다.
+                       원본에 없는 만큼은 늘리지 않습니다(원본 비와 max-width:100% 로 제한).
+                       그래서 16:9 칸 안에 보이는 그림은 관리자 미리보기와 똑같습니다.
+       --hero-hw       세로/가로 비. 세부 위치의 상하 값을 잴 때 씁니다. */
+  .hero-band{--hero-avail:calc(var(--hero-vh) * 1svh);
+    --hero-src-ar:0;--hero-base-ar:calc(16 / 9);
+    --hero-media-ar:max(var(--hero-base-ar), var(--hero-src-ar));--hero-hw:calc(1 / var(--hero-base-ar));
+    position:relative;overflow:hidden;
+    background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);}
   /* 문구 칸도 히어로 폭 기준입니다. .wrap 의 고정 폭(1280px)과 창 너비 여백(vw)을
      그대로 두면 히어로 폭이 바뀔 때 문구 시작 위치가 제각각이 됩니다.
      실측 : 히어로 1440 에서 5.56%, 1783 에서 14.11%, 1228 에서 0% 로 어긋났습니다. */
@@ -303,12 +310,19 @@
   .hero{background:#130A0F;}
   /* 배경 확대 — 관리자 [배경 확대] 값입니다. 100% 면 animation 이 제자리라 안 움직입니다.
      배율·시간 숫자는 banner-layout.js 한 곳에 있습니다. */
-  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
-    transform-origin:center center;
+  /* 배경과 오버레이 — 높이는 히어로와 같고, 폭은 원본 비만큼만 넓힙니다.
+     aspect-ratio 로 폭이 높이 x 원본비 가 되고, max-width:100% 가 띠 폭에서 자릅니다.
+     그래서 여백이 있는 만큼만 채워지고, 원본에 없는 만큼은 늘어나지 않습니다. */
+  .hero-video,.hero-overlay{position:absolute;top:0;bottom:0;left:50%;height:100%;width:auto;
+    aspect-ratio:var(--hero-media-ar);max-width:100%;}
+  .hero-video{object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
     animation:heroBgZoom calc(var(--hero-bg-zoom-secs) * 1s) ease-in-out infinite alternate;}
-  @keyframes heroBgZoom{from{transform:scale(1);}to{transform:scale(var(--hero-bg-zoom));}}
+  @keyframes heroBgZoom{from{transform:translateX(-50%) scale(1);}
+                        to{transform:translateX(-50%) scale(var(--hero-bg-zoom));}}
   @media(prefers-reduced-motion:reduce){.hero-video{animation:none;}}
-  .hero-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;
+  /* 자리·폭은 위 .hero-video,.hero-overlay 규칙이 정합니다. 여기서는 색만 정합니다.
+     예전처럼 inset:0 을 다시 쓰면 그 폭 지정이 덮여서 배경만 넓어지고 막은 안 넓어집니다. */
+  .hero-overlay{z-index:1;pointer-events:none;transform:translateX(-50%);
     background:linear-gradient(95deg,rgba(14,8,11,.86) 0%,rgba(22,9,16,.6) 46%,rgba(241,55,122,.22) 100%);}
   .hero .wrap{position:relative;z-index:2;}
   .hero-eyebrow{color:var(--pink-mid);}
@@ -558,7 +572,7 @@
   @media(max-width:880px){
     /* 모바일 히어로는 3:2 입니다. 16:9 로 두면 390 폭에서 높이가 219px 뿐이라
        문구가 들어갈 자리가 모자랍니다. 3:2 면 260px 이 됩니다. */
-    .hero{--hero-base-ar:calc(3 / 2);}
+    .hero-band{--hero-base-ar:calc(3 / 2);}
     .hero h1{font-size:calc(var(--hero-m-title-vw) * 1cqw);line-height:var(--hero-m-title-lh);}
     .hero p.lead{font-size:calc(var(--hero-m-sub-vw) * 1cqw);line-height:var(--hero-m-sub-lh);
       margin-top:calc(var(--hero-m-sub-gap) * 1em);}
@@ -589,7 +603,7 @@
 <!-- banner-layout.js 는 <head> 에서 읽어야 합니다. 히어로 기본값(--hero-*)을
      :root 규칙으로 먼저 깔아 두는데, 몸통 끝에서 읽으면 히어로를 한 번 그린 뒤에
      값이 들어와 화면이 덜컥 움직입니다. -->
-<script src="/assets/banner-layout.js?v=20260914-zoom-1"></script>
+<script src="/assets/banner-layout.js?v=20260914-bleed-1"></script>
 </head>
 <body>
 <a href="#upcoming" class="skip">본문으로 건너뛰기</a>
@@ -599,10 +613,12 @@
 
 <!-- 히어로는 16:9 고정 칸이라 넓은 화면에서는 좌우에 여백이 생깁니다. 그 자리를 이 띠가 채웁니다. -->
 <div class="hero-band">
-<section class="hero" aria-labelledby="hero-h">
+  <!-- 배경과 막은 히어로 칸이 아니라 띠 안에 둡니다. 그래야 화면이 16:9 보다
+       가로로 길 때 좌우 여백까지 그림으로 채울 수 있습니다(원본이 가진 만큼만). -->
   <!-- 영상 주소는 관리자 [사이트 콘텐츠] → 배너에서 가져옵니다 (hero-banner.js). -->
   <video class="hero-video" data-site-hero-video autoplay muted loop playsinline preload="auto" disablePictureInPicture disableRemotePlayback poster="/images/deardayclass-01.jpg"></video>
   <div class="hero-overlay" aria-hidden="true"></div>
+<section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <h1 id="hero-h" class="reveal">오늘을,<span class="mg">특별한 하루로</span></h1>
@@ -883,7 +899,7 @@
 <script src="/assets/banner-cta.js?v=20260911-cta-1"></script>
 <script src="/assets/site-content-store.js"></script>
 <script src="/assets/public-media-overrides.js?v=20260908-r2-1"></script>
-<script src="/assets/hero-banner.js?v=20260914-zoom-1"></script>
+<script src="/assets/hero-banner.js?v=20260914-bleed-1"></script>
 <script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/events-renderer.js?v=20260909-category-2"></script>

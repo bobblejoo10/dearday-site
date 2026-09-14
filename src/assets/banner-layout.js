@@ -163,7 +163,20 @@
   // 좁은 화면인지 아닌지는 JS 가 재지 않습니다. 변수만 넘기고 고르는 것은
   // 각 사이트의 미디어 쿼리가 합니다. 그래야 창을 줄이거나 화면을 돌려도
   // 다시 재 줄 필요가 없습니다.
-  function applyVars(hero, banner) {
+  // 변수를 어디에 달지 — 띠(.hero-band)가 있으면 거기입니다.
+  // 배경 그림은 히어로의 형제라서, 히어로에 달면 변수를 못 받습니다.
+  // (CSS 변수는 자기 자신과 그 아래로만 내려갑니다)
+  function varTarget(hero) {
+    if (!hero) return null;
+    if (hero.closest) {
+      var band = hero.closest('.hero-band');
+      if (band) return band;
+    }
+    return hero;
+  }
+
+  function applyVars(heroEl, banner) {
+    var hero = varTarget(heroEl);
     if (!hero || !hero.style) return;
     var b = banner || {};
     CSS_VARS.forEach(function (row) {
@@ -213,12 +226,12 @@
 
   // 원본 그림·영상의 가로세로 비를 히어로에 알려 줍니다.
   //
-  // 원본이 히어로보다 가로로 길면(예: 25:10) 가운데를 잘라내지 않고,
-  // 히어로 칸의 세로를 원본 비에 맞춰 줄입니다. 그러면 잘리는 곳도,
-  // 위아래 빈 띠도 생기지 않고 바로 아래 내용이 붙습니다.
-  // 원본이 더 세로로 길면 지금처럼 히어로 비(16:9 · 모바일 3:2)를 지키고 잘립니다.
-  // 고르는 일은 CSS 가 합니다 — max(기본비, 원본비). 큰 쪽이 가로로 더 긴 쪽입니다.
-  function setSourceRatio(hero, ratio) {
+  // 히어로 칸의 비는 늘 고정입니다(16:9 · 모바일 3:2). 이 값이 바꾸는 것은 배경 폭뿐입니다.
+  // 화면이 고정 비보다 가로로 길면 히어로 좌우에 띠 여백이 생기는데, 원본이 그만큼
+  // 가로로 길면 그 여백까지 그림으로 채웁니다. 원본에 없는 만큼은 늘리지 않습니다.
+  // 고르는 일은 CSS 가 합니다 — --hero-media-ar: max(고정비, 원본비).
+  function setSourceRatio(heroEl, ratio) {
+    var hero = varTarget(heroEl);
     if (!hero || !hero.style) return;
     var n = Number(ratio);
     if (!isFinite(n) || n <= 0) hero.style.removeProperty('--hero-src-ar');
