@@ -51,7 +51,10 @@
   .utility .lang button{background:none;border:none;color:var(--muted);font-size:.8rem;padding:2px 4px;}
   .utility .lang button[aria-current="true"]{color:var(--ink);font-weight:700;}
 
-  header.nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(12px);
+  /* 상단 메뉴는 히어로 위에 겹칩니다(리더스와 같은 방식). 자리를 차지하지 않으므로
+     히어로가 화면 맨 위에서 시작하고, --hero-vh 안에 메뉴까지 들어갑니다.
+     바탕과 흐림 효과는 그대로 두어 지금 모습을 지킵니다. */
+  header.nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.93);backdrop-filter:blur(12px);
     border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s;}
   header.nav.scrolled{border-bottom-color:var(--line);box-shadow:0 8px 30px -26px rgba(216,30,99,.3);}
   .nav-inner{display:flex;align-items:center;justify-content:space-between;height:76px;gap:24px;}
@@ -80,9 +83,21 @@
      --hero-avail 은 상단 메뉴(76px)를 뺀 남은 화면 높이입니다. */
   /* 상단 메뉴는 안쪽 76px 에 아래 테두리 1px 을 더해 77px 입니다.
      76 으로 두면 히어로 아래끝이 화면을 1px 넘어갑니다(실측). */
-  .hero{--hero-avail:calc(100svh - 77px);
+  /* 히어로 칸 크기
+       --hero-vh     화면 높이의 몇 % 를 히어로가 쓰는지. 상단 메뉴가 위에 겹치므로
+                     메뉴까지 포함한 값입니다. 숫자는 banner-layout.js 한 곳에 있습니다.
+       --hero-src-ar 등록한 그림·영상의 가로세로 비. JS 가 채웁니다(없으면 0).
+       --hero-ar     실제로 쓸 비 = max(기본비, 원본비).
+                     원본이 기본비보다 가로로 길면 그 비를 그대로 씁니다.
+                     그러면 가운데를 잘라내지도, 위아래에 빈 띠가 생기지도 않고
+                     히어로 세로만 짧아져서 바로 아래 내용이 붙습니다.
+                     원본이 더 세로로 길면 기본비를 지키고 잘립니다(지금과 같음).
+       --hero-hw     세로/가로 비. 세부 위치의 상하 값을 잴 때 씁니다. */
+  .hero{--hero-avail:calc(var(--hero-vh) * 1svh);
+    --hero-src-ar:0;--hero-base-ar:calc(16 / 9);
+    --hero-ar:max(var(--hero-base-ar), var(--hero-src-ar));--hero-hw:calc(1 / var(--hero-ar));
     position:relative;background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);overflow:hidden;
-    aspect-ratio:16/9;--hero-hw:0.5625;width:min(100%,calc(var(--hero-avail) * 16 / 9));max-height:var(--hero-avail);
+    aspect-ratio:var(--hero-ar);width:min(100%,calc(var(--hero-avail) * var(--hero-ar)));max-height:var(--hero-avail);
     margin-inline:auto;box-sizing:border-box;
     /* 문구·단추 크기를 이 칸 폭에 비례시키려고 컨테이너로 선언합니다(cqw 단위). */
     container-type:size;}
@@ -286,7 +301,13 @@
 
   /* ===== hero video background ===== */
   .hero{background:#130A0F;}
-  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+  /* 배경 확대 — 관리자 [배경 확대] 값입니다. 100% 면 animation 이 제자리라 안 움직입니다.
+     배율·시간 숫자는 banner-layout.js 한 곳에 있습니다. */
+  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;
+    transform-origin:center center;
+    animation:heroBgZoom calc(var(--hero-bg-zoom-secs) * 1s) ease-in-out infinite alternate;}
+  @keyframes heroBgZoom{from{transform:scale(1);}to{transform:scale(var(--hero-bg-zoom));}}
+  @media(prefers-reduced-motion:reduce){.hero-video{animation:none;}}
   .hero-overlay{position:absolute;inset:0;z-index:1;pointer-events:none;
     background:linear-gradient(95deg,rgba(14,8,11,.86) 0%,rgba(22,9,16,.6) 46%,rgba(241,55,122,.22) 100%);}
   .hero .wrap{position:relative;z-index:2;}
@@ -537,7 +558,7 @@
   @media(max-width:880px){
     /* 모바일 히어로는 3:2 입니다. 16:9 로 두면 390 폭에서 높이가 219px 뿐이라
        문구가 들어갈 자리가 모자랍니다. 3:2 면 260px 이 됩니다. */
-    .hero{aspect-ratio:3/2;--hero-hw:0.66667;width:min(100%,calc(var(--hero-avail) * 3 / 2));}
+    .hero{--hero-base-ar:calc(3 / 2);}
     .hero h1{font-size:calc(var(--hero-m-title-vw) * 1cqw);line-height:var(--hero-m-title-lh);}
     .hero p.lead{font-size:calc(var(--hero-m-sub-vw) * 1cqw);line-height:var(--hero-m-sub-lh);
       margin-top:calc(var(--hero-m-sub-gap) * 1em);}
@@ -565,6 +586,10 @@
     .hero.hero-m-cta-right .hero-actions{justify-content:flex-end;}
   }
 </style>
+<!-- banner-layout.js 는 <head> 에서 읽어야 합니다. 히어로 기본값(--hero-*)을
+     :root 규칙으로 먼저 깔아 두는데, 몸통 끝에서 읽으면 히어로를 한 번 그린 뒤에
+     값이 들어와 화면이 덜컥 움직입니다. -->
+<script src="/assets/banner-layout.js?v=20260914-zoom-1"></script>
 </head>
 <body>
 <a href="#upcoming" class="skip">본문으로 건너뛰기</a>
@@ -855,11 +880,10 @@
 <script>window.DeardayLayout && window.DeardayLayout.renderAll();</script>
 <script src="/assets/supabase-store-common.js"></script>
 <script src="/assets/rich-text.js?v=20260911-size-1"></script>
-<script src="/assets/banner-layout.js"></script>
 <script src="/assets/banner-cta.js?v=20260911-cta-1"></script>
 <script src="/assets/site-content-store.js"></script>
 <script src="/assets/public-media-overrides.js?v=20260908-r2-1"></script>
-<script src="/assets/hero-banner.js?v=20260911-mtext-1"></script>
+<script src="/assets/hero-banner.js?v=20260914-zoom-1"></script>
 <script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/events-renderer.js?v=20260909-category-2"></script>

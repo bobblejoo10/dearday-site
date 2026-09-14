@@ -86,6 +86,23 @@
       : (banner.desktopImage || banner.mobileImage);
     if (poster) video.setAttribute('poster', 미디어주소_(poster));
 
+    // 등록한 그림·영상의 가로세로 비를 히어로에 알려 줍니다.
+    // 히어로보다 가로로 길면 잘라내는 대신 히어로 세로가 줄어듭니다(banner-layout.js).
+    // 영상이 있으면 영상 비, 없으면 포스터 그림 비를 씁니다.
+    var hero = document.querySelector('.hero');
+    var layout = global.BannerLayout;
+    if (hero && layout && layout.watchHeroMedia) {
+      if (banner.videoUrl) {
+        layout.watchHeroMedia(hero, video);
+      } else if (poster) {
+        var probe = new Image();
+        probe.onload = function () { layout.setSourceRatio(hero, probe.naturalWidth / probe.naturalHeight); };
+        probe.src = 미디어주소_(poster);
+      } else if (layout.setSourceRatio) {
+        layout.setSourceRatio(hero, 0);               // 등록된 것이 없으면 기본 비로 되돌립니다
+      }
+    }
+
     // 문구 — 서식본(HTML)이 있으면 그대로, 없으면 평문. 둘 다 없으면 페이지에 적힌 문구를 그대로 둡니다.
     // 좁은 화면에서는 모바일 문구를 먼저 씁니다. 모바일 칸이 비면 PC 문구 그대로입니다.
     // 고르는 규칙은 세 저장소가 함께 쓰는 banner-layout.js 에 있습니다.

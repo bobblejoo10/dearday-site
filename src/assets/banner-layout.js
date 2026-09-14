@@ -106,7 +106,17 @@
     desktop: { title: 5,   subtitle: 2, cta: 1.04, dx: 0, dy: 0,
                titleLh: 1.06, subLh: 1.6, subGap: 0.7, ctaGap: 2.2 },
     mobile:  { title: 7.5, subtitle: 3, cta: 3,    dx: 0, dy: 0,
-               titleLh: 1.06, subLh: 1.6, subGap: 0.6, ctaGap: 1.6 }
+               titleLh: 1.06, subLh: 1.6, subGap: 0.6, ctaGap: 1.6 },
+    // 화면과 무관하게 한 벌만 쓰는 값들
+    page: {
+      // 히어로 칸이 차지할 화면 높이(%). 100 이면 첫 화면이 히어로로 꽉 찹니다.
+      // 상단 메뉴는 히어로 위에 겹치므로 이 안에 포함됩니다.
+      heroVh: 85,
+      // 배경을 천천히 확대하는 효과의 최대 배율(%). 100 이면 확대 없음.
+      // 전에는 리더스 index.html 에만 112 가 박혀 있었습니다.
+      bgZoom: 100,
+      bgZoomSecs: 22
+    }
   };
 
   // 배너마다 바꾸는 값이 아니라 늘 같은 값으로 넣는 것들입니다.
@@ -124,7 +134,8 @@
       Object.keys(side).forEach(function (key) { out[key] = side[key]; });
       return out;
     };
-    return { desktop: copy(HERO_DEFAULT.desktop), mobile: copy(HERO_DEFAULT.mobile) };
+    return { desktop: copy(HERO_DEFAULT.desktop), mobile: copy(HERO_DEFAULT.mobile),
+             page: copy(HERO_DEFAULT.page) };
   }
 
   // 배너 칸 이름 → CSS 변수 → 그 자리의 기본값 → (모바일이면) 비었을 때 볼 PC 칸
@@ -145,9 +156,9 @@
     ['mobileCtaVw',          '--hero-m-cta-vw',   'mobile',  'cta',      null]
   ];
 
-  // 변수를 늘 전부 답니다. 빈 칸이면 위 기본값을 답니다.
-  // CSS 쪽에 var(--이름, 숫자) 로 기본값을 두지 않는 이유가 이것입니다 —
-  // 그러면 사이트마다 숫자를 또 적게 되고, 관리자에서 한 번에 못 바꿉니다.
+  // 배너에서 정한 값만 .hero 에 인라인으로 붙입니다.
+  // 빈 칸은 인라인 값을 지웁니다 — 그러면 :root 에 깔아 둔 기본값이 살아납니다.
+  // 여기에 기본값을 다시 써 넣으면, 기본값을 바꿔도 인라인이 이겨서 안 바뀝니다.
   //
   // 좁은 화면인지 아닌지는 JS 가 재지 않습니다. 변수만 넘기고 고르는 것은
   // 각 사이트의 미디어 쿼리가 합니다. 그래야 창을 줄이거나 화면을 돌려도
@@ -162,22 +173,81 @@
         var pc = b[row[4]];
         n = (pc === null || pc === undefined || pc === '') ? NaN : Number(pc);
       }
-      if (!isFinite(n)) n = HERO_DEFAULT[row[2]][row[3]];
-      hero.style.setProperty(row[1], String(n));
+      if (!isFinite(n)) hero.style.removeProperty(row[1]);
+      else hero.style.setProperty(row[1], String(n));
     });
+    // 배경 확대 — 관리자에서 정한 최대 배율(%)입니다. 100 이면 확대 없음.
+    var zoom = b.bgZoom;
+    var z = (zoom === null || zoom === undefined || zoom === '') ? NaN : Number(zoom);
+    if (!isFinite(z) || z <= 0) hero.style.removeProperty('--hero-bg-zoom');
+    else hero.style.setProperty('--hero-bg-zoom', String(Math.round(z) / 100));
+  }
+
+  // ── 기본값을 CSS 에 먼저 깔아 둡니다 ─────────────────────
+  // 이 파일이 <head> 에서 실행되면서 :root 규칙을 바로 만들어 둡니다.
+  // 그래야 히어로가 처음 그려질 때부터 값이 있습니다. DOMContentLoaded 를 기다리면
+  // 한 번 그린 뒤에 값이 들어와서 화면이 덜컥 움직입니다.
+  // 배너별 값은 .hero 에 인라인으로 붙어서 이 :root 값을 덮습니다.
+  function defaultCss() {
+    var lines = [];
     STYLE_VARS.forEach(function (row) {
-      hero.style.setProperty(row[0], String(HERO_DEFAULT[row[1]][row[2]]));
+      lines.push(row[0] + ':' + HERO_DEFAULT[row[1]][row[2]]);
+    });
+    CSS_VARS.forEach(function (row) {
+      lines.push(row[1] + ':' + HERO_DEFAULT[row[2]][row[3]]);
+    });
+    lines.push('--hero-vh:' + HERO_DEFAULT.page.heroVh);
+    lines.push('--hero-bg-zoom:' + (HERO_DEFAULT.page.bgZoom / 100));
+    lines.push('--hero-bg-zoom-secs:' + HERO_DEFAULT.page.bgZoomSecs);
+    return ':root{' + lines.join(';') + '}';
+  }
+
+  function injectDefaults() {
+    if (!document.head) return;                     // <head> 보다 먼저면 아래 DOM 대기로 갑니다
+    if (document.getElementById('hero-default-vars')) return;
+    var style = document.createElement('style');
+    style.id = 'hero-default-vars';
+    style.textContent = defaultCss();
+    document.head.appendChild(style);
+  }
+
+  // 원본 그림·영상의 가로세로 비를 히어로에 알려 줍니다.
+  //
+  // 원본이 히어로보다 가로로 길면(예: 25:10) 가운데를 잘라내지 않고,
+  // 히어로 칸의 세로를 원본 비에 맞춰 줄입니다. 그러면 잘리는 곳도,
+  // 위아래 빈 띠도 생기지 않고 바로 아래 내용이 붙습니다.
+  // 원본이 더 세로로 길면 지금처럼 히어로 비(16:9 · 모바일 3:2)를 지키고 잘립니다.
+  // 고르는 일은 CSS 가 합니다 — max(기본비, 원본비). 큰 쪽이 가로로 더 긴 쪽입니다.
+  function setSourceRatio(hero, ratio) {
+    if (!hero || !hero.style) return;
+    var n = Number(ratio);
+    if (!isFinite(n) || n <= 0) hero.style.removeProperty('--hero-src-ar');
+    else hero.style.setProperty('--hero-src-ar', String(Math.round(n * 10000) / 10000));
+  }
+
+  // 그림이면 naturalWidth, 영상이면 videoWidth 를 봅니다. 아직 안 읽혔으면 기다립니다.
+  function watchHeroMedia(hero, el) {
+    if (!hero || !el) return;
+    var read = function () {
+      var w = Number(el.naturalWidth || el.videoWidth || 0);
+      var h = Number(el.naturalHeight || el.videoHeight || 0);
+      if (w > 0 && h > 0) { setSourceRatio(hero, w / h); return true; }
+      return false;
+    };
+    if (read()) return;
+    ['load', 'loadedmetadata'].forEach(function (type) {
+      el.addEventListener(type, function once() {
+        el.removeEventListener(type, once);
+        read();
+      });
     });
   }
 
-  // 배너를 아직 못 받았을 때도 기본값이 들어가 있어야 합니다.
-  // 안 그러면 calc(var(--hero-title-vw) * 1cqw) 가 값을 못 찾아 글자 크기가 사라집니다.
-  function seedDefaults() {
-    var hero = document.querySelector('.hero');
-    if (hero) applyVars(hero, null);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', seedDefaults);
-  else seedDefaults();
+  // 기본값 :root 규칙을 지금 바로 깝니다.
+  // 이 파일이 <head> 에서 실행되므로 히어로가 처음 그려지기 전에 값이 준비됩니다.
+  // <head> 가 아직 없는 아주 이른 경우에만 DOM 준비를 기다립니다.
+  if (document.head) injectDefaults();
+  else document.addEventListener('DOMContentLoaded', injectDefaults);
 
   function apply(hero, banner) {
     if (!hero) return;
@@ -188,5 +258,6 @@
     applyVars(hero, banner);
   }
 
-  global.BannerLayout = { classes: classes, apply: apply, allClasses: all, heroText: heroText, applyVars: applyVars, heroDefaults: heroDefaults };
+  global.BannerLayout = { classes: classes, apply: apply, allClasses: all, heroText: heroText, applyVars: applyVars, heroDefaults: heroDefaults,
+    watchHeroMedia: watchHeroMedia, setSourceRatio: setSourceRatio };
 })(window);

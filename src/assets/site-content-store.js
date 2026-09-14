@@ -84,6 +84,7 @@
     item.contentOffsetY = numOrBlank(item.contentOffsetY);
     item.mobileContentOffsetX = numOrBlank(item.mobileContentOffsetX);
     item.mobileContentOffsetY = numOrBlank(item.mobileContentOffsetY);
+    item.bgZoom = numOrBlank(item.bgZoom);
     item.titleVw = numOrBlank(item.titleVw);
     item.subtitleVw = numOrBlank(item.subtitleVw);
     item.ctaVw = numOrBlank(item.ctaVw);
@@ -183,6 +184,7 @@
       contentOffsetY: row.content_offset_y,
       mobileContentOffsetX: row.mobile_content_offset_x,
       mobileContentOffsetY: row.mobile_content_offset_y,
+      bgZoom: row.bg_zoom,
       titleVw: row.title_vw,
       subtitleVw: row.subtitle_vw,
       ctaVw: row.cta_vw,
@@ -235,6 +237,7 @@
       content_offset_y: nullIfBlank(item.contentOffsetY),
       mobile_content_offset_x: nullIfBlank(item.mobileContentOffsetX),
       mobile_content_offset_y: nullIfBlank(item.mobileContentOffsetY),
+      bg_zoom: nullIfBlank(item.bgZoom),
       title_vw: nullIfBlank(item.titleVw),
       subtitle_vw: nullIfBlank(item.subtitleVw),
       cta_vw: nullIfBlank(item.ctaVw),
