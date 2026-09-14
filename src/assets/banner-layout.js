@@ -115,7 +115,16 @@
       // 배경을 천천히 확대하는 효과의 최대 배율(%). 100 이면 확대 없음.
       // 전에는 리더스 index.html 에만 112 가 박혀 있었습니다.
       bgZoom: 100,
-      bgZoomSecs: 22
+      bgZoomSecs: 22,
+      // 좌우 여백 채우기 — 아래 paintEdges 가 씁니다.
+      //   edgeStrip : 원본에서 떠올 띠의 폭. 여백 폭의 %. 여백보다 늘 좁아 항상 늘어납니다.
+      //   edgeFrost : 서리가 원본 쪽으로 넘어가는 폭(px). 이 구간에서 서리가 풀립니다.
+      //   edgeBlur  : 서리의 흐림 정도(px). 상단 메뉴가 10px 입니다.
+      //   edgeFps   : 영상일 때 띠를 다시 뜨는 횟수(초당).
+      edgeStrip: 30,
+      edgeFrost: 60,
+      edgeBlur: 12,
+      edgeFps: 10
     }
   };
 
@@ -212,6 +221,7 @@
     lines.push('--hero-vh:' + HERO_DEFAULT.page.heroVh);
     lines.push('--hero-bg-zoom:' + (HERO_DEFAULT.page.bgZoom / 100));
     lines.push('--hero-bg-zoom-secs:' + HERO_DEFAULT.page.bgZoomSecs);
+    lines.push('--hero-edge-blur:' + HERO_DEFAULT.page.edgeBlur + 'px');
     return ':root{' + lines.join(';') + '}';
   }
 
@@ -241,6 +251,7 @@
   // 그림이면 naturalWidth, 영상이면 videoWidth 를 봅니다. 아직 안 읽혔으면 기다립니다.
   function watchHeroMedia(hero, el) {
     if (!hero || !el) return;
+    watchEdges(hero, el);
     var read = function () {
       var w = Number(el.naturalWidth || el.videoWidth || 0);
       var h = Number(el.naturalHeight || el.videoHeight || 0);
@@ -271,6 +282,143 @@
     applyVars(hero, banner);
   }
 
+  // ── 좌우 여백 채우기 ───────────────────────────────────────────────
+  //
+  // 히어로 칸은 비가 고정입니다(16:9 · 모바일 3:2). 화면이 그보다 가로로 길면
+  // 좌우에 띠 여백이 생기는데, 그 자리를 브랜드 배경색으로 두면 경계가 딱 끊겨 보입니다.
+  // 그래서 원본 가장자리를 떠다 여백 폭만큼 늘려 채우고, 경계에는 상단 메뉴와 같은
+  // 서리(backdrop-filter)를 얹습니다.
+  //
+  // 층 (바깥 → 안쪽)
+  //   coarse : 가장자리 띠를 가로 1px 로 줄여 늘린 것. 사실상 한 색. 여백 바깥 절반.
+  //   fine   : 같은 띠를 가로 14px 로 줄여 늘린 것. 형태가 조금 남습니다. 여백 전체.
+  //   frost  : 여백 전체 + 원본 쪽 edgeFrost px 를 덮는 서리. 원본 쪽에서 풀립니다.
+  //
+  // 가로 해상도만 낮춰 늘리므로 가로로만 번집니다. 따로 블러 연산을 하지 않습니다.
+  // 늘린 층은 여백까지만 깔고 원본을 덮지 않습니다. 원본을 흐리는 것은 서리뿐입니다.
+  //
+  // 여백이 없으면 아무것도 그리지 않고 타이머도 돌리지 않습니다.
+  // 영상은 초당 edgeFps 번만 다시 뜹니다. 영상을 두 번 재생하는 것이 아니라
+  // 이미 나오는 화면에서 가장자리 띠만 긁어 옵니다.
+  var EDGE = { fineW: 14, fineH: 90, coarseW: 1, coarseH: 4 };
+  var EDGE_EVENTS = ['load', 'loadedmetadata', 'loadeddata', 'play', 'playing', 'pause', 'ended'];
+
+  function directChild(parent, selector) {
+    var kids = parent.children || [];
+    for (var i = 0; i < kids.length; i++) {
+      if (kids[i].matches && kids[i].matches(selector)) return kids[i];
+    }
+    return null;
+  }
+
+  function edgeBox(band, side) {
+    var el = band.querySelector('.hero-edge-' + side);
+    if (el) return el;
+    el = document.createElement('div');
+    el.className = 'hero-edge hero-edge-' + side;
+    el.setAttribute('aria-hidden', 'true');
+    ['fine', 'coarse'].forEach(function (kind) {
+      var cv = document.createElement('canvas');
+      cv.className = 'hero-edge-' + kind;
+      el.appendChild(cv);
+    });
+    band.insertBefore(el, band.firstChild);
+    return el;
+  }
+
+  // 서리는 원본 위에 얹혀야 하므로 배경보다 뒤에 두되, 문구 칸(.hero) 앞에 둡니다.
+  // 그래야 문구는 흐려지지 않습니다.
+  function frostBox(band, side) {
+    var el = band.querySelector('.hero-frost-' + side);
+    if (el) return el;
+    el = document.createElement('div');
+    el.className = 'hero-frost hero-frost-' + side;
+    el.setAttribute('aria-hidden', 'true');
+    band.insertBefore(el, directChild(band, '.hero'));
+    return el;
+  }
+
+  function drawStrip(cv, media, sx, sw, srcH, w, h) {
+    if (!cv) return false;
+    if (cv.width !== w) cv.width = w;
+    if (cv.height !== h) cv.height = h;
+    var cx = cv.getContext('2d');
+    if (!cx) return false;
+    cx.imageSmoothingEnabled = true;
+    cx.imageSmoothingQuality = 'high';
+    try { cx.drawImage(media, sx, 0, sw, srcH, 0, 0, w, h); }
+    catch (err) { return false; }
+    return true;
+  }
+
+  function paintEdges(band, media) {
+    if (!band || !media) return false;
+    var page = HERO_DEFAULT.page;
+    var srcW = Number(media.naturalWidth || media.videoWidth || 0);
+    var srcH = Number(media.naturalHeight || media.videoHeight || 0);
+    var mediaW = media.getBoundingClientRect().width;
+    var margin = Math.round((band.clientWidth - mediaW) / 2);
+    var boxes = [edgeBox(band, 'l'), edgeBox(band, 'r'), frostBox(band, 'l'), frostBox(band, 'r')];
+    var hide = function () { boxes.forEach(function (el) { el.style.display = 'none'; }); };
+    if (!(margin > 0) || !srcW || !srcH || !(mediaW > 0)) { hide(); return false; }
+
+    var sw = Math.max(1, Math.round(margin * (page.edgeStrip / 100) * (srcW / mediaW)));
+    if (sw > srcW) sw = srcW;
+    var frostW = margin + page.edgeFrost;
+    var stop = (margin / frostW * 100).toFixed(2) + '%';
+    var ok = true;
+
+    [['l', 0, 'to right'], ['r', srcW - sw, 'to left']].forEach(function (row) {
+      var box = edgeBox(band, row[0]);
+      box.style.display = 'block';
+      box.style.width = margin + 'px';
+      if (!drawStrip(box.querySelector('.hero-edge-fine'), media, row[1], sw, srcH, EDGE.fineW, EDGE.fineH)) ok = false;
+      if (!drawStrip(box.querySelector('.hero-edge-coarse'), media, row[1], sw, srcH, EDGE.coarseW, EDGE.coarseH)) ok = false;
+      var fr = frostBox(band, row[0]);
+      fr.style.display = 'block';
+      fr.style.width = frostW + 'px';
+      var mask = 'linear-gradient(' + row[2] + ', #000 0%, #000 ' + stop + ', rgba(0,0,0,0) 100%)';
+      fr.style.webkitMaskImage = mask;
+      fr.style.maskImage = mask;
+    });
+
+    if (!ok) hide();
+    return ok;
+  }
+
+  function watchEdges(heroEl, media) {
+    var band = varTarget(heroEl);
+    if (!band || !media) return;
+    if (band.heroEdgeOff) band.heroEdgeOff();
+
+    var timer = null;
+    var isVideo = String(media.tagName || '').toLowerCase() === 'video';
+    var stop = function () { if (timer) { clearInterval(timer); timer = null; } };
+    var start = function () {
+      if (timer || !isVideo) return;
+      timer = setInterval(function () { paintEdges(band, media); },
+                          Math.round(1000 / HERO_DEFAULT.page.edgeFps));
+    };
+    var tick = function () {
+      var ok = paintEdges(band, media);
+      if (!ok || media.paused || document.hidden) stop();
+      else start();
+    };
+
+    tick();
+    window.addEventListener('resize', tick);
+    document.addEventListener('visibilitychange', tick);
+    EDGE_EVENTS.forEach(function (type) { media.addEventListener(type, tick); });
+
+    band.heroEdgeOff = function () {
+      stop();
+      window.removeEventListener('resize', tick);
+      document.removeEventListener('visibilitychange', tick);
+      EDGE_EVENTS.forEach(function (type) { media.removeEventListener(type, tick); });
+      band.heroEdgeOff = null;
+    };
+  }
+
   global.BannerLayout = { classes: classes, apply: apply, allClasses: all, heroText: heroText, applyVars: applyVars, heroDefaults: heroDefaults,
-    watchHeroMedia: watchHeroMedia, setSourceRatio: setSourceRatio };
+    watchHeroMedia: watchHeroMedia, setSourceRatio: setSourceRatio, watchEdges: watchEdges };
 })(window);

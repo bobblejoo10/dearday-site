@@ -359,6 +359,27 @@
   .hero-overlay{z-index:1;pointer-events:none;transform:translateX(-50%);
     background:linear-gradient(95deg,rgba(14,8,11,.86) 0%,rgba(22,9,16,.6) 46%,rgba(241,55,122,.22) 100%);}
   .hero .wrap{position:relative;z-index:2;}
+
+  /* 좌우 여백 채우기 — 칸과 층은 banner-layout.js 가 만들고 그립니다.
+     늘린 층(.hero-edge)은 여백까지만 깔고 원본을 덮지 않습니다.
+     서리(.hero-frost)만 여백 전체를 지나 원본 쪽으로 넘어가고, 그 구간에서 풀립니다.
+     가로 해상도만 낮춰 늘리므로 가로로만 번집니다 — 따로 블러 연산을 하지 않습니다.
+     흐림 정도(--hero-edge-blur)는 banner-layout.js 가 :root 에 넣습니다. */
+  .hero-edge{position:absolute;top:0;height:100%;z-index:0;overflow:hidden;}
+  .hero-edge-l{left:0;}
+  .hero-edge-r{right:0;}
+  .hero-edge canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  .hero-edge-fine{filter:blur(3px);transform:scale(1.06);}
+  .hero-edge-coarse{filter:blur(40px);transform:scale(1.6);}
+  .hero-edge-l .hero-edge-coarse{-webkit-mask-image:linear-gradient(to right,#000 0,#000 50%,rgba(0,0,0,0) 100%);
+    mask-image:linear-gradient(to right,#000 0,#000 50%,rgba(0,0,0,0) 100%);}
+  .hero-edge-r .hero-edge-coarse{-webkit-mask-image:linear-gradient(to left,#000 0,#000 50%,rgba(0,0,0,0) 100%);
+    mask-image:linear-gradient(to left,#000 0,#000 50%,rgba(0,0,0,0) 100%);}
+  /* 문구 칸(.hero)이 뒤에 오므로 문구는 서리에 흐려지지 않습니다. */
+  .hero-frost{position:absolute;top:0;height:100%;z-index:1;pointer-events:none;
+    -webkit-backdrop-filter:blur(var(--hero-edge-blur,12px));backdrop-filter:blur(var(--hero-edge-blur,12px));}
+  .hero-frost-l{left:0;}
+  .hero-frost-r{right:0;}
   .hero-eyebrow{color:var(--pink-mid);}
   .hero h1{color:#fff;}
   .hero p.lead{color:rgba(255,255,255,.9);}
@@ -637,7 +658,7 @@
 <!-- banner-layout.js 는 <head> 에서 읽어야 합니다. 히어로 기본값(--hero-*)을
      :root 규칙으로 먼저 깔아 두는데, 몸통 끝에서 읽으면 히어로를 한 번 그린 뒤에
      값이 들어와 화면이 덜컥 움직입니다. -->
-<script src="/assets/banner-layout.js?v=20260914-bleed-2"></script>
+<script src="/assets/banner-layout.js?v=20260914-edge-1"></script>
 </head>
 <body>
 <a href="#upcoming" class="skip">본문으로 건너뛰기</a>
