@@ -92,19 +92,39 @@
   // 각 사이트 CSS 에는 숫자를 두지 않습니다. 두면 값이 세 벌이 되어 서로 어긋납니다.
   // 관리자에서 배너마다 다른 값을 정하면 그 값이 이 기본값을 덮습니다.
   //   값의 뜻 : 히어로 칸 폭의 백분율. 세부 위치는 폭(x)·높이(y) 의 백분율.
+  //   title·subtitle·cta : 글자 크기. 히어로 칸 폭의 백분율.
+  //   dx·dy              : 세부 위치. 폭·높이의 백분율.
+  //   titleLh·subLh      : 줄 간격(배수).
+  //   subGap             : 제목과 설명 사이. 설명 글자 크기의 배수(em).
+  //   ctaGap             : 설명과 단추 사이. 히어로 칸 폭의 백분율.
+  //
+  // subGap·subLh 를 여기로 옮긴 까닭 — 세 곳이 서로 달랐습니다(실측).
+  //   제목→설명 간격   미리보기 0px · 리더스 41.4px · 디어데이 40.9px
+  //   설명 줄 간격     미리보기 1.5 · 리더스 1.7 · 디어데이 1.6
+  // 전민 지시로 둘의 가운데로 맞춥니다 — 간격 0.7em, 줄 간격 1.6.
   var HERO_DEFAULT = {
-    desktop: { title: 5,   subtitle: 2, cta: 1.04, dx: 0, dy: 0 },
-    mobile:  { title: 7.5, subtitle: 3, cta: 3,    dx: 0, dy: 0 }
+    desktop: { title: 5,   subtitle: 2, cta: 1.04, dx: 0, dy: 0,
+               titleLh: 1.06, subLh: 1.6, subGap: 0.7, ctaGap: 2.2 },
+    mobile:  { title: 7.5, subtitle: 3, cta: 3,    dx: 0, dy: 0,
+               titleLh: 1.06, subLh: 1.6, subGap: 0.6, ctaGap: 1.6 }
   };
+
+  // 배너마다 바꾸는 값이 아니라 늘 같은 값으로 넣는 것들입니다.
+  var STYLE_VARS = [
+    ['--hero-title-lh',   'desktop', 'titleLh'], ['--hero-m-title-lh',   'mobile', 'titleLh'],
+    ['--hero-sub-lh',     'desktop', 'subLh'],   ['--hero-m-sub-lh',     'mobile', 'subLh'],
+    ['--hero-sub-gap',    'desktop', 'subGap'],  ['--hero-m-sub-gap',    'mobile', 'subGap'],
+    ['--hero-cta-gap',    'desktop', 'ctaGap'],  ['--hero-m-cta-gap',    'mobile', 'ctaGap']
+  ];
 
   // 관리자 sites-store.js 가 이 값을 그대로 가져다 씁니다(숫자를 또 적지 않으려고).
   function heroDefaults() {
-    return {
-      desktop: { title: HERO_DEFAULT.desktop.title, subtitle: HERO_DEFAULT.desktop.subtitle,
-                 cta: HERO_DEFAULT.desktop.cta, dx: HERO_DEFAULT.desktop.dx, dy: HERO_DEFAULT.desktop.dy },
-      mobile:  { title: HERO_DEFAULT.mobile.title, subtitle: HERO_DEFAULT.mobile.subtitle,
-                 cta: HERO_DEFAULT.mobile.cta, dx: HERO_DEFAULT.mobile.dx, dy: HERO_DEFAULT.mobile.dy }
+    var copy = function (side) {
+      var out = {};
+      Object.keys(side).forEach(function (key) { out[key] = side[key]; });
+      return out;
     };
+    return { desktop: copy(HERO_DEFAULT.desktop), mobile: copy(HERO_DEFAULT.mobile) };
   }
 
   // 배너 칸 이름 → CSS 변수 → 그 자리의 기본값 → (모바일이면) 비었을 때 볼 PC 칸
@@ -144,6 +164,9 @@
       }
       if (!isFinite(n)) n = HERO_DEFAULT[row[2]][row[3]];
       hero.style.setProperty(row[1], String(n));
+    });
+    STYLE_VARS.forEach(function (row) {
+      hero.style.setProperty(row[0], String(HERO_DEFAULT[row[1]][row[2]]));
     });
   }
 

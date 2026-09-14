@@ -109,14 +109,15 @@
      기본값 숫자는 여기에 두지 않습니다 — 세 저장소가 함께 쓰는 banner-layout.js 한 곳에만
      있고, 그 파일이 --hero-* 변수를 늘 채워 넣습니다. 여기에 숫자를 또 적으면 값이
      세 벌이 되어 관리자에서 한 번에 못 바꿉니다. 1cqw = 히어로 칸 폭의 1%. */
-  .hero h1{font-weight:800;font-size:calc(var(--hero-title-vw) * 1cqw);line-height:1.06;letter-spacing:-.03em;color:var(--ink);}
+  .hero h1{font-weight:800;font-size:calc(var(--hero-title-vw) * 1cqw);line-height:var(--hero-title-lh);letter-spacing:-.03em;color:var(--ink);}
   .hero h1 .mg{color:var(--magenta);display:block;margin-top:.06em;}
   /* 제목 기본이 800 이라 <b> 기본값(700)이면 굵게가 거꾸로 가늘어졌습니다. */
   .hero h1 b,.hero h1 strong{font-weight:900;}
-  .hero p.lead{font-size:calc(var(--hero-sub-vw) * 1cqw);color:var(--ink-2);margin:1.4em 0 0;font-weight:500;}
+  .hero p.lead{font-size:calc(var(--hero-sub-vw) * 1cqw);color:var(--ink-2);
+    line-height:var(--hero-sub-lh);margin:calc(var(--hero-sub-gap) * 1em) 0 0;font-weight:500;}
   .hero p.lead b{color:var(--magenta-deep);font-weight:700;}
   /* 단추 줄은 문구 칸 폭을 그대로 씁니다. 그래야 [단추 정렬] 이 문구 기준으로 움직입니다. */
-  .hero-actions{display:flex;gap:0.83cqw;flex-wrap:wrap;margin-top:2.1em;align-self:stretch;}
+  .hero-actions{display:flex;gap:0.83cqw;flex-wrap:wrap;margin-top:calc(var(--hero-cta-gap) * 1cqw);align-self:stretch;}
   .hero .btn{font-size:calc(var(--hero-cta-vw) * 1cqw);padding:0.8em 1.6em;}
 
   /* ===== 배너 문구·단추 자리 (관리자에서 고른 값) =====
@@ -537,9 +538,10 @@
     /* 모바일 히어로는 3:2 입니다. 16:9 로 두면 390 폭에서 높이가 219px 뿐이라
        문구가 들어갈 자리가 모자랍니다. 3:2 면 260px 이 됩니다. */
     .hero{aspect-ratio:3/2;--hero-hw:0.66667;width:min(100%,calc(var(--hero-avail) * 3 / 2));}
-    .hero h1{font-size:calc(var(--hero-m-title-vw) * 1cqw);}
-    .hero p.lead{font-size:calc(var(--hero-m-sub-vw) * 1cqw);margin-top:1.2em;}
-    .hero-actions{gap:2cqw;margin-top:1.4em;}
+    .hero h1{font-size:calc(var(--hero-m-title-vw) * 1cqw);line-height:var(--hero-m-title-lh);}
+    .hero p.lead{font-size:calc(var(--hero-m-sub-vw) * 1cqw);line-height:var(--hero-m-sub-lh);
+      margin-top:calc(var(--hero-m-sub-gap) * 1em);}
+    .hero-actions{gap:2cqw;margin-top:calc(var(--hero-m-cta-gap) * 1cqw);}
     .hero .btn{font-size:calc(var(--hero-m-cta-vw) * 1cqw);padding:0.6333em 1.2667em;}
     /* 모바일 세부 위치 — 안 정하면 PC 값을 씁니다(자리 칸과 같은 규칙). */
     .hero-copy{transform:translate(calc(var(--hero-m-dx) * 1cqw),
