@@ -313,8 +313,12 @@
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important;}.reveal{opacity:1;transform:none;transition:none;}}
 
-  /* ===== hero video background ===== */
-  .hero{background:#130A0F;}
+  /* ===== hero video background =====
+     .hero{background:#130A0F} 를 뺐습니다.
+     배경 영상이 이제 .hero 의 형제(띠 안)라 .hero 보다 뒤에 깔립니다.
+     그래서 .hero 에 불투명한 색이 있으면 영상을 통째로 가립니다 —
+     실제로 화면이 새까맣게 나왔습니다(실측: .hero 의 배경색이 rgb(19,10,15)).
+     영상이 아직 안 뜬 동안 보일 색은 영상 요소 자신의 바탕으로 옮겼습니다. */
   /* 배경 확대 — 관리자 [배경 확대] 값입니다. 100% 면 animation 이 제자리라 안 움직입니다.
      배율·시간 숫자는 banner-layout.js 한 곳에 있습니다. */
   /* 배경과 오버레이 — 높이는 히어로와 같고, 폭은 원본 비만큼만 넓힙니다.
@@ -323,7 +327,7 @@
   .hero-video,.hero-overlay{position:absolute;top:0;left:50%;height:100%;
     width:min(100%, calc(var(--hero-h) * var(--hero-media-ar)));}
   /* 등록된 것이 없을 때 보이는 바탕입니다. 예전에 .hero 가 갖고 있던 그 색입니다. */
-  .hero-video{background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);
+  .hero-video{background:#130A0F;
     object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
     animation:heroBgZoom calc(var(--hero-bg-zoom-secs) * 1s) ease-in-out infinite alternate;}
   @keyframes heroBgZoom{from{transform:translateX(-50%) scale(1);}
