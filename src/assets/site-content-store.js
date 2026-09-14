@@ -166,12 +166,18 @@
     return item;
   }
 
+  // FAQ 분류 묶음. 예전에는 apply·lecture·pay·biz 네 가지가 코드에 박혀 있었는데,
+  // 리더스 기준이라 디어데이에는 맞지 않았습니다. 이제 브랜드마다 따로 정합니다.
+  var FAQ_CATEGORY_GROUP = 'faq_category';
+
   function normalizeFaq(faq) {
     var item = Object.assign({}, faq || {});
     item.id = text(item.id);
-    item.category = text(item.category) || 'apply';
+    // 분류가 없는 브랜드(디어데이)는 빈 값으로 둡니다.
+    item.category = text(item.category);
     item.question = text(item.question);
     item.answer = text(item.answer);
+    item.answerHtml = text(item.answerHtml);
     item.sortOrder = toNumber(item.sortOrder, 0);
     item.isActive = toBoolean(item.isActive, true);
     return item;
@@ -349,6 +355,7 @@
       category: row.category,
       question: row.question,
       answer: row.answer,
+      answerHtml: row.answer_html,
       sortOrder: row.sort_order,
       isActive: row.is_active
     });
@@ -361,9 +368,14 @@
       category: item.category,
       question: item.question,
       answer: item.answer,
+      answer_html: item.answerHtml || null,
       sort_order: item.sortOrder,
       is_active: item.isActive
     };
+  }
+
+  function getFaqCategories(includeInactive) {
+    return getOptions(FAQ_CATEGORY_GROUP, includeInactive);
   }
 
   // ── 이벤트 카드 ────────────────────────────────────────────────────
@@ -828,6 +840,8 @@
   global.SiteContentStore = {
     optionGroups: clone(OPTION_GROUPS),
     faqCategories: clone(FAQ_CATEGORIES),
+    faqCategoryGroup: FAQ_CATEGORY_GROUP,
+    getFaqCategories: getFaqCategories,
     contentAssetsBucket: CONTENT_ASSETS_BUCKET,
     ready: ready,
     refresh: refresh,

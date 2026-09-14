@@ -9,8 +9,10 @@
 
   var ALLOWED_TAGS = {
     B: 1, STRONG: 1, I: 1, EM: 1, U: 1, S: 1, STRIKE: 1, DEL: 1,
-    BR: 1, SPAN: 1, DIV: 1, P: 1, UL: 1, OL: 1, LI: 1
+    BR: 1, SPAN: 1, DIV: 1, P: 1, UL: 1, OL: 1, LI: 1, A: 1
   };
+  // 링크 주소는 이 세 가지만 받습니다. javascript: · data: 같은 것은 버립니다.
+  var SAFE_HREF = /^(https?:\/\/|mailto:|\/)/i;
   var DROP_WHOLE = { SCRIPT: 1, STYLE: 1, TEMPLATE: 1, NOSCRIPT: 1, IFRAME: 1, OBJECT: 1, EMBED: 1 };
   var ALLOWED_STYLES = ['color', 'font-size', 'font-weight', 'font-style', 'text-align', 'text-decoration'];
   var SAFE_VALUE = /^[#0-9a-zA-Z().,%\- ]*$/;
@@ -82,6 +84,17 @@
       var copy = doc.createElement(tag.toLowerCase());
       var style = safeStyle(child);
       if (style) copy.setAttribute('style', style);
+      // 링크 — 주소가 안전할 때만 살리고, 새 창으로 열게 고정합니다.
+      if (tag === 'A') {
+        var href = String(child.getAttribute('href') || '').trim();
+        if (!SAFE_HREF.test(href)) {                    // 못 믿을 주소면 글자만 남깁니다
+          clean(child, out, doc);
+          return;
+        }
+        copy.setAttribute('href', href);
+        copy.setAttribute('target', '_blank');
+        copy.setAttribute('rel', 'noopener');
+      }
       var host = copy;
       // 인라인으로 굵게 지정된 것은 <b> 로 감싸 옮깁니다. B·STRONG 자체는 그냥 둡니다.
       if (tag !== 'B' && tag !== 'STRONG' && isBoldWeight(weightOf(child))) {
