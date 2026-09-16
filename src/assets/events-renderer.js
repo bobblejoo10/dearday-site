@@ -29,10 +29,15 @@
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
+  // 카드에는 지역/층수·지하/홀이름 없이 장소명만 짧게 보여 줍니다.
+  // 실제 데이터: session.location = 지역(예: "강릉")만, session.address = "장소명 [N층|지하] [홀이름]".
+  // address 에서 층수(N층) 또는 지하 표시가 나오는 지점 앞부분(장소명)만 잘라내고,
+  // 층수·지하·홀이름과 location(지역)은 버립니다.
   function venueText(session) {
-    return [session.location, session.address].filter(function (part) {
-      return String(part || '').trim();
-    }).join(' ').trim();
+    var address = String(session.address || '').trim();
+    var venue = address.split(/\s*(?:\d+\s*층|지하)/)[0].trim();
+    if (venue) return venue;
+    return address || String(session.location || '').trim();
   }
 
   // 날짜 표기 — 원본 22장이 세 가지 형식으로 뒤섞여 있었습니다.
