@@ -557,15 +557,31 @@
     return getState();
   }
 
+  // 히어로는 배너 한 표만 있으면 그립니다.
+  // 예전에는 일곱 표를 다 받은 뒤에야 배너가 넘어가서, 가장 늦은 표를 기다렸습니다
+  // (실측 : site_banners 2426ms 도착 · sites 3207ms 도착 · 히어로는 3207ms 까지 대기).
+  // 이제 배너만 먼저 채워 알리고, 나머지는 도착하는 대로 아래에서 한꺼번에 채웁니다.
+  var bannersPromise = null;
+
+  function setBannersEarly(rows) {
+    cache.banners = (Array.isArray(rows) ? rows : [])
+      .map(bannerFromRow).map(normalizeBanner).sort(sortByOrder);
+    notify();                     // loaded 는 아직 true 로 두지 않습니다(나머지가 안 왔으므로)
+    return cache.banners;
+  }
+
   async function loadContent() {
     if (!api || !api.hasConfig()) {
       throw new Error(api ? api.defaultErrorMessage : '데이터를 불러올 수 없습니다.');
     }
+    // 배너 조회를 따로 붙잡아 둡니다. 이 줄은 첫 await 앞이라 ready() 를 부르는 즉시 정해집니다.
+    var bannersQuery = api.selectRows('site_banners', { select: '*' });
+    bannersPromise = bannersQuery.then(setBannersEarly);
     // 네 가지를 동시에(병렬) 불러온다. FAQ 테이블(site_faqs)이 아직 없거나 조회에
     // 실패해도 배너/강사/옵션 로딩은 막히지 않도록 FAQ 조회만 실패 시 빈 목록으로 처리한다.
     // (순차로 기다리면 히어로 배너 렌더가 늦어져 기본 이미지가 잠깐 깜빡이므로 반드시 병렬로 둔다.)
     var rows = await Promise.all([
-      api.selectRows('site_banners', { select: '*' }),
+      bannersQuery,
       api.selectRows('instructors', { select: '*' }),
       api.selectRows('form_options', { select: '*' }),
       api.selectRows('site_faqs', { select: '*' }).catch(function () { return []; }),
@@ -590,8 +606,17 @@
     });
   }
 
+  // 배너만 기다립니다. 전체 로딩은 같이 시작하되 기다리지는 않습니다.
+  function readyBanners() {
+    var all = ready();
+    return bannersPromise || all.then(function () { return cache.banners; });
+  }
+
   function ready(force) {
-    if (force) readyPromise = null;
+    if (force) {
+      readyPromise = null;
+      bannersPromise = null;
+    }
     if (!readyPromise) {
       readyPromise = loadContent().catch(function (error) {
         loaded = false;
@@ -863,6 +888,7 @@
     getFaqCategories: getFaqCategories,
     contentAssetsBucket: CONTENT_ASSETS_BUCKET,
     ready: ready,
+    readyBanners: readyBanners,
     refresh: refresh,
     subscribe: subscribe,
     hasLoaded: function () { return loaded; },

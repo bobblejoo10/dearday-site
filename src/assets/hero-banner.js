@@ -277,7 +277,10 @@
     });
   }
 
-  store.ready().then(apply).catch(function (error) {
+  // 배너 한 표만 오면 그립니다. 나머지 표(강사·FAQ·후기 등)는 안 기다립니다.
+  // 없는 옛 저장소와 같이 쓸 수 있게, readyBanners 가 없으면 예전처럼 ready 를 씁니다.
+  var 배너대기_ = typeof store.readyBanners === 'function' ? store.readyBanners() : store.ready();
+  배너대기_.then(apply).catch(function (error) {
     // 자료를 못 불러와도 화면은 poster 로 남습니다. 조용히 넘어갑니다.
     if (global.console && console.warn) console.warn('[디어데이] 히어로 배너를 불러오지 못했습니다.', error);
   });
