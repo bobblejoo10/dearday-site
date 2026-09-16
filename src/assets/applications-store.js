@@ -339,5 +339,9 @@
     escapeHtml: escapeHtml
   };
 
-  ready().catch(function () {});
+  // 페이지가 열리자마자 읽지 않습니다.
+  // 이 표(lecture_applications)는 공개 사이트 권한으로는 읽을 수 없습니다
+  // (실측 : 401 permission denied for table lecture_applications).
+  // 그런데도 첫 화면에서 매번 한 번씩 나가 다른 조회와 자리를 다투고 있었습니다.
+  // 실제로 쓰는 곳(addApplicationInternal)은 스스로 ready() 를 부르므로 그대로 동작합니다.
 })(window);

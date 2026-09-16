@@ -89,26 +89,27 @@
      다 보여 주므로 둘 다 읽습니다. 구분 없던 옛 값(course_category)도 함께요. */
   var 카테고리그룹_ = ['course_category_free', 'course_category_paid', 'course_category'];
 
+  // 카테고리 목록은 SiteContentStore 가 form_options 를 통째로(select *) 이미 받아 둡니다.
+  // 예전에는 여기서 그룹 세 개를 for 문 안에서 하나씩 더 읽었습니다.
+  // 같은 표를 세 번, 그것도 앞의 답을 기다린 뒤에 다음을 보내서 그만큼 늦었습니다
+  // (실측 : 첫 화면에서 form_options 가 1262 · 2867 · 3300ms 에 각각 한 번씩).
   async function 카테고리읽기_() {
-    var api = window.AiLeadersSupabase;
-    if (!api || typeof api.selectRows !== 'function') { 카테고리목록_ = []; return; }
-    var 모음 = [];
-    for (var i = 0; i < 카테고리그룹_.length; i += 1) {
-      try {
-        var rows = await api.selectRows('form_options', {
-          select: 'label,value,sort_order,is_active,option_group',
-          filters: { option_group: 카테고리그룹_[i], is_active: true },
-          order: 'sort_order.asc'
-        });
-        (Array.isArray(rows) ? rows : []).forEach(function (row) {
-          var value = String((row && (row.value || row.label)) || '').trim();
-          if (!value) return;
-          모음.push({ value: value, label: String((row && (row.label || row.value)) || '').trim() || value });
-        });
-      } catch (error) {
-        // 한 그룹을 못 읽어도 나머지는 씁니다.
-      }
+    var content = global.SiteContentStore;
+    if (!content || typeof content.getOptions !== 'function') { 카테고리목록_ = []; return; }
+    try {
+      await content.ready();
+    } catch (error) {
+      카테고리목록_ = [];            // 못 읽어도 행사 카드로 탭을 세웁니다(예전과 같음)
+      return;
     }
+    var 모음 = [];
+    카테고리그룹_.forEach(function (group) {
+      (content.getOptions(group) || []).forEach(function (row) {
+        var value = String((row && (row.value || row.label)) || '').trim();
+        if (!value) return;
+        모음.push({ value: value, label: String((row && (row.label || row.value)) || '').trim() || value });
+      });
+    });
     var 봤다 = {};
     카테고리목록_ = 모음.filter(function (item) {
       if (봤다[item.value]) return false;
@@ -195,6 +196,6 @@
   }
 
   // 카테고리 목록을 먼저 읽고 나서 그립니다. 목록을 못 읽어도 행사 카드로 탭을 세웁니다.
-  카테고리읽기_().then(function () { return store.ready(); }).then(render).catch(failed);
+  Promise.all([카테고리읽기_(), store.ready()]).then(render).catch(failed);
   if (store.subscribe) store.subscribe(render);
 })(window);
