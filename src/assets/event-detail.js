@@ -349,8 +349,26 @@
     draw(selected);
   }
 
+  // 본문 열기 — 리더스 강연 상세와 같은 방식입니다.
+  function reveal() { document.body.classList.add('event-detail-ready'); }
+
+  // 포스터까지 그려진 뒤에 엽니다. 그림이 늦거나 없으면 기다리지 않습니다.
+  function revealWhenBannerReady() {
+    var img = el('evBanner');
+    if (!img || img.hidden || !img.getAttribute('src')) { reveal(); return; }
+    if (img.complete && img.naturalWidth) { reveal(); return; }
+    var done = false;
+    var finish = function () { if (done) return; done = true; reveal(); };
+    img.addEventListener('load', finish, { once: true });
+    img.addEventListener('error', finish, { once: true });
+    global.setTimeout(finish, 2500);
+  }
+
+  // 무슨 일이 있어도 6초 뒤에는 엽니다. 자료를 못 받아도 화면이 잠기지 않게요.
+  global.setTimeout(reveal, 6000);
+
   store.ready().then(boot).catch(function (error) {
     if (global.console && console.warn) console.warn('[디어데이] 행사 자료를 불러오지 못했습니다.', error);
     showMissing();
-  });
+  }).then(revealWhenBannerReady, reveal);
 })(window, document);

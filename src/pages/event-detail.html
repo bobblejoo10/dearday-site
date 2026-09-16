@@ -593,6 +593,20 @@
 <div data-site-nav></div>
 <script src="/assets/site-layout.js?v=20260914-anchor-1"></script>
 
+<!-- 자료가 오기 전의 "불러오는 중" 문구가 잠깐 보였다 바뀌는 것을 막습니다.
+     리더스 강연 상세(courses/detail.html)와 같은 방식입니다 — 다 갖춰질 때까지
+     본문을 감추고 흰 바탕에 진행 막대만 보여 줍니다. -->
+<style>.detail{visibility:hidden}body.event-detail-ready .detail{visibility:visible}
+/* z-index 190 : 메뉴바(200)보다는 아래, 옆 리모컨(150)·상담 단추(180)보다는 위.
+   리더스도 메뉴바만 보이고 나머지는 가려집니다. */
+#eventLoading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;z-index:190}
+body.event-detail-ready #eventLoading{display:none}
+#eventLoading .el-bar{width:180px;height:4px;border-radius:999px;background:#FFE1EC;overflow:hidden;position:relative}
+#eventLoading .el-bar>span{position:absolute;top:0;left:-40%;width:40%;height:100%;background:var(--magenta);border-radius:999px;animation:elMove 1.1s ease-in-out infinite}
+@keyframes elMove{0%{left:-40%}100%{left:100%}}
+@media(prefers-reduced-motion:reduce){#eventLoading .el-bar>span{animation:none;left:0;width:100%}}</style>
+<div id="eventLoading" aria-hidden="true"><div class="el-bar"><span></span></div></div>
+
 <main class="detail">
   <a class="crumb" href="/events/">&#8592; 전체 행사 보기</a>
   <div class="hero-detail">
