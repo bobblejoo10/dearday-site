@@ -160,6 +160,29 @@
     if (typeof store.subscribe === 'function') store.subscribe(paint);
   }
 
+  // 우측 하단 상담 단추 — 관리자 [홈페이지 관리] → [상담 버튼] 에서 켜야 나옵니다.
+  // 페이지에는 display:none 으로 박혀 있고, 켜져 있을 때만 풀어 줍니다.
+  // 그래서 꺼져 있을 때 잠깐 떴다 사라지는 일이 없습니다.
+  function applyChatButton() {
+    var store = global.SiteContentStore;
+    if (!store || typeof store.isChatButtonEnabled !== 'function') return;
+    var paint = function () {
+      var on = store.isChatButtonEnabled() === true;
+      var nodes = document.querySelectorAll('#ctLauncher, .ct-launcher');
+      for (var i = 0; i < nodes.length; i++) {
+        nodes[i].style.display = on ? '' : 'none';
+      }
+      // 단추를 껐는데 대화창이 열려 있으면 같이 닫습니다.
+      if (!on) {
+        var box = document.getElementById('chatbot');
+        if (box) box.hidden = true;
+      }
+    };
+    if (typeof store.ready === 'function') store.ready().then(paint).catch(function () {});
+    else paint();
+    if (typeof store.subscribe === 'function') store.subscribe(paint);
+  }
+
   // ── 해시로 들어왔을 때 자리 맞추기 ────────────────────────────────
   //
   // 주소에 #promise · #reviews · #faq 가 붙어 있으면 브라우저는 HTML 을 읽자마자
@@ -232,6 +255,7 @@
     renderFooter();
     renderChrome();
     applyEventMenu();
+    applyChatButton();
   }
 
   global.DeardayLayout = {

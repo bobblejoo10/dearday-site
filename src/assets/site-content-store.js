@@ -42,6 +42,7 @@
     events: [],
     eventPage: null,
     eventPageEnabled: false,
+    chatButtonEnabled: false,
     reviews: [],
     reviewSettings: null
   };
@@ -543,6 +544,7 @@
     cache.events = (next.events || []).map(normalizeEvent).sort(sortByOrder);
     cache.eventPage = normalizeEventPage(next.eventPage);
     cache.eventPageEnabled = toBoolean(next.eventPageEnabled, false);
+    cache.chatButtonEnabled = toBoolean(next.chatButtonEnabled, false);
     cache.reviews = (next.reviews || []).map(normalizeReview).sort(sortByOrder);
     cache.reviewSettings = normalizeReviewSettings(next.reviewSettings);
     loaded = true;
@@ -565,7 +567,7 @@
       api.selectRows('site_faqs', { select: '*' }).catch(function () { return []; }),
       api.selectRows('site_events', { select: '*' }).catch(function () { return []; }),
       // sites 는 브랜드로 걸러 읽는 표가 아니라 세 줄뿐입니다. 지금 브랜드 줄만 골라 씁니다.
-      api.selectRows('sites', { select: 'id,event_page_enabled,event_page,reviews_label,reviews_photo_enabled' }).catch(function () { return []; }),
+      api.selectRows('sites', { select: 'id,event_page_enabled,event_page,reviews_label,reviews_photo_enabled,chat_button_enabled' }).catch(function () { return []; }),
       api.selectRows('site_reviews', { select: '*' }).catch(function () { return []; })
     ]);
     var siteId = currentSiteId();
@@ -578,6 +580,7 @@
       events: (rows[4] || []).map(eventFromRow),
       eventPage: siteRow.event_page,
       eventPageEnabled: siteRow.event_page_enabled,
+      chatButtonEnabled: siteRow.chat_button_enabled,
       reviews: (rows[6] || []).map(reviewFromRow),
       reviewSettings: { label: siteRow.reviews_label, photoEnabled: siteRow.reviews_photo_enabled }
     });
@@ -737,6 +740,18 @@
     return cache.eventPageEnabled === true;
   }
 
+  // 우측 하단 상담 버튼 — 켜기/끄기만 sites 표에 둡니다.
+  function isChatButtonEnabled() {
+    return cache.chatButtonEnabled === true;
+  }
+
+  async function saveChatButton(enabled) {
+    var siteId = currentSiteId();
+    if (!siteId) throw new Error('브랜드를 먼저 고르세요.');
+    await api.updateRows('sites', { id: siteId }, { chat_button_enabled: toBoolean(enabled, false) });
+    return refresh();
+  }
+
   async function saveEvent(source) {
     var item = normalizeEvent(source);
     if (!item.id) item.id = api.createId('event');
@@ -875,6 +890,8 @@
     saveEventOrder: saveEventOrder,
     deleteEvent: deleteEvent,
     saveEventPage: saveEventPage,
+    isChatButtonEnabled: isChatButtonEnabled,
+    saveChatButton: saveChatButton,
     reviewPlacements: clone(REVIEW_PLACEMENTS),
     reviewCategoryGroup: REVIEW_CATEGORY_GROUP,
     getReviews: getReviews,
