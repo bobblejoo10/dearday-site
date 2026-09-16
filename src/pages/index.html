@@ -363,7 +363,9 @@
      배경이 천천히 커졌다 줄어드는 움직임은 .hero-video 에 걸려 있어서 여기는 안 따라갑니다. */
   .hero-pin{z-index:0;object-fit:contain;pointer-events:none;transform:translateX(-50%);}
   /* 등록된 것이 없을 때 보이는 바탕입니다. 예전에 .hero 가 갖고 있던 그 색입니다. */
-  .hero-video{background:#130A0F;
+  /* 자료를 불러오는 동안 보이는 바탕 — [브랜드 소개] 칸에 쓰는 그라데이션과 같습니다.
+     그림 파일을 쓰지 않아 페이지가 무거워지지 않습니다. */
+  .hero-video{background:radial-gradient(125% 125% at 50% 20%, #FFE6EF 8%, #FFD1E3 28%, #FFF1F6 50%, #ffffff 75%, #FFF1F6 100%);
     object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
     animation:heroBgZoom calc(var(--hero-bg-zoom-secs) * 1s) ease-in-out infinite alternate;}
   @keyframes heroBgZoom{from{transform:translateX(-50%) scale(1);}
@@ -371,8 +373,10 @@
   @media(prefers-reduced-motion:reduce){.hero-video{animation:none;}}
   /* 자리·폭은 위 .hero-video,.hero-overlay 규칙이 정합니다. 여기서는 색만 정합니다.
      예전처럼 inset:0 을 다시 쓰면 그 폭 지정이 덮여서 배경만 넓어지고 막은 안 넓어집니다. */
-  .hero-overlay{z-index:1;pointer-events:none;transform:translateX(-50%);
-    background:linear-gradient(95deg,rgba(14,8,11,.86) 0%,rgba(22,9,16,.6) 46%,rgba(241,55,122,.22) 100%);}
+  /* 막의 색·켜짐은 관리자 [그라데이션 씌우기] 가 정합니다(hero-banner.js 가 붙여 줍니다).
+     자료가 오기 전에 미리 덮어 두면 로딩 동안 글자가 어두운 막에 묻혔습니다.
+     그래서 기본은 투명으로 두고 설정이 온 뒤에만 덮습니다. */
+  .hero-overlay{z-index:1;pointer-events:none;transform:translateX(-50%);background:transparent;}
   .hero .wrap{position:relative;z-index:2;}
 
   /* 좌우 여백 채우기 — 칸과 층은 banner-layout.js 가 만들고 그립니다.
@@ -698,9 +702,11 @@
   <!-- 배경과 막은 히어로 칸이 아니라 띠 안에 둡니다. 그래야 화면이 16:9 보다
        가로로 길 때 좌우 여백까지 그림으로 채울 수 있습니다(원본이 가진 만큼만). -->
   <!-- 영상 주소는 관리자 [사이트 콘텐츠] → 배너에서 가져옵니다 (hero-banner.js). -->
-  <video class="hero-video" data-site-hero-video autoplay muted loop playsinline preload="auto" disablePictureInPicture disableRemotePlayback poster="/images/deardayclass-01.jpg"></video>
+  <video class="hero-video" data-site-hero-video autoplay muted loop playsinline preload="auto" disablePictureInPicture disableRemotePlayback></video>
   <div class="hero-overlay" aria-hidden="true"></div>
-<section class="hero" aria-labelledby="hero-h">
+<!-- tone-light : 지금 켜 둔 배너의 [배경 밝기] 값입니다. 자료가 오기 전에도 같은 색으로 보이게 미리 붙여 둡니다.
+     관리자에서 배경 밝기를 [어두운 배경] 으로 바꾸면 이 자리도 tone-light 를 빼 주세요. -->
+<section class="hero tone-light" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <h1 id="hero-h" class="reveal">오늘을,<span class="mg">특별한 하루로</span></h1>
