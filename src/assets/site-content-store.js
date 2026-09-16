@@ -566,7 +566,12 @@
   function setBannersEarly(rows) {
     cache.banners = (Array.isArray(rows) ? rows : [])
       .map(bannerFromRow).map(normalizeBanner).sort(sortByOrder);
-    notify();                     // loaded 는 아직 true 로 두지 않습니다(나머지가 안 왔으므로)
+    // 여기서 notify() 를 부르면 안 됩니다.
+    // 구독자들은 "자료가 다 왔다" 는 뜻으로 알아듣습니다. 그런데 이 시점에는
+    // 배너 말고는 전부 기본값입니다(eventPageEnabled=false · chatButtonEnabled=false).
+    // 실제로 site-layout.js 의 applyEventMenu 가 그 false 를 보고
+    // 디어데이 /event-review/ 를 첫 화면으로 돌려보냈습니다(실측).
+    // 히어로는 readyBanners() 가 돌려주는 약속으로 받아 가므로 알림이 필요 없습니다.
     return cache.banners;
   }
 
