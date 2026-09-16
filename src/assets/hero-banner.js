@@ -86,6 +86,29 @@
       : (banner.desktopImage || banner.mobileImage);
     if (poster) video.setAttribute('poster', 미디어주소_(poster));
 
+    // 고정 PNG — 배경 위, 막 아래. 배경 확대 움직임을 따라가지 않습니다.
+    var band = video.closest ? video.closest('.hero-band') : video.parentNode;
+    if (band) {
+      var pinSrc = banner.fixedImage ? 미디어주소_(banner.fixedImage) : '';
+      var pin = band.querySelector('.hero-pin');
+      if (pinSrc && !pin) {
+        pin = document.createElement('img');
+        pin.className = 'hero-pin';
+        pin.alt = '';
+        pin.setAttribute('aria-hidden', 'true');
+        band.insertBefore(pin, video.nextSibling);
+      }
+      if (pin) {
+        if (pinSrc) {
+          if (pin.getAttribute('src') !== pinSrc) pin.setAttribute('src', pinSrc);
+          pin.hidden = false;
+        } else {
+          pin.hidden = true;
+          pin.removeAttribute('src');
+        }
+      }
+    }
+
     // 등록한 그림·영상의 가로세로 비를 히어로에 알려 줍니다.
     // 히어로보다 가로로 길면 잘라내는 대신 히어로 세로가 줄어듭니다(banner-layout.js).
     // 영상이 있으면 영상 비, 없으면 포스터 그림 비를 씁니다.

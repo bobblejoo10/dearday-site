@@ -116,6 +116,8 @@
     item.desktopImage = normalizeAssetUrl(item.desktopImage, 'images');
     item.mobileImage = normalizeAssetUrl(item.mobileImage, 'images');
     item.videoUrl = text(item.videoUrl);
+    // 고정 PNG — 배경 위·글자 아래에 얹는 투명 그림. 배경 확대 움직임을 안 따라갑니다.
+    item.fixedImage = normalizeAssetUrl(item.fixedImage, 'images');
     item.overlayColor = text(item.overlayColor) || '#021642';
     // 배경 밝기. light 면 대제목·소제목·단추·메뉴바가 진한 색으로 바뀝니다.
     item.backgroundTone = text(item.backgroundTone) === 'light' ? 'light' : 'dark';
@@ -218,6 +220,7 @@
       desktopImage: row.desktop_image,
       mobileImage: row.mobile_image,
       videoUrl: row.video_url,
+      fixedImage: row.fixed_image,
       overlayColor: row.overlay_color,
       backgroundTone: row.background_tone,
       overlayEnabled: row.overlay_enabled,
@@ -271,6 +274,7 @@
       desktop_image: item.desktopImage || null,
       mobile_image: item.mobileImage || null,
       video_url: item.videoUrl || null,
+      fixed_image: item.fixedImage || null,
       overlay_color: item.overlayColor || '#021642',
       background_tone: item.backgroundTone === 'light' ? 'light' : 'dark',
       overlay_enabled: item.overlayEnabled !== false,

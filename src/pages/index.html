@@ -357,8 +357,11 @@
   /* 배경과 오버레이 — 높이는 히어로와 같고, 폭은 원본 비만큼만 넓힙니다.
      aspect-ratio 로 폭이 높이 x 원본비 가 되고, max-width:100% 가 띠 폭에서 자릅니다.
      그래서 여백이 있는 만큼만 채워지고, 원본에 없는 만큼은 늘어나지 않습니다. */
-  .hero-video,.hero-overlay{position:absolute;top:0;left:50%;height:100%;
+  .hero-video,.hero-overlay,.hero-pin{position:absolute;top:0;left:50%;height:100%;
     width:min(100%, calc(var(--hero-h) * var(--hero-media-ar)));}
+  /* 고정 PNG — 관리자 [고정 PNG 파일]. 배경 위·막 아래에 비율 그대로 얹습니다.
+     배경이 천천히 커졌다 줄어드는 움직임은 .hero-video 에 걸려 있어서 여기는 안 따라갑니다. */
+  .hero-pin{z-index:0;object-fit:contain;pointer-events:none;transform:translateX(-50%);}
   /* 등록된 것이 없을 때 보이는 바탕입니다. 예전에 .hero 가 갖고 있던 그 색입니다. */
   .hero-video{background:#130A0F;
     object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
