@@ -565,6 +565,10 @@
     .top-fab svg{width:18px;height:18px;}
     .top-fab.show{opacity:1;pointer-events:auto;}
     .top-fab:active{transform:scale(.94);}
+
+    /* 상담 버튼을 끄면 그 자리를 회수합니다. (이 페이지는 신청 바가 있어 값이 다릅니다) */
+    body.chat-off .top-fab{bottom:100px;}
+    body.chat-off .rail{bottom:112px;}
     .rail{display:none !important;}
     body.more-open .top-fab,body.more-open .ct-launcher{opacity:0 !important;pointer-events:none !important;}
   }

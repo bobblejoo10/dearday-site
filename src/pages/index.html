@@ -649,6 +649,13 @@
     .top-fab svg{width:18px;height:18px;}
     .top-fab.show{opacity:1;pointer-events:auto;}
     .top-fab:active{transform:scale(.94);}
+
+    /* 상담 버튼을 끄면 그 자리를 회수합니다.
+       켜져 있을 때 : [상담 84px] [TOP 140px]
+       꺼져 있을 때 : [TOP 84px]  — 빈 자리가 남지 않게 아래로 내립니다.
+       body.chat-off 는 site-layout.js 의 applyChatButton 이 붙입니다. */
+    body.chat-off .top-fab{bottom:84px;}
+    body.chat-off .rail{bottom:88px;}
     .rail{display:none !important;}
     body.more-open .top-fab,body.more-open .ct-launcher{opacity:0 !important;pointer-events:none !important;}
   }

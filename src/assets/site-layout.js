@@ -172,6 +172,8 @@
       for (var i = 0; i < nodes.length; i++) {
         nodes[i].style.display = on ? '' : 'none';
       }
+      // 꺼져 있으면 그 자리를 다른 단추들이 쓰게 합니다(빈 자리가 남지 않게).
+      document.body.classList.toggle('chat-off', !on);
       // 단추를 껐는데 대화창이 열려 있으면 같이 닫습니다.
       if (!on) {
         var box = document.getElementById('chatbot');
