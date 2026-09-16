@@ -321,6 +321,16 @@
     .pitem{text-align:left;}
   }
   @media(max-width:620px){
+    /* 모바일에서는 맨 위에서 메뉴 바탕을 없애 히어로가 그대로 보이게 합니다.
+       리더스와 같은 방식입니다 — 맨 위는 투명, 내리면(.scrolled) 흰 바탕.
+       이 폭에서는 메뉴 글자가 접히고 로고만 남아서 가능합니다.
+       로고는 진한 그림이라 어두운 히어로 위에서 안 보입니다.
+       푸터에서 쓰는 방법 그대로(brightness(0) invert(1)) 흰색으로 바꿉니다. */
+    header.nav:not(.scrolled){background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;
+      border-bottom-color:transparent;box-shadow:none;}
+    header.nav:not(.scrolled) .brand img{filter:brightness(0) invert(1);}
+    /* 로고 — 리더스와 같은 비율로 줄입니다 (리더스 38px -> 33.6px) */
+    .brand img{height:34px;}
     .nav-menu{display:none;position:absolute;top:76px;left:0;right:0;flex-direction:column;align-items:flex-start;background:#fff;border-bottom:1px solid var(--line);padding:16px 24px 24px;gap:16px;}
     .nav-menu.open{display:flex;}
     .nav-menu a::after{display:none;}
