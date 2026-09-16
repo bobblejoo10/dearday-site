@@ -403,6 +403,15 @@
     -webkit-backdrop-filter:blur(var(--hero-edge-blur,12px));backdrop-filter:blur(var(--hero-edge-blur,12px));}
   .hero-frost-l{left:0;}
   .hero-frost-r{right:0;}
+
+  /* 로딩 중 잡아두기 — hero-banner.js 가 .hero-band 에 .hero-hold 를 붙였다 뗍니다.
+     배경(영상·그림)과 고정 PNG 가 둘 다 준비될 때까지 감춰 두었다가 한 번에 보여 줍니다.
+     7초 안에 안 오면 그냥 뗍니다(시간은 hero-banner.js 의 대기제한_ 한 곳). */
+  .hero-video,.hero-pin,.hero-edge,.hero-frost{transition:opacity .35s ease;}
+  .hero-band.hero-hold .hero-video,
+  .hero-band.hero-hold .hero-pin,
+  .hero-band.hero-hold .hero-edge,
+  .hero-band.hero-hold .hero-frost{opacity:0;}
   .hero-eyebrow{color:var(--pink-mid);}
   .hero h1{color:#fff;}
   .hero p.lead{color:rgba(255,255,255,.9);}
@@ -993,7 +1002,7 @@
 <script src="/assets/reviews-renderer.js?v=20260914-review-1"></script>
 <script src="/assets/faq-renderer.js?v=20260914-faq-1"></script>
 <script src="/assets/public-media-overrides.js?v=20260908-r2-1"></script>
-<script src="/assets/hero-banner.js?v=20260914-bleed-1"></script>
+<script src="/assets/hero-banner.js?v=20260916-hold-1"></script>
 <script src="/assets/courses-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/applications-store.js?v=20260903-dd-events-1"></script>
 <script src="/assets/events-renderer.js?v=20260909-category-2"></script>
