@@ -125,7 +125,9 @@
     --hero-w:min(100%, calc(var(--hero-avail) * var(--hero-base-ar)));
     --hero-h:calc(var(--hero-w) / var(--hero-base-ar));
     position:relative;overflow:hidden;
-    background:var(--pink-3,#FFF2F7);}
+    /* 띠 바탕 — 히어로 칸이 화면보다 좁을 때 좌우 여백에 보이는 색입니다.
+       불러오는 동안 히어로 안쪽과 같은 그라데이션이 여백까지 이어집니다. */
+    background:radial-gradient(125% 125% at 50% 20%, #FFE6EF 8%, #FFD1E3 28%, #FFF1F6 50%, #ffffff 75%, #FFF1F6 100%);}
   /* 문구 칸도 히어로 폭 기준입니다. .wrap 의 고정 폭(1280px)과 창 너비 여백(vw)을
      그대로 두면 히어로 폭이 바뀔 때 문구 시작 위치가 제각각이 됩니다.
      실측 : 히어로 1440 에서 5.56%, 1783 에서 14.11%, 1228 에서 0% 로 어긋났습니다. */
@@ -365,7 +367,9 @@
   /* 등록된 것이 없을 때 보이는 바탕입니다. 예전에 .hero 가 갖고 있던 그 색입니다. */
   /* 자료를 불러오는 동안 보이는 바탕 — [브랜드 소개] 칸에 쓰는 그라데이션과 같습니다.
      그림 파일을 쓰지 않아 페이지가 무거워지지 않습니다. */
-  .hero-video{background:radial-gradient(125% 125% at 50% 20%, #FFE6EF 8%, #FFD1E3 28%, #FFF1F6 50%, #ffffff 75%, #FFF1F6 100%);
+  /* 영상 칸 바탕은 비워 둡니다. 띠(.hero-band)의 그라데이션이 여백부터
+     히어로 칸까지 끊기지 않고 이어지게 하려는 것입니다. */
+  .hero-video{background:transparent;
     object-fit:cover;z-index:0;transform:translateX(-50%);transform-origin:center center;
     animation:heroBgZoom calc(var(--hero-bg-zoom-secs) * 1s) ease-in-out infinite alternate;}
   @keyframes heroBgZoom{from{transform:translateX(-50%) scale(1);}
