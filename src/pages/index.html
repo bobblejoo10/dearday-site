@@ -328,7 +328,9 @@
        푸터에서 쓰는 방법 그대로(brightness(0) invert(1)) 흰색으로 바꿉니다. */
     header.nav:not(.scrolled){background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;
       border-bottom-color:transparent;box-shadow:none;}
-    header.nav:not(.scrolled) .brand img{filter:brightness(0) invert(1);}
+    /* 로고는 배경 밝기가 [어두운 배경] 일 때만 흰색으로 바꿉니다.
+       밝은 사진에 흰 로고를 얹으면 오히려 안 보입니다. */
+    header.nav.tone-dark:not(.scrolled) .brand img{filter:brightness(0) invert(1);}
     /* 로고 — 리더스와 같은 비율로 줄입니다 (리더스 38px -> 33.6px) */
     .brand img{height:34px;}
     .nav-menu{display:none;position:absolute;top:76px;left:0;right:0;flex-direction:column;align-items:flex-start;background:#fff;border-bottom:1px solid var(--line);padding:16px 24px 24px;gap:16px;}
@@ -394,6 +396,18 @@
   .hero h1{color:#fff;}
   .hero p.lead{color:rgba(255,255,255,.9);}
   .hero p.lead b{color:var(--pink-mid);}
+
+  /* 배경 밝기 — 관리자 [홈페이지 관리 > 히어로 배너 > 배경 밝기] 값입니다.
+     hero-banner.js 가 .hero 와 header.nav 에 tone-light / tone-dark 를 붙입니다.
+     리더스와 같은 동작입니다. 색만 바뀌고 글자 크기·자리·간격은 그대로입니다.
+     위 세 줄(흰 글자)이 원래 모습이라 [어두운 배경] 과 같습니다.
+     관리자 글자 편집기에서 색을 직접 고른 부분은 그 색이 이깁니다. */
+  .hero h1, .hero p.lead{transition:color .3s ease;}
+  .hero.tone-light h1{color:var(--ink);}
+  .hero.tone-light p.lead{color:var(--ink-2);}
+  .hero.tone-light p.lead b{color:var(--magenta-deep);}
+  .hero.tone-dark h1{color:#fff;}
+  .hero.tone-dark p.lead{color:rgba(255,255,255,.9);}
   .hero-dots i{background:rgba(255,255,255,.45);}
   .hero-arrow{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff;}
   .hero-arrow:hover{background:rgba(255,255,255,.32);color:#fff;}

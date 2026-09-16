@@ -122,6 +122,19 @@
       else leadEl.textContent = copy.subtitle;
     }
 
+    // 배경 밝기 — 관리자 [홈페이지 관리 > 히어로 배너 > 배경 밝기] 값입니다.
+    // 리더스와 같은 동작입니다. 리더스는 기본이 흰 글자라 .tone-light 에 규칙이 있고,
+    // 디어데이는 기본이 진한 글자라 .tone-dark 쪽에 규칙을 둡니다.
+    // 관리자에서 고르는 것과 화면에서 보이는 결과는 두 브랜드가 같습니다.
+    var isLight = banner.backgroundTone !== 'dark';
+    hero.classList.toggle('tone-light', isLight);
+    hero.classList.toggle('tone-dark', !isLight);
+    var navBar = document.getElementById('nav') || document.querySelector('header.nav');
+    if (navBar) {
+      navBar.classList.toggle('tone-light', isLight);
+      navBar.classList.toggle('tone-dark', !isLight);
+    }
+
     // 직접 지정한 색이 있으면 그 색으로, 비어 있으면 원래 CSS 색 그대로.
     글자색_(titleEl, banner.titleColor);
     글자색_(leadEl, banner.subtitleColor);
