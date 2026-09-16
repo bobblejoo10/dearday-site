@@ -15,7 +15,7 @@
   var TABBAR_HTML = "<nav class=\"mobile-tabbar\" aria-label=\"모바일 하단 메뉴\">\n  <a href=\"/\" class=\"mt-item\" data-tab-key=\"home\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 10.5 12 3l9 7.5\"/><path d=\"M5 9.5V21h14V9.5\"/></svg><span>홈</span></a>\n  <a href=\"/event-review/\" class=\"mt-item\" data-tab-key=\"review\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 9.5h18\"/><path d=\"M8 3v4M16 3v4\"/></svg><span>이벤트</span></a>\n  <a href=\"/events/\" class=\"mt-item mt-main\" data-tab-key=\"events\"><span class=\"mt-main-ic\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z\"/><path d=\"M10 8v8\" stroke-dasharray=\"2 2\"/></svg></span><span>신청하기</span></a>\n  <a href=\"/#reviews\" class=\"mt-item\" data-tab-key=\"reviews\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m12 2 3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z\"/></svg><span>후기</span></a>\n  <button type=\"button\" class=\"mt-item\" id=\"mtMoreBtn\" aria-haspopup=\"true\" aria-expanded=\"false\"><svg viewBox=\"0 0 24 24\" fill=\"currentColor\" aria-hidden=\"true\"><circle cx=\"5\" cy=\"12\" r=\"1.8\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\"/><circle cx=\"19\" cy=\"12\" r=\"1.8\"/></svg><span>더보기</span></button>\n</nav>";
   // 하단 [더보기] — 리더스 mt-drawer 와 같은 "메뉴" 입니다.
   // SNS 바로가기는 오른쪽 아래 [+] 단추(QUICK_RAIL_HTML)로 옮겼습니다.
-  var MORE_SHEET_HTML = "<div class=\"mt-more-sheet\" id=\"mtMoreSheet\" hidden>\n  <div class=\"mt-more-head\"><span>메뉴</span></div>\n  <div class=\"mt-more-links\">\n    <a href=\"/#promise\" data-nav-key=\"about\">브랜드소개</a>\n    <a href=\"/events/\" data-nav-key=\"events\">행사신청</a>\n    <a href=\"/event-review/\" data-nav-key=\"review\">이벤트</a>\n    <a href=\"/#reviews\" data-nav-key=\"reviews\">참석후기</a>\n    <a href=\"/#faq\" data-nav-key=\"faq\">FAQ</a>\n  </div>\n</div>";
+  var MORE_SHEET_HTML = "<div class=\"mt-more-wrap\">\n  <div class=\"mt-more-overlay\" id=\"mtMoreOverlay\"></div>\n  <aside class=\"mt-more-sheet\" id=\"mtMoreSheet\" role=\"dialog\" aria-modal=\"true\" aria-label=\"메뉴\" hidden>\n    <div class=\"mt-more-head\"><span>메뉴</span><button class=\"mt-more-close\" id=\"mtMoreClose\" type=\"button\" aria-label=\"메뉴 닫기\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M6 6l12 12M18 6L6 18\"/></svg></button></div>\n    <nav class=\"mt-more-links\">\n      <a href=\"/#promise\" data-nav-key=\"about\">브랜드소개</a>\n      <a href=\"/events/\" data-nav-key=\"events\">행사신청</a>\n      <a href=\"/event-review/\" data-nav-key=\"review\">이벤트</a>\n      <a href=\"/#reviews\" data-nav-key=\"reviews\">참석후기</a>\n      <a href=\"/#faq\" data-nav-key=\"faq\">FAQ</a>\n    </nav>\n  </aside>\n</div>";
   var TOP_FAB_HTML = "<button class=\"top-fab\" id=\"topFab\" aria-label=\"맨 위로\">\n  <svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"var(--magenta)\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"12\" y1=\"19\" x2=\"12\" y2=\"5\"/><polyline points=\"6 11 12 5 18 11\"/></svg>\n</button>";
   // 오른쪽 아래 [+] — 리더스 quick-links 와 같은 자리·같은 역할입니다.
   // 누르면 SNS 바로가기가 위로 펼쳐집니다.
@@ -132,10 +132,23 @@
   // 상담 버튼이 꺼져 있으면(body.chat-off) 한 칸씩 내려가 빈 자리가 남지 않습니다.
   var QUICK_RAIL_CSS = [
     ':root{--qr-base:84px;--qr-gap:56px;}',
-    '.qr{position:fixed;right:19px;z-index:152;display:none;flex-direction:column;align-items:center;gap:10px;',
-    '  bottom:calc(var(--qr-base) + var(--qr-gap));}',
-    'body.chat-off .qr{bottom:var(--qr-base);}',
-    '@media(max-width:640px){.qr{display:flex;}}',
+
+    /* ── 오른쪽 아래 단추들 ────────────────────────────────
+       아래에서부터 [상담] [TOP] [+] 순서로 쌓입니다.
+       상담이 꺼져 있거나(body.chat-off) TOP 이 아직 안 나왔으면(body.topfab-on 없음)
+       그만큼 한 칸씩 내려가 빈 자리가 남지 않습니다. */
+    '.qr{position:fixed;right:19px;z-index:152;display:none;flex-direction:column;align-items:center;gap:10px;}',
+    '@media(max-width:640px){',
+    '  .qr{display:flex;}',
+    /* 아래 칸 수 = (상담 있으면 1) + (TOP 나와 있으면 1) */
+    '  .qr{bottom:calc(var(--qr-base) + var(--qr-gap));}',                                  /* 상담만 */
+    '  body.chat-off .qr{bottom:var(--qr-base);}',                                          /* 아무것도 없음 */
+    '  body.topfab-on .qr{bottom:calc(var(--qr-base) + var(--qr-gap) * 2);}',               /* 상담 + TOP */
+    '  body.chat-off.topfab-on .qr{bottom:calc(var(--qr-base) + var(--qr-gap));}',          /* TOP 만 */
+    '  .top-fab{bottom:calc(var(--qr-base) + var(--qr-gap)) !important;}',
+    '  body.chat-off .top-fab{bottom:var(--qr-base) !important;}',
+    '  .rail{display:none !important;}',
+    '}',
     '.qr-toggle{width:46px;height:46px;border-radius:50%;background:#fff;border:1.5px solid var(--magenta-soft);',
     '  display:grid;place-items:center;cursor:pointer;box-shadow:0 12px 26px -12px rgba(216,30,99,.3);',
     '  transition:transform .25s ease;-webkit-tap-highlight-color:transparent;}',
@@ -150,15 +163,27 @@
     '.qr-ic.ig{background:linear-gradient(45deg,#feda75 5%,#fa7e1e 30%,#d62976 55%,#962fbf 78%,#4f5bd5 100%);}',
     '.qr-ic.naver{background:#03C75A;color:#fff;font-weight:900;font-size:1.25rem;line-height:1;font-family:Arial,Helvetica,sans-serif;}',
     '.qr-ic.kakao{background:#FAE100;}',
-    // TOP 단추는 [+] 아래 칸입니다. 페이지마다 박혀 있던 값을 여기서 다시 정합니다.
-    '@media(max-width:640px){',
-    '  .top-fab{bottom:calc(var(--qr-base) + var(--qr-gap)) !important;}',
-    '  body.chat-off .top-fab{bottom:var(--qr-base) !important;}',
-    '  .qr{bottom:calc(var(--qr-base) + var(--qr-gap) * 2) !important;}',
-    '  body.chat-off .qr{bottom:calc(var(--qr-base) + var(--qr-gap)) !important;}',
-    '  .rail{display:none !important;}',
-    '  .mt-more-head{padding:2px 4px 10px;font-weight:800;color:var(--ink);font-size:.95rem;}',
-    '}'
+
+    /* ── [더보기] 메뉴 — 리더스 mt-drawer 와 같은 모양입니다.
+       옆에서 밀려 나오는 세로 메뉴이고, 뒤는 어둡게 덮습니다. */
+    '.mt-more-overlay{display:none;position:fixed;inset:0;z-index:210;background:rgba(40,20,28,.45);',
+    '  opacity:0;pointer-events:none;transition:opacity .25s ease;}',
+    'body.more-open .mt-more-overlay{display:block;opacity:1;pointer-events:auto;}',
+    '.mt-more-sheet{display:flex;flex-direction:column;position:fixed;top:0;bottom:0;right:0;left:auto;',
+    '  z-index:215;width:min(82vw,320px);background:#fff;border:0;border-radius:0;overflow-y:auto;',
+    '  box-shadow:-12px 0 32px rgba(60,40,46,.18);transform:translateX(100%);',
+    '  transition:transform .3s cubic-bezier(.22,1,.36,1);}',
+    '.mt-more-sheet[hidden]{display:flex;}',
+    '.mt-more-sheet.open{transform:translateX(0);}',
+    '.mt-more-head{display:flex;align-items:center;justify-content:space-between;padding:20px 18px;',
+    '  border-bottom:1px solid var(--line);font-size:1rem;font-weight:800;color:var(--ink);}',
+    '.mt-more-close{display:grid;place-items:center;width:34px;height:34px;padding:0;border:0;border-radius:8px;',
+    '  background:transparent;color:var(--ink-2);cursor:pointer;-webkit-tap-highlight-color:transparent;}',
+    '.mt-more-close:hover{background:var(--pink-tint,#FFF2F7);color:var(--magenta);}',
+    '.mt-more-links{display:flex;flex-direction:column;padding:8px 10px 24px;border:0;}',
+    '.mt-more-sheet a{display:block;flex:none;text-align:left;padding:14px 12px;border:0;border-radius:10px;',
+    '  font-size:.95rem;font-weight:700;color:var(--ink);text-decoration:none;}',
+    '.mt-more-sheet a:hover{background:var(--pink-tint,#FFF2F7);color:var(--magenta-deep);}'
   ].join('\n');
 
   function ensureQuickRailStyles() {
@@ -190,6 +215,21 @@
     });
   }
 
+  // [더보기] 메뉴의 닫기 단추. 여닫기 자체는 mobile-tabbar.js 가 맡습니다.
+  function wireMoreSheet() {
+    var close = document.getElementById('mtMoreClose');
+    if (!close || close.__wired) return;
+    close.__wired = true;
+    close.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var sheet = document.getElementById('mtMoreSheet');
+      var btn = document.getElementById('mtMoreBtn');
+      if (sheet) { sheet.classList.remove('open'); sheet.hidden = true; }
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('more-open');
+    });
+  }
+
   function renderChrome() {
     if (!document.querySelector('.mobile-tabbar')) {
       localizeAnchors(mount('[data-site-tabbar]', TABBAR_HTML, true));
@@ -200,6 +240,7 @@
     ensureQuickRailStyles();
     if (!document.getElementById('quickRail')) mount('[data-site-quick-rail]', QUICK_RAIL_HTML, true);
     wireQuickRail();
+    wireMoreSheet();
     if (!document.getElementById('siteAlert')) mount('[data-site-alert]', SITE_ALERT_HTML, true);
     dropLeftoverMounts();
   }
