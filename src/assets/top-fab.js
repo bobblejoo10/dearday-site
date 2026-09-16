@@ -10,9 +10,6 @@
     var toggleFabShow=function(){
       var show=window.scrollY>=heroEl.offsetHeight-60;
       topFab.classList.toggle('show', show);
-      // [+] 단추가 자리를 맞출 수 있게 몸통에도 표시를 남깁니다.
-      // TOP 이 아직 안 나왔으면 [+] 가 그 자리로 내려갑니다.
-      document.body.classList.toggle('topfab-on', show);
     };
     toggleFabShow();
     window.addEventListener('scroll',toggleFabShow,{passive:true});
