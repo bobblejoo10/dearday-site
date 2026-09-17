@@ -30,9 +30,18 @@
   }
 
   function venueText(session) {
+    // 전체 장소 표기(지역명 + 상세홀 포함) — 검색·대체텍스트·PC 표시용
     return [session.location, session.address].filter(function (part) {
       return String(part || '').trim();
     }).join(' ').trim();
+  }
+
+  function venueShort(session) {
+    // 장소명만 — 지역명(location)과 상세홀(지하·N층·BN·N호 등) 제외, 모바일 표시용
+    var addr = String(session.address || '').trim();
+    if (!addr) return String(session.location || '').trim();
+    var m = addr.match(/\s(지하\s*\d*\s*층?|지상\s*\d+\s*층|\d+\s*층|[Bb]\d+|\d+\s*호)/);
+    return (m ? addr.slice(0, m.index) : addr).trim();
   }
 
   // 날짜 표기 — 원본 22장이 세 가지 형식으로 뒤섞여 있었습니다.
@@ -64,15 +73,16 @@
   function cardHtml(course, session) {
     var tab = String(course.category || '').trim();
     var href = store.courseDetailUrl(course, session);
-    var venue = venueText(session);
+    var venueAll = venueText(session);
+    var venueName = venueShort(session);
     var img = cardImage(course, session);
     var label = [course.title, session.location].filter(Boolean).join(' ') + ' 상세보기';
-    var alt = venue ? course.title + ' - ' + venue : course.title;
+    var alt = venueAll ? course.title + ' - ' + venueAll : course.title;
     return '<a class="ex" data-cat="' + esc(tab) + '" href="' + esc(href) + '" aria-label="' + esc(label) + '">'
       + '<div class="ex-imgwrap"><img class="ex-img" src="' + esc(img) + '" alt="' + esc(alt) + '" loading="lazy"><span class="ex-rank">1</span></div>'
       + '<div class="ex-body">'
       + '<h3>' + esc(course.title) + '</h3>'
-      + '<p class="venue">' + esc(venue) + '</p>'
+      + '<p class="venue"><span class="v-full">' + esc(venueAll) + '</span><span class="v-short">' + esc(venueName) + '</span></p>'
       + '<p class="daterange">' + esc(dateText(session)) + '</p>'
       + '<span class="ex-tag">전액 무료</span>'
       + '</div></a>';

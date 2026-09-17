@@ -371,7 +371,7 @@
   @media(max-width:560px){.faq-a-inner{padding-left:22px;}}
   
   .detail{max-width:var(--maxw);margin:0 auto;padding:clamp(26px,5vw,52px) clamp(20px,4vw,44px) clamp(56px,9vw,110px);position:relative;}
-.detail::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:100vw;height:760px;background:linear-gradient(180deg,#FFE6EF 0%,#FFF2F7 74%,#fff 100%);z-index:-1;pointer-events:none;}
+.detail::before{content:"";position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100vw;height:auto;background:linear-gradient(0deg,#FFE6EF 0%,#FFF2F7 60%,#fff 100%);z-index:-1;pointer-events:none;}
   .crumb{display:inline-flex;gap:6px;align-items:center;color:var(--ink-2);text-decoration:none;font-size:1.18rem;margin-bottom:22px;}
   .crumb:hover{color:var(--magenta);}
   .detail-banner{display:block;width:100%;max-width:430px;margin:0 auto 26px;border-radius:16px;overflow:hidden;box-shadow:0 18px 44px -28px rgba(35,20,30,.42);background:#f6f0f3;}
@@ -393,11 +393,13 @@
   .req-list li{position:relative;padding-left:20px;color:var(--ink-2);line-height:1.62;font-size:.93rem;}
   .req-list li::before{content:"·";position:absolute;left:5px;top:-3px;color:var(--magenta);font-weight:900;font-size:1.3rem;}
   .req-list li strong{color:var(--magenta-deep);}
-  .hero-detail{display:grid;grid-template-columns:1.5fr 1fr;column-gap:48px;grid-template-areas:"title ." "sub ." "info visual";align-items:start;}
+  .hero-detail{display:grid;grid-template-columns:1fr 1.5fr;column-gap:48px;grid-template-areas:". title" ". sub" "visual info";align-items:start;}
   .hero-detail-title{grid-area:title;max-width:580px;}
   .hero-detail-subtitle{grid-area:sub;max-width:580px;}
   .ev-sub.hero-detail-subtitle{margin-left:6px;}
-  .hero-detail-info{grid-area:info;max-width:580px;}
+  /* 디데이 표시: 연한 분홍 배경의 둥근 뱃지 (PC·모바일 공통, 브랜드 컬러) */
+  #mDday{display:inline-block;width:max-content;max-width:100%;justify-self:start;background:var(--pink-2);color:var(--magenta-deep);font-size:1.1rem;font-weight:800;line-height:1.15;padding:4px 12px;border-radius:7px;margin:0 0 18px 6px;letter-spacing:-.01em;-webkit-text-stroke:0;}
+  .hero-detail-info{grid-area:info;}
   .hero-detail-visual-col{grid-area:visual;}
   .hero-detail-visual{margin:0;max-width:none;width:100%;}
   .hero-detail-info .ev-title{margin-top:0;}
@@ -488,7 +490,7 @@
   .pmodal-body p:last-child{margin-bottom:0;}
 
   /* ===== 2단 상세 레이아웃 + 스티키 신청 사이드바 ===== */
-  .detail-cols{display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:start;margin-top:42px;}
+  .detail-cols{display:grid;grid-template-columns:1fr 420px;column-gap:48px;align-items:start;margin-top:42px;}
   .detail-imgs-col .detail-imgs{margin:0 0 8px;}
   .detail-imgs-col > .apply-btn{display:none;}
   .detail-side{position:sticky;top:96px;}
@@ -507,23 +509,35 @@
   .sticky-cta .sc-btn{flex:1;max-width:260px;margin-left:auto;background:var(--magenta);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:800;font-size:.96rem;}
   @media(max-width:900px){
     .hero-detail{grid-template-columns:1fr;grid-template-areas:"visual" "title" "sub" "info";}
-    .hero-detail-visual{max-width:430px;margin:0 auto 26px;}
-    .hero-detail-title{margin-top:24px;max-width:none;margin-left:6px;}
+    .hero-detail-visual{max-width:330px;margin:0 auto 26px;}
+    .hero-detail-title{margin-top:24px;max-width:none;margin-left:25px;font-size:1.6rem;}
     .hero-detail-subtitle{max-width:none;}
+    #mDday{margin-left:25px;}
     .hero-detail-info{max-width:none;}
+    .crumb{margin-left:0;}
     .hero-detail-cta{display:none;}
     .hero-detail-cta-mobile{display:none;}
-    .hero-detail-req{margin-top:36px;}
+    .hero-detail-req{margin-top:24px;}
     .req-card > .req-title{pointer-events:auto;cursor:pointer;padding-right:26px;}
     .req-card > .req-title::after{content:'';display:block;position:absolute;right:2px;top:6px;width:9px;height:9px;border-right:2px solid var(--ink-2);border-bottom:2px solid var(--ink-2);transform:rotate(45deg);transition:transform .25s ease;}
     .req-card[open] > .req-title::after{transform:rotate(225deg);top:11px;}
-    .detail::before{height:420px;}
+    .detail::before{top:0;bottom:0;height:auto;background:linear-gradient(0deg,#FFE6EF 0%,#FFF2F7 60%,#fff 100%);}
     .detail-cols{grid-template-columns:1fr;}
     .detail-side{display:none;}
     .detail-imgs-col > .apply-btn{display:none;}
     .sticky-cta{display:flex;}
     .detail{padding-bottom:96px;}
   }
+  /* ===== mobile: 정보 카드(일정/장소/신청대상)를 NOL 스타일 담백한 줄 디자인으로 (모바일 전용) ===== */
+  @media(max-width:900px){
+    .meta-card{background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;margin:0 25px;}
+    .meta-card .meta{border-top:0;border-bottom:1px solid var(--line);padding:0 0 23px;}
+    .meta-card .meta .row{grid-template-columns:76px 1fr;gap:10px;align-items:start;padding:11px 0;border-bottom:0;}
+    .meta-card .meta .row:last-child{border-bottom:0;padding-bottom:0;}
+    .meta-card .meta .k{color:#8b8b90;font-weight:500;font-size:.9rem;letter-spacing:-.01em;}
+    .meta-card .meta .v{color:var(--magenta-deep);font-weight:600;font-size:.98rem;line-height:1.5;letter-spacing:-.01em;}
+  }
+
   /* ===== mobile: keep SNS rail / chatbot launcher clear of the sticky apply bar ===== */
   @media(max-width:900px){
     .rail{flex-direction:column;bottom:168px;right:20px;left:auto;top:auto;transform:none;background:rgba(255,255,255,.94);padding:12px 8px;border-radius:20px;box-shadow:var(--shadow);gap:10px;}
@@ -587,6 +601,23 @@
   .ev-missing{ padding:60px 20px; text-align:center; color:var(--muted); font-size:15px; line-height:1.8; }
   .ev-missing a{ color:var(--magenta); font-weight:800; }
   @media (max-width:700px){ .ev-sessions-list{ gap:6px; } .ev-session{ padding:9px 12px; } }
+
+  /* ===== PDP 2-column layout: 왼쪽 미디어 + 오른쪽 단일 스티키 요약 카드 (NOL 구조) ===== */
+  .pdp-aside{display:none;}                 /* 기본(모바일): 오른쪽 요약 카드 숨김, 본문은 세로로 쌓임 */
+  @media(min-width:901px){
+    .pdp{display:grid;grid-template-columns:minmax(0,1fr) 400px;column-gap:48px;align-items:start;grid-template-areas:"body media" "body aside";margin-top:6px;}
+    .pdp-media{grid-area:media;}
+    .pdp-body{grid-area:body;margin-top:0;}
+    .pdp-aside{grid-area:aside;display:block;position:sticky;top:96px;}
+    /* PC: 일정/장소/신청대상을 NOL식 담백한 줄 리스트(선 구분)로 — 카드 테두리 제거 */
+    .pdp-body .meta-card{background:transparent;border:0;border-radius:0;box-shadow:none;padding:0;margin:2px 25px 0;}
+    .pdp-body .meta-card .meta{border-top:0;border-bottom:1px solid var(--line);padding:0 0 21px;}
+    .pdp-body .meta-card .meta .row{padding:9px 0;border-bottom:0;}
+    .pdp-media .hero-detail-visual{max-width:none;width:100%;margin:0 0 20px;}
+    .pdp-body .ev-title{margin-top:0;}
+    .pdp-body .detail-imgs{margin-top:34px;}
+  }
+
 </style>
 </head>
 <body>
@@ -595,46 +626,42 @@
 
 <main class="detail">
   <a class="crumb" href="/events/">&#8592; 전체 행사 보기</a>
-  <div class="hero-detail">
-  <h1 class="ev-title hero-detail-title" id="evTitle">행사 정보를 불러오는 중입니다</h1>
-  <p class="ev-sub hero-detail-subtitle" id="mDday">-</p>
-  <div class="hero-detail-info">
-  <div class="meta-card"><div class="meta">
-    <div class="row"><span class="k">일정</span><span class="v" id="mDate">-</span></div>
-    <div class="row"><span class="k">장소</span><span class="v" id="mVenue">-</span></div>
-    <div class="row"><span class="k">신청대상자</span><span class="v">성인남녀 (미성년자 입장불가)</span></div>
-  </div></div>
-  <button type="button" class="apply-btn js-apply hero-detail-cta-mobile">신청하기</button>
-  <div class="ev-sessions" id="evSessions" hidden></div>
-  <details class="req-card hero-detail-req" id="reqCard" open hidden>
-  <summary class="req-title" id="reqTitle">필수 확인 사항</summary>
-  <ul class="req-list" id="reqList"></ul>
-  <p class="req-foot" id="reqFoot" hidden></p>
-  </details>
-  </div>
-  <div class="hero-detail-visual-col">
-  <div class="detail-banner hero-detail-visual"><img id="evBanner" src="" alt="행사 포스터" hidden></div>
-  <button type="button" class="apply-btn js-apply hero-detail-cta">신청하기</button>
-  </div>
-  </div>
-<div class="detail-cols">
-  <div class="detail-imgs-col">
-  <div class="detail-imgs" id="detailImgs"></div>
-  <button type="button" class="apply-btn js-apply">신청하기</button>
-  </div>
-  <aside class="detail-side">
-    <div class="detail-side-card">
-      <p class="ds-eyebrow">DEARDAY CLASS</p>
-      <h3 class="ds-title" id="dsTitle">-</h3>
-      <p class="ds-sub" id="dsSub">전액 무료 · 성인 관람 (미성년자 입장불가)</p>
-      <div class="ds-meta">
-        <div class="row"><span class="k">일정</span><span class="v" id="dsDate">-</span></div>
-        <div class="row"><span class="k">장소</span><span class="v" id="dsVenue">-</span></div>
-      </div>
-      <button type="button" class="apply-btn js-apply">신청하기</button>
+  <div class="pdp">
+    <div class="pdp-media">
+      <div class="detail-banner hero-detail-visual"><img id="evBanner" src="" alt="행사 포스터" hidden></div>
     </div>
-  </aside>
-</div>
+    <div class="pdp-body">
+      <h1 class="ev-title hero-detail-title" id="evTitle">행사 정보를 불러오는 중입니다</h1>
+      <p class="ev-sub hero-detail-subtitle" id="mDday">-</p>
+      <div class="hero-detail-info">
+        <div class="meta-card"><div class="meta">
+          <div class="row"><span class="k">일정</span><span class="v" id="mDate">-</span></div>
+          <div class="row"><span class="k">장소</span><span class="v" id="mVenue">-</span></div>
+          <div class="row"><span class="k">시간</span><span class="v" id="mTime">-</span></div>
+          <div class="row"><span class="k">신청대상자</span><span class="v">성인남녀 (미성년자 입장불가)</span></div>
+        </div></div>
+        <div class="ev-sessions" id="evSessions" hidden></div>
+        <details class="req-card hero-detail-req" id="reqCard" open hidden>
+          <summary class="req-title" id="reqTitle">필수 확인 사항</summary>
+          <ul class="req-list" id="reqList"></ul>
+          <p class="req-foot" id="reqFoot" hidden></p>
+        </details>
+      </div>
+      <div class="detail-imgs" id="detailImgs"></div>
+    </div>
+    <aside class="pdp-aside">
+      <div class="detail-side-card">
+        <p class="ds-eyebrow">DEARDAY CLASS</p>
+        <h3 class="ds-title" id="dsTitle">-</h3>
+        <p class="ds-sub" id="dsSub">전액 무료 · 성인 관람 (미성년자 입장불가)</p>
+        <div class="ds-meta">
+          <div class="row"><span class="k">일정</span><span class="v" id="dsDate">-</span></div>
+          <div class="row"><span class="k">장소</span><span class="v" id="dsVenue">-</span></div>
+        </div>
+        <button type="button" class="apply-btn js-apply">신청하기</button>
+      </div>
+    </aside>
+  </div>
 <div class="sticky-cta" id="stickyCta">
   <span class="sc-label">전액 무료</span>
   <button type="button" class="sc-btn js-apply">신청하기</button>

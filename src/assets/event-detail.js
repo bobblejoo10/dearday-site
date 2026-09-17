@@ -160,6 +160,9 @@
     var whenText = view.date ? dateText(view.date) : '-';
     setText('mDate', whenText);
     setText('mVenue', view.venue || '-');
+    var _t = timeParts(view.time);
+    var _timeStr = _t.start ? (_t.end ? timeText(_t.start, '오전오후') + ' ~ ' + timeText(_t.end, '오전오후') : timeText(_t.start, '오전오후')) : (text(view.time) || '-');
+    setText('mTime', _timeStr);
     setText('dsTitle', view.title || '-');
     setText('dsDate', whenText);
     setText('dsVenue', view.venue || '-');
@@ -299,6 +302,7 @@
     setText('evTitle', '행사를 찾을 수 없습니다');
     setText('mDate', '-');
     setText('mVenue', '-');
+    setText('mTime', '-');
     setText('mDday', '-');
     var imgs = el('detailImgs');
     if (imgs) {
